@@ -1,0 +1,590 @@
+[
+  {
+    "levelNumber": 0,
+    "id": "level-0",
+    "title": "Level 0: Meet the Brain",
+    "subtitle": "Discovering the Raspberry Pi Pico WH",
+    "estimatedMinutes": 10,
+    "conceptByte": {
+      "id": "byte-1",
+      "title": "Computers vs Microcontrollers",
+      "metaphor": "The Smartphone vs The Reflex Muscle",
+      "readTimeSeconds": 60,
+      "svgType": "brain_vs_pc",
+      "keyTakeaways": [
+        "Your laptop or phone is a general-purpose computer. It runs a massive operating system, renders graphics, and browses YouTube, but cannot toggle electrical pins at microsecond speed.",
+        "The Raspberry Pi Pico WH is a microcontroller. It has no screen, no mouse, and no operating system lag. It runs your code directly on bare silicon.",
+        "The black square in the middle is the RP2040 chip: a dual-core brain running at 133 million calculations per second. The 40 metal pins along the edges connect your code directly to the real world."
+      ],
+      "analogyStory": "If your laptop is a massive library with millions of books, the Raspberry Pi Pico is an Olympic sprinter waiting on the starting block. It doesn't waste time loading desktop windows or checking notifications. It boots up in 5 milliseconds and focuses 100% of its brainpower on reading sensors and switching electrical signals."
+    },
+    "quizGate": [
+      {
+        "id": "q0-1",
+        "question": "Which microcontroller board is sitting in your kit on the desk right now?",
+        "options": [
+          "Arduino Uno (Big blue board with a bulky USB-B cable)",
+          "ESP32 NodeMCU",
+          "Raspberry Pi Pico WH (Green board with pre-soldered header pins and a silver metal Wi-Fi box)"
+        ],
+        "correctIndex": 2,
+        "hint": "Look for the green board with the Raspberry Pi logo and the shiny silver Wi-Fi shield.",
+        "explanation": "You are using the Raspberry Pi Pico WH, powered by the RP2040 dual-core processor with built-in Wi-Fi and Bluetooth."
+      },
+      {
+        "id": "q0-2",
+        "question": "Why do engineers use microcontrollers instead of just plugging sensors into a normal laptop?",
+        "options": [
+          "Laptops are not powerful enough to read temperature",
+          "Microcontrollers can directly read electrical voltages and switch physical pins with microsecond accuracy",
+          "Microcontrollers are only used for playing music"
+        ],
+        "correctIndex": 1,
+        "hint": "Laptops have complex operating systems that add lag; microcontrollers connect directly to electrical circuits.",
+        "explanation": "Microcontrollers bridge pure software logic to real electrical voltages (0V and 3.3V) with zero operating system delay."
+      }
+    ],
+    "circuitSteps": [
+      {
+        "stepNumber": 1,
+        "title": "Inspect Your Pico WH",
+        "instruction": "Gently remove the Raspberry Pi Pico WH from its protective foam. Notice the silver micro-USB port at the top, the silver Wi-Fi shield box in the upper half, and the 40 pre-soldered gold-plated pins.",
+        "component": "Raspberry Pi Pico WH",
+        "fromPin": "Board",
+        "toBreadboardHole": "Desk",
+        "color": "#10B981"
+      }
+    ],
+    "codeChunks": [
+      {
+        "blockId": "c0-1",
+        "title": "Hardware Inspection Check",
+        "language": "python",
+        "code": "# Hardware Profile:\n# Board: Raspberry Pi Pico WH\n# Silicon: Dual-Core ARM Cortex-M0+ (RP2040)\n# Memory: 264KB SRAM + 2MB Flash\n# Wireless: CYW43439 (2.4GHz 802.11n Wi-Fi)",
+        "explanation": "No code needed for this level. Once you verify your hardware, click next to start programming."
+      }
+    ],
+    "fullScript": "# Hardware check complete!\nprint('Raspberry Pi Pico WH verified and ready for MicroPython!')",
+    "verificationChallenge": {
+      "instruction": "Inspect your board and verify that the 40 pre-soldered pins are straight and the micro-USB port is clean.",
+      "expectedObservableResult": "Your team is ready to connect the USB cable and launch MicroPython in Level 1."
+    }
+  },
+  {
+    "levelNumber": 1,
+    "id": "level-1",
+    "title": "Level 1: The First Spark",
+    "subtitle": "Blinking the On-Board Wireless LED",
+    "estimatedMinutes": 15,
+    "conceptByte": {
+      "id": "byte-2",
+      "title": "Digital Output & The Speed of Code",
+      "metaphor": "The Flashlight Switch & The Clock",
+      "readTimeSeconds": 75,
+      "svgType": "digital_switch",
+      "keyTakeaways": [
+        "A Digital Output pin has only two states: 1 (HIGH, supplying 3.3 volts of electricity) or 0 (LOW, cutting voltage to 0 volts).",
+        "MicroPython executes line by line. Writing led.value(1) turns on the pin. Writing led.value(0) shuts off the pin.",
+        "The RP2040 chip executes over 100,000 commands every millisecond! If you don't pause with time.sleep(0.5), the LED blinks millions of times a second and looks permanently frozen on."
+      ],
+      "analogyStory": "Imagine holding a flashlight switch. Flicking it up turns the bulb on; flicking it down turns it off. The Pico can flick that switch millions of times every single second. Without time.sleep(0.5) to pause execution, human eyes only see a continuous blur. We pause so our human eyes can keep up with the computer!"
+    },
+    "quizGate": [
+      {
+        "id": "q1-1",
+        "question": "What does a Digital Output pin do when you set its value to 1 in MicroPython?",
+        "options": [
+          "It plays a loud sound",
+          "It pushes 3.3 volts of electrical power out through the pin",
+          "It shuts down the Pico to save battery"
+        ],
+        "correctIndex": 1,
+        "hint": "1 means HIGH, which supplies the operating voltage of 3.3V.",
+        "explanation": "Setting a pin to 1 (HIGH) supplies 3.3 volts. Setting it to 0 (LOW) connects it to 0 volts (Ground)."
+      },
+      {
+        "id": "q1-2",
+        "question": "Why is time.sleep(0.5) necessary inside a blink loop?",
+        "options": [
+          "Without a pause, the chip runs so fast that the LED blinks millions of times a second and looks solid",
+          "The Pico runs out of memory if it does not rest",
+          "MicroPython requires sleep commands to save code to the hard drive"
+        ],
+        "correctIndex": 0,
+        "hint": "Microcontrollers think in nanoseconds; human vision needs half a second to register changes.",
+        "explanation": "Without time.sleep(), the LED toggles at megahertz speeds, appearing solid to human eyes."
+      }
+    ],
+    "circuitSteps": [
+      {
+        "stepNumber": 1,
+        "title": "Connect the Micro-USB Cable",
+        "instruction": "Plug the micro-USB cable into the Pico WH. Plug the other end into your laptop. If your laptop only has USB-C ports, use the USB-C adapter from your kit.",
+        "component": "Micro-USB Data Cable",
+        "fromPin": "Pico Micro-USB",
+        "toBreadboardHole": "Laptop USB Port",
+        "color": "#3B82F6"
+      }
+    ],
+    "codeChunks": [
+      {
+        "blockId": "c1-1",
+        "title": "Step 1: Import Hardware Tools",
+        "language": "python",
+        "code": "from machine import Pin\nimport time",
+        "explanation": "Imports the Pin class to control electrical voltages, and the time module to pause."
+      },
+      {
+        "blockId": "c1-2",
+        "title": "Step 2: Configure the Onboard LED",
+        "language": "python",
+        "code": "led = Pin('LED', Pin.OUT)",
+        "explanation": "On the Pico WH, the wireless chip controls the onboard LED using the special name 'LED'."
+      },
+      {
+        "blockId": "c1-3",
+        "title": "Step 3: The Infinite Blink Loop",
+        "language": "python",
+        "code": "while True:\n    led.value(1)       # Supply 3.3V (Turn ON)\n    time.sleep(0.5)    # Wait 0.5 seconds\n    led.value(0)       # Cut voltage to 0V (Turn OFF)\n    time.sleep(0.5)    # Wait 0.5 seconds",
+        "explanation": "Repeats forever: turns the LED ON, pauses half a second, turns it OFF, pauses, and repeats."
+      }
+    ],
+    "fullScript": "from machine import Pin\nimport time\n\n# Configure onboard LED on Pico WH\nled = Pin('LED', Pin.OUT)\n\nprint('Level 1: Blinking onboard LED! Press Stop in Thonny to pause.')\n\nwhile True:\n    led.value(1)\n    time.sleep(0.5)\n    led.value(0)\n    time.sleep(0.5)",
+    "verificationChallenge": {
+      "instruction": "Paste the code into Thonny and click the Green Play button. Look directly at the tiny green LED near the USB port.",
+      "expectedObservableResult": "A crisp, bright green LED on the Pico PCB pulsing steadily on and off once every second."
+    }
+  },
+  {
+    "levelNumber": 2,
+    "id": "level-2",
+    "title": "Level 2: Building on the Breadboard",
+    "subtitle": "LED Anatomy, Current-Limiting Resistors & Hidden Rails",
+    "estimatedMinutes": 20,
+    "conceptByte": {
+      "id": "byte-3",
+      "title": "LED Anatomy, Resistors & Breadboards",
+      "metaphor": "The One-Way Gate, The Water Valve & The Subway Clips",
+      "readTimeSeconds": 90,
+      "svgType": "breadboard_cutaway",
+      "keyTakeaways": [
+        "Inside an LED: LED stands for Light Emitting Diode. It is a one-way street for electricity! The longer leg is the Anode (+). The shorter leg with the flat notch on the plastic rim is the Cathode (-). If you wire it backwards, zero current flows and it stays dark.",
+        "The Resistor (Current Limiter): An LED has virtually no internal resistance once lit. If you connect it directly across 3.3V, a massive flood of current rushes through the tiny crystal and burns it out in a fraction of a second! The 220 ohm resistor acts like a water valve, choking the current to a safe 15 milliamps.",
+        "Under the Breadboard: The white plastic breadboard is full of springy metal clips underneath. Groups of 5 holes (A-B-C-D-E) are joined together sideways. The outer blue (-) and red (+) strips run continuously all the way down the board to distribute power and Ground."
+      ],
+      "analogyStory": "Think of electrical current like high-pressure water rushing through a pipe. An LED is a fragile decorative water wheel that only spins in one direction. The 220 ohm resistor is a safety nozzle that restricts the rushing water to a gentle stream. Without the resistor nozzle, the water pressure blows the wheel right off its hinges!"
+    },
+    "quizGate": [
+      {
+        "id": "q2-1",
+        "question": "How can you instantly identify the positive leg (Anode) of an LED with your eyes?",
+        "options": [
+          "It is the longer metal leg (and the round side of the plastic dome)",
+          "It is the shorter metal leg (near the flat rim)",
+          "Both legs are identical; direction does not matter"
+        ],
+        "correctIndex": 0,
+        "hint": "Remember: The longer leg is the Anode (+); the shorter leg near the flat notch is the Cathode (-).",
+        "explanation": "The longer leg is the Anode (+). It connects towards the 3.3V GPIO signal. The shorter leg (Cathode) connects to Ground."
+      },
+      {
+        "id": "q2-2",
+        "question": "What happens if you connect an LED directly to 3.3V without a 220 ohm resistor?",
+        "options": [
+          "The light turns blue",
+          "Too much current rushes through the semiconductor, overheating and permanently destroying the LED",
+          "The Pico WH increases its Wi-Fi speed"
+        ],
+        "correctIndex": 1,
+        "hint": "The resistor limits the flow of electric current.",
+        "explanation": "Without a current-limiting resistor, excessive current flows, burning out the LED diode and risking damage to the Pico GPIO pin."
+      }
+    ],
+    "circuitSteps": [
+      {
+        "stepNumber": 1,
+        "title": "Connect Main Ground to Blue Rail (-)",
+        "instruction": "Plug a black jumper wire from Pico Pin 38 (GND) into the long Blue Ground Rail (-) on the breadboard. This establishes your 0V reference line.",
+        "component": "Black Jumper Wire",
+        "fromPin": "Pico Pin 38 (GND)",
+        "toBreadboardHole": "Blue Rail (-)",
+        "color": "#1E293B",
+        "fromCoords": { "x": 145, "y": 321, "label": "Pico Pin 38 (GND)" },
+        "toCoords": { "x": 190, "y": 320, "label": "Blue Rail (-)" }
+      },
+      {
+        "stepNumber": 2,
+        "title": "Extend Ground into Circuit Area (Row 18)",
+        "instruction": "Plug a black jumper wire from the Blue Ground Rail (-) into Breadboard Row 18, Column F on the right side of the board. This delivers Ground directly to your LED's cathode row.",
+        "component": "Ground Extension Wire",
+        "fromPin": "Blue Rail (-)",
+        "toBreadboardHole": "Row 18, Col F",
+        "color": "#0F172A",
+        "fromCoords": { "x": 190, "y": 352, "label": "Blue Rail (-)" },
+        "toCoords": { "x": 324, "y": 352, "label": "Row 18, Col F" }
+      },
+      {
+        "stepNumber": 3,
+        "title": "Connect GP15 to Circuit Area (Row 15)",
+        "instruction": "Plug a green jumper wire from Pico GP15 (Pin 20) into Breadboard Row 15, Column B on the left side of the board. This brings the 3.3V control signal to this row.",
+        "component": "Green Jumper Wire",
+        "fromPin": "Pico GP15 (Pin 20)",
+        "toBreadboardHole": "Row 15, Col B",
+        "color": "#10B981",
+        "fromCoords": { "x": 30, "y": 347, "label": "GP15 (Pin 20)" },
+        "toCoords": { "x": 236, "y": 304, "label": "Row 15, Col B" }
+      },
+      {
+        "stepNumber": 4,
+        "title": "Bridge 220Ω Resistor Across the Trench",
+        "instruction": "Insert one leg of the 220 ohm resistor (Red-Red-Brown-Gold) into Row 15, Column E (left side), and bridge it across the central trough into Row 15, Column F on the other side of the board.",
+        "component": "220 Ohm Resistor",
+        "fromPin": "Row 15, Col E",
+        "toBreadboardHole": "Row 15, Col F",
+        "color": "#D97706",
+        "fromCoords": { "x": 284, "y": 304, "label": "Row 15, Col E" },
+        "toCoords": { "x": 324, "y": 304, "label": "Row 15, Col F" }
+      },
+      {
+        "stepNumber": 5,
+        "title": "Insert 5mm Green LED (Anode & Cathode)",
+        "instruction": "Insert the longer leg (Anode +) into Row 15, Column H (connected to the resistor through Row 15's internal metal clip). Insert the shorter leg with the flat rim notch (Cathode -) into Row 18, Column H (connected to Ground through Row 18's internal metal clip).",
+        "component": "5mm Green LED",
+        "fromPin": "Row 15, Col H (+)",
+        "toBreadboardHole": "Row 18, Col H (-)",
+        "color": "#10B981",
+        "polarityNote": "Anode (+) in Row 15 Col H (from Resistor); Cathode (-) with flat rim in Row 18 Col H (to Ground)",
+        "fromCoords": { "x": 356, "y": 304, "label": "Row 15, Col H (Anode +)" },
+        "toCoords": { "x": 356, "y": 352, "label": "Row 18, Col H (Cathode -)" }
+      }
+    ],
+    "codeChunks": [
+      {
+        "blockId": "c2-1",
+        "title": "Step 1: Declare External Pin GP15",
+        "language": "python",
+        "code": "from machine import Pin\nimport time\n\n# Configure GP15 (Pin 20) as an Output\nexternal_led = Pin(15, Pin.OUT)",
+        "explanation": "Configures physical pin GP15 to supply 3.3V when toggled."
+      },
+      {
+        "blockId": "c2-2",
+        "title": "Step 2: Toggle Method in While Loop",
+        "language": "python",
+        "code": "while True:\n    external_led.toggle()  # Flips state (0 -> 1 or 1 -> 0)\n    time.sleep(0.5)",
+        "explanation": "The .toggle() function automatically flips the voltage state every half second."
+      }
+    ],
+    "fullScript": "from machine import Pin\nimport time\n\n# External LED on GP15\nled = Pin(15, Pin.OUT)\n\nprint('Level 2: External breadboard LED blinking!')\n\nwhile True:\n    led.toggle()\n    time.sleep(0.5)",
+    "verificationChallenge": {
+      "instruction": "Run the script. The physical green LED standing in your breadboard should blink bright green.",
+      "expectedObservableResult": "A bright green 5mm LED blinking steadily on your breadboard. If it does not light, check whether the long and short legs are reversed."
+    }
+  },
+  {
+    "levelNumber": 3,
+    "id": "level-3",
+    "title": "Level 3: Button & Digital Input",
+    "subtitle": "Floating Pins, Internal Pull-Up Resistors & Decision Trees",
+    "estimatedMinutes": 20,
+    "conceptByte": {
+      "id": "byte-5",
+      "title": "The 4-Pin Tactile Button & Floating Pins",
+      "metaphor": "The Helium Balloon & The Anchor",
+      "readTimeSeconds": 85,
+      "svgType": "pullup_tugofwar",
+      "keyTakeaways": [
+        "Inside a 4-Pin Tactile Button: The button has a square body and 4 metal legs. The legs on the top are permanently connected in pairs, and the legs on the bottom are connected in pairs. Pressing the button connects the top and bottom pairs together!",
+        "The Floating Pin Mystery: When a wire is left unconnected, it acts like a radio antenna. It picks up stray electrical noise from fluorescent lights, Wi-Fi, and your fingers, bouncing wildly between 0 and 1! That is a floating pin.",
+        "Internal Pull-Up Resistor (Pin.PULL_UP): The RP2040 chip has a built-in resistor that gently pulls the pin UP to 3.3V (value 1) when nobody is touching it. When you press the button, it bridges the pin straight to Ground (0V), pulling the reading down to 0.",
+        "Active-Low Rule: Released = 1 (HIGH), Pressed = 0 (LOW)."
+      ],
+      "analogyStory": "An unconnected input pin is like a helium balloon floating in the wind: it blows around randomly. Setting Pin.PULL_UP is like tying that balloon to the ceiling at 3.3V. It stays firmly at 1. When you press the push button, you pull the balloon down to the floor (Ground = 0V). That is why a pressed button reads as 0!"
+    },
+    "quizGate": [
+      {
+        "id": "q3-1",
+        "question": "When a push button is configured with Pin.PULL_UP in MicroPython, what does it read when RELEASED?",
+        "options": [
+          "0 (Ground / LOW)",
+          "1 (3.3V / HIGH)",
+          "Random static noise"
+        ],
+        "correctIndex": 1,
+        "hint": "The pull-up resistor holds the pin UP to 3.3V until pressed.",
+        "explanation": "When released, the internal pull-up resistor holds the pin steady at 1 (HIGH). Pressing the button connects it to ground, pulling it down to 0."
+      },
+      {
+        "id": "q3-2",
+        "question": "Why do engineers use internal pull-up resistors instead of leaving the input pin bare?",
+        "options": [
+          "To prevent the pin from floating and generating false button presses from electrical static",
+          "To make the button louder when clicked",
+          "To turn on the Wi-Fi chip"
+        ],
+        "correctIndex": 0,
+        "hint": "A bare wire acts like an antenna and picks up ambient static noise.",
+        "explanation": "A floating pin acts like an antenna, picking up static. An internal pull-up resistor holds it steady at 3.3V until pressed."
+      }
+    ],
+    "circuitSteps": [
+      {
+        "stepNumber": 1,
+        "title": "Mount 4-Pin Button Across Trench",
+        "instruction": "Straddle the 4-pin tactile push button across the center divider trench at Row 10. The legs on the left plug into Column E; the legs on the right plug into Column F.",
+        "component": "4-Pin Tactile Button",
+        "fromPin": "Col E, Row 10",
+        "toBreadboardHole": "Col F, Row 10",
+        "color": "#6B7280"
+      },
+      {
+        "stepNumber": 2,
+        "title": "Wire GP14 Signal to Button",
+        "instruction": "Plug a yellow jumper wire from Pico GP14 (Pin 19) into Breadboard Row 10, Column D (same row as the left leg of the button).",
+        "component": "Yellow Jumper Wire",
+        "fromPin": "Pico GP14",
+        "toBreadboardHole": "Row 10, Col D",
+        "color": "#EAB308"
+      },
+      {
+        "stepNumber": 3,
+        "title": "Wire Button to Ground Rail",
+        "instruction": "Plug a black jumper wire from Breadboard Row 10, Column G (right leg of the button) to the Blue Ground Rail (-).",
+        "component": "Black Jumper Wire",
+        "fromPin": "Row 10, Col G",
+        "toBreadboardHole": "Blue Rail (-)",
+        "color": "#1F2937"
+      },
+      {
+        "stepNumber": 4,
+        "title": "Add Orange Alert LED on GP16",
+        "instruction": "Insert an Orange LED in Row 20 (long leg in Col C, short leg in GND rail through a 220 ohm resistor). Connect Pico GP16 to Row 20, Col E.",
+        "component": "Orange LED & Resistor",
+        "fromPin": "Pico GP16",
+        "toBreadboardHole": "Row 20, Col E",
+        "color": "#F97316"
+      }
+    ],
+    "codeChunks": [
+      {
+        "blockId": "c3-1",
+        "title": "Step 1: Setup Button and Dual LEDs",
+        "language": "python",
+        "code": "from machine import Pin\nimport time\n\n# Configure Button with internal pull-up\nbutton = Pin(14, Pin.IN, Pin.PULL_UP)\ngreen_led = Pin(15, Pin.OUT)\norange_led = Pin(16, Pin.OUT)",
+        "explanation": "Configures GP14 as an input holding 3.3V, and GP15/GP16 as outputs for Normal and Alert states."
+      },
+      {
+        "blockId": "c3-2",
+        "title": "Step 2: Active-Low If/Else Decision",
+        "language": "python",
+        "code": "while True:\n    if button.value() == 0:  # Pressed down to Ground!\n        green_led.value(0)   # Normal OFF\n        orange_led.value(1)  # Alert ON\n    else:                    # Released (Pull-Up active)\n        green_led.value(1)   # Normal ON\n        orange_led.value(0)  # Alert OFF\n    time.sleep(0.05)         # 50ms button debounce delay",
+        "explanation": "If button is pressed (0), switch to Orange alert. If released, stay on Green normal."
+      }
+    ],
+    "fullScript": "from machine import Pin\nimport time\n\nbutton = Pin(14, Pin.IN, Pin.PULL_UP)\ngreen_led = Pin(15, Pin.OUT)\norange_led = Pin(16, Pin.OUT)\n\nprint('Level 3: Button controller active! Press button to trigger alert.')\n\nwhile True:\n    if button.value() == 0:\n        green_led.value(0)\n        orange_led.value(1)\n    else:\n        green_led.value(1)\n        orange_led.value(0)\n    time.sleep(0.05)",
+    "verificationChallenge": {
+      "instruction": "Run code. The green LED should glow. Press and hold the push button; the green LED should turn off and the orange LED should light up instantly.",
+      "expectedObservableResult": "Immediate visual state change between green and orange whenever the push button is held down."
+    }
+  },
+  {
+    "levelNumber": 4,
+    "id": "level-4",
+    "title": "Level 4: Drawing on Glass",
+    "subtitle": "Pixels, The I2C Two-Wire Highway & The Framebuffer",
+    "estimatedMinutes": 25,
+    "conceptByte": {
+      "id": "byte-7",
+      "title": "What is an OLED & How Pixels Work",
+      "metaphor": "The 8,192 Microscopic Fireflies & The Hidden Sketchpad",
+      "readTimeSeconds": 90,
+      "svgType": "i2c_bus_grid",
+      "keyTakeaways": [
+        "What is an OLED? OLED stands for Organic Light Emitting Diode. Unlike LCDs that have a big white backlight glowing behind liquid crystal blinds, an OLED display has 8,192 microscopic organic dots that each create their own light! When a pixel is OFF, it emits zero light, giving true pitch black.",
+        "What is a Pixel? Pixel = Picture Element. Our 0.96 inch screen has 128 pixels across (X axis: 0 to 127) and 64 pixels down (Y axis: 0 to 63). That is 128 x 64 = 8,192 individual light dots.",
+        "The I2C Two-Wire Highway: Controlling 8,192 pixels individually would need thousands of wires. Instead, the I2C protocol uses just 2 wires: SDA (Serial Data: carries the pixel bits) and SCL (Serial Clock: provides the beat, ticking 400,000 times a second).",
+        "The Framebuffer Rule: The Pico has a secret sketchpad in its RAM called the Framebuffer. Calling oled.text() draws words on the sketchpad in memory, but nothing appears on screen yet! You MUST call oled.show() to blast that memory map down the I2C wires and light up the glass."
+      ],
+      "analogyStory": "Imagine an artist painting behind a thick velvet curtain. Every time you call oled.text(), the artist paints words on the canvas in the dark. If you forget to call oled.show(), the curtain stays shut and the glass stays black! Calling oled.show() pulls open the curtain in one millisecond, revealing your name in bright glowing white pixels."
+    },
+    "quizGate": [
+      {
+        "id": "q4-1",
+        "question": "What is the difference between an OLED screen and a standard LCD screen?",
+        "options": [
+          "OLED pixels generate their own individual light; LCDs use a constant backlight shining through liquid filters",
+          "OLEDs only work in black and white and have no pixels",
+          "LCDs are made of paper while OLEDs are made of plastic"
+        ],
+        "correctIndex": 0,
+        "hint": "Organic Light Emitting Diode: every microscopic dot creates its own light.",
+        "explanation": "In an OLED, each individual pixel emits light independently. This allows true deep blacks and high contrast without a bulky backlight."
+      },
+      {
+        "id": "q4-2",
+        "question": "Why does nothing appear on the OLED screen until you call oled.show()?",
+        "options": [
+          "MicroPython draws into an off-screen RAM buffer first; oled.show() transmits that image over I2C to the glass",
+          "oled.show() connects the board to Wi-Fi",
+          "The Pico needs permission from the operating system"
+        ],
+        "correctIndex": 0,
+        "hint": "Remember the artist painting on the sketchpad behind the closed curtain.",
+        "explanation": "All drawing functions update an off-screen memory buffer (Framebuffer). Calling oled.show() pushes the buffer data across the I2C bus to the physical pixels."
+      }
+    ],
+    "circuitSteps": [
+      {
+        "stepNumber": 1,
+        "title": "Wire OLED Power (VCC & GND)",
+        "instruction": "Connect OLED VCC to the Breadboard Red 3.3V Rail (+). Connect OLED GND to the Blue Ground Rail (-).",
+        "component": "OLED Power Wires",
+        "fromPin": "OLED VCC / GND",
+        "toBreadboardHole": "Rails (+) & (-)",
+        "color": "#EF4444"
+      },
+      {
+        "stepNumber": 2,
+        "title": "Wire OLED SDA (Data Highway)",
+        "instruction": "Connect a blue jumper wire from Pico GP4 (Pin 6) to the OLED SDA pin.",
+        "component": "Blue Jumper Wire",
+        "fromPin": "Pico GP4",
+        "toBreadboardHole": "OLED SDA",
+        "color": "#3B82F6"
+      },
+      {
+        "stepNumber": 3,
+        "title": "Wire OLED SCL (Clock Highway)",
+        "instruction": "Connect a yellow jumper wire from Pico GP5 (Pin 7) to the OLED SCL pin.",
+        "component": "Yellow Jumper Wire",
+        "fromPin": "Pico GP5",
+        "toBreadboardHole": "OLED SCL",
+        "color": "#EAB308"
+      }
+    ],
+    "codeChunks": [
+      {
+        "blockId": "c4-1",
+        "title": "Step 1: Initialize I2C Bus & OLED Driver",
+        "language": "python",
+        "code": "from machine import Pin, I2C\nimport ssd1306\n\n# Configure I2C on GP4 (SDA) and GP5 (SCL) at 400kHz\ni2c = I2C(0, scl=Pin(5), sda=Pin(4), freq=400000)\noled = ssd1306.SSD1306_I2C(128, 64, i2c)",
+        "explanation": "Initializes the I2C0 communication peripheral and links it to the 128x64 SSD1306 OLED driver."
+      },
+      {
+        "blockId": "c4-2",
+        "title": "Step 2: Personalize Your Team Variables",
+        "language": "python",
+        "code": "# Customize these strings with your team's real info:\nTEAM_NAME = 'CyberKnights'\nSTUDENT_AGE = '13'\nSCHOOL_NAME = 'Subbiah Vidyalayam'",
+        "explanation": "Update these variables so your team name and school appear on the OLED display.",
+        "isConfigurable": true
+      },
+      {
+        "blockId": "c4-3",
+        "title": "Step 3: Draw on Buffer & Blast to Glass",
+        "language": "python",
+        "code": "oled.fill(0)  # Wipe sketchpad clean\noled.text('NXPLORERS IoT', 10, 0)\noled.text('Team: ' + TEAM_NAME, 0, 20)\noled.text('Age: ' + STUDENT_AGE, 0, 36)\noled.text('Sch: ' + SCHOOL_NAME, 0, 50)\noled.show()   # Blasts the buffer to the physical pixels!",
+        "explanation": "Clears the screen buffer, writes formatted text lines, and calls oled.show() to display it on the glass."
+      }
+    ],
+    "fullScript": "from machine import Pin, I2C\nimport ssd1306\n\n# Configure I2C bus\ni2c = I2C(0, scl=Pin(5), sda=Pin(4), freq=400000)\noled = ssd1306.SSD1306_I2C(128, 64, i2c)\n\n# --- EDIT YOUR DETAILS HERE ---\nTEAM_NAME = 'CyberKnights'\nSTUDENT_AGE = '13'\nSCHOOL_NAME = 'Subbiah Vidyalayam'\n# ------------------------------\n\noled.fill(0)\noled.text('NXPLORERS IoT', 12, 0)\noled.text('Team: ' + TEAM_NAME, 0, 20)\noled.text('Age: ' + STUDENT_AGE, 0, 36)\noled.text('Sch: ' + SCHOOL_NAME, 0, 50)\noled.show()\n\nprint('Level 4: Personalized OLED display active.')",
+    "verificationChallenge": {
+      "instruction": "Update the team name and school name strings in the code. Run the script in Thonny.",
+      "expectedObservableResult": "Sharp, glowing white text rendered across the OLED screen displaying your team name and school."
+    }
+  },
+  {
+    "levelNumber": 5,
+    "id": "level-5",
+    "title": "Level 5: The Grand IoT Challenge",
+    "subtitle": "Connecting to the Cloud: APIs, Wi-Fi & Closed-Loop Alarms",
+    "estimatedMinutes": 45,
+    "conceptByte": {
+      "id": "byte-9",
+      "title": "What is an API & The 4 Layers of IoT",
+      "metaphor": "The Restaurant Waiter & The 4-Story Tower",
+      "readTimeSeconds": 90,
+      "svgType": "iot_4_layers",
+      "keyTakeaways": [
+        "What is an API? Imagine you are at a restaurant. You cannot walk into the kitchen, open the fridge, and start chopping vegetables yourself! Instead, you look at the menu and give your order to the Waiter. The waiter carries your order to the kitchen and brings back a neat plate of food. An API (Application Programming Interface) is the digital waiter! Your Pico doesn't dig into ThingSpeak's servers. It sends a polite request: 'Hey API, give me the latest temperature!' The API fetches the number and hands it back in a neat JSON box.",
+        "Layer 1 (Perception): Physical sensors touching nature (temperature probes, humidity chips, soil moisture sensors in dirt).",
+        "Layer 2 (Network): Wi-Fi radio waves transmitting 0s and 1s through the air to the internet router.",
+        "Layer 3 (Cloud Data): The central server (ThingSpeak or classroom server) recording and organizing sensor numbers 24/7.",
+        "Layer 4 (Application): Your team's OLED display and warning buzzer automatically alerting you when soil dries out or temperatures spike."
+      ],
+      "analogyStory": "When the teacher dips a soil probe into water at the front of the classroom, that measurement climbs a 4-story tower: from wet soil (Layer 1), through invisible Wi-Fi airwaves (Layer 2), into the central cloud database (Layer 3), and down to your team's OLED screen (Layer 4). Your Pico acts like a customer ordering fresh numbers from the API waiter every 15 seconds!"
+    },
+    "quizGate": [
+      {
+        "id": "q5-1",
+        "question": "In the restaurant analogy, why is an API compared to a waiter?",
+        "options": [
+          "It takes your program's request, communicates with the central server/database, and delivers the data back safely",
+          "It serves drinks to the computer chips",
+          "It cleans up memory when the computer turns off"
+        ],
+        "correctIndex": 0,
+        "hint": "An API is a safe messenger between your code and an external server.",
+        "explanation": "An API acts like a waiter: your code asks for specific data, the API queries the database, and returns the response in a standardized format."
+      },
+      {
+        "id": "q5-2",
+        "question": "Which of the 4 layers of IoT does your team's OLED screen and alarm buzzer belong to?",
+        "options": [
+          "Layer 1: Perception Layer (Raw sensors in soil)",
+          "Layer 2: Network Layer (Wi-Fi radio waves)",
+          "Layer 4: Application Layer (Dashboards, screens, and automated alerts)"
+        ],
+        "correctIndex": 2,
+        "hint": "The Application Layer is where humans see data and actuators take physical action.",
+        "explanation": "OLED screens, mobile dashboards, and warning buzzers belong to Layer 4 (Application Layer)."
+      }
+    ],
+    "circuitSteps": [
+      {
+        "stepNumber": 1,
+        "title": "Wire Active Buzzer to GP18",
+        "instruction": "Plug the Active Buzzer Signal pin into Pico GP18 (Pin 24). Connect Buzzer VCC to the 3.3V rail and GND to the ground rail.",
+        "component": "Active Buzzer Module",
+        "fromPin": "Pico GP18",
+        "toBreadboardHole": "Buzzer Signal",
+        "color": "#EF4444"
+      },
+      {
+        "stepNumber": 2,
+        "title": "Wire Red Alert LED to GP17",
+        "instruction": "Connect Red LED Anode to GP17 (through a 220 ohm resistor) and Cathode to the Ground rail.",
+        "component": "Red 5mm LED",
+        "fromPin": "Pico GP17",
+        "toBreadboardHole": "Row 25",
+        "color": "#EF4444"
+      }
+    ],
+    "codeChunks": [
+      {
+        "blockId": "c5-1",
+        "title": "Step 1: Connect to Wi-Fi",
+        "language": "python",
+        "code": "import network, time\n\nwlan = network.WLAN(network.STA_IF)\nwlan.active(True)\nwlan.connect('NXPLORERS_WIFI', 'iotworkshop2026')\n\nwhile not wlan.isconnected():\n    print('Connecting to Wi-Fi...')\n    time.sleep(1)\nprint('Connected! IP:', wlan.ifconfig()[0])",
+        "explanation": "Turns on the onboard 2.4 GHz radio and connects to the classroom wireless network."
+      },
+      {
+        "blockId": "c5-2",
+        "title": "Step 2: Order Data from the API Waiter",
+        "language": "python",
+        "code": "import urequests\n\n# Query the classroom telemetry feed\nURL = 'http://192.168.0.100:3001/api/feed'\nresponse = urequests.get(URL)\ndata = response.json()\nlatest = data['feeds'][0]\n\ntemp = latest['field1']     # Field 1: Temp\nsoil = latest['field4']     # Field 4: Soil Moisture\nresponse.close()",
+        "explanation": "Sends an HTTP GET request, receives the JSON payload, and extracts temperature and soil moisture."
+      },
+      {
+        "blockId": "c5-3",
+        "title": "Step 3: Closed-Loop Automated Alarm",
+        "language": "python",
+        "code": "# Autonomous Alert: Temp > 30C or Soil Moisture < 25%\nif float(temp) > 30.0 or float(soil) < 25.0:\n    red_led.value(1)\n    buzzer.value(1)\n    oled.text('ALERT: HAZARD!', 0, 52)\nelse:\n    red_led.value(0)\n    buzzer.value(0)\n    oled.text('STATUS: NORMAL', 0, 52)\noled.show()",
+        "explanation": "Evaluates environmental conditions. If hazardous, triggers the buzzer and red LED automatically."
+      }
+    ],
+    "fullScript": "import network, time, urequests\nfrom machine import Pin, I2C\nimport ssd1306\n\n# Hardware Setup\ni2c = I2C(0, scl=Pin(5), sda=Pin(4))\noled = ssd1306.SSD1306_I2C(128, 64, i2c)\nred_led = Pin(17, Pin.OUT)\nbuzzer = Pin(18, Pin.OUT)\n\n# Wi-Fi Config\nwlan = network.WLAN(network.STA_IF)\nwlan.active(True)\nwlan.connect('NXPLORERS_WIFI', 'iotworkshop2026')\nwhile not wlan.isconnected():\n    time.sleep(0.5)\n\nFEED_URL = 'http://192.168.0.100:3001/api/feed'\nprint('Level 5: Live IoT Stream Connected!')\n\nwhile True:\n    try:\n        res = urequests.get(FEED_URL)\n        payload = res.json()['feeds'][0]\n        res.close()\n        \n        t = payload.get('field1', '0')\n        h = payload.get('field2', '0')\n        l = payload.get('field3', '0')\n        s = payload.get('field4', '0')\n        \n        oled.fill(0)\n        oled.text('LIVE TELEMETRY', 8, 0)\n        oled.text('Temp: ' + t + ' C', 0, 16)\n        oled.text('Humi: ' + h + ' %', 0, 28)\n        oled.text('Soil: ' + s + ' %', 0, 40)\n        \n        if float(t) > 30.0 or float(s) < 25.0:\n            red_led.value(1)\n            buzzer.value(1)\n            oled.text('ALERT ACTIVE!', 0, 54)\n        else:\n            red_led.value(0)\n            buzzer.value(0)\n            oled.text('SAFE / NORMAL', 0, 54)\n            \n        oled.show()\n    except Exception as e:\n        print('Fetch error:', e)\n        \n    time.sleep(15)",
+    "verificationChallenge": {
+      "instruction": "Watch your OLED screen synchronize with the live classroom feed. When the facilitator triggers a temperature or soil spike in the dashboard, verify your OLED and buzzer react within 15 seconds.",
+      "expectedObservableResult": "All team OLED screens and warning buzzers trigger in unison based on broadcast sensor changes."
+    }
+  }
+]
