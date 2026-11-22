@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Sparkles, Grid, Layers, Compass } from 'lucide-react';
+import { Oled, oledMeta, PartHover } from '../../hardware/index.js';
 
 export const OLEDAnatomyCard: React.FC = () => {
   // 8x8 Interactive Pixel Grid Sandbox
@@ -81,67 +82,31 @@ export const OLEDAnatomyCard: React.FC = () => {
 
       </div>
 
-      {/* Interactive Visual Section: Realistic OLED Module + Pixel Sandbox */}
+      {/* Interactive Visual Section: Authentic OLED Module + Pixel Sandbox */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center pt-2">
         
-        {/* Authentic 0.96" SSD1306 Module SVG Illustration */}
+        {/* Authentic SSD1306 Module with Live Display & Hover Inspector */}
         <div className="bg-[#FFFDF7] border border-[#EBE6DC] rounded-2xl p-6 flex flex-col items-center justify-center min-h-[300px] shadow-inner">
-          <svg viewBox="0 0 320 260" className="w-full max-w-[300px] select-none">
-            <defs>
-              <linearGradient id="oledPcbGradBright" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#1E3A8A" />
-                <stop offset="100%" stopColor="#0F172A" />
-              </linearGradient>
-            </defs>
+          <span className="text-[11px] font-mono font-bold text-[#899AA8] mb-2 uppercase tracking-wider">
+            Hover pins (GND, VCC, SCL, SDA) for specs
+          </span>
 
-            {/* Blue Fiberglass PCB Body (27mm x 27mm) */}
-            <rect x="50" y="25" width="220" height="210" rx="8" fill="url(#oledPcbGradBright)" stroke="#3B82F6" strokeWidth="1.5" />
+          <svg viewBox="0 0 200 160" className="w-full max-w-[280px] select-none" style={{ overflow: 'visible' }}>
+            <Oled x={25} y={15} scale={1.4}>
+              <text x="64" y="16" fill="#38BDF8" fontFamily="monospace" fontSize="10" textAnchor="middle">NXPLORERS IoT</text>
+              <text x="64" y="32" fill="#FFFFFF" fontFamily="monospace" fontSize="11" fontWeight="bold" textAnchor="middle">CyberKnights</text>
+              <text x="64" y="46" fill="#4ADE80" fontFamily="monospace" fontSize="8" textAnchor="middle">T: 27°C | Soil: 42%</text>
+              <text x="64" y="58" fill="#94A3B8" fontFamily="monospace" fontSize="7" textAnchor="middle">I2C: 0x3C ONLINE</text>
+            </Oled>
 
-            {/* 4 Corner Mounting Holes with Brass Bushings */}
-            <circle cx="65" cy="40" r="5" fill="#0F172A" stroke="#D4AF37" strokeWidth="1.2" />
-            <circle cx="255" cy="40" r="5" fill="#0F172A" stroke="#D4AF37" strokeWidth="1.2" />
-            <circle cx="65" cy="220" r="5" fill="#0F172A" stroke="#D4AF37" strokeWidth="1.2" />
-            <circle cx="255" cy="220" r="5" fill="#0F172A" stroke="#D4AF37" strokeWidth="1.2" />
-
-            {/* 4 Header Pins at Top with Silkscreen Labels */}
-            {/* GND */}
-            <circle cx="110" cy="45" r="4" fill="#E2E8F0" stroke="#000" strokeWidth="1" />
-            <text x="110" y="58" textAnchor="middle" fill="#CBD5E1" fontSize="7" fontWeight="bold">GND</text>
-
-            {/* VCC */}
-            <circle cx="140" cy="45" r="4" fill="#E2E8F0" stroke="#000" strokeWidth="1" />
-            <text x="140" y="58" textAnchor="middle" fill="#EF4444" fontSize="7" fontWeight="bold">VCC</text>
-
-            {/* SCL */}
-            <circle cx="170" cy="45" r="4" fill="#E2E8F0" stroke="#000" strokeWidth="1" />
-            <text x="170" y="58" textAnchor="middle" fill="#FBBF24" fontSize="7" fontWeight="bold">SCL</text>
-
-            {/* SDA */}
-            <circle cx="200" cy="45" r="4" fill="#E2E8F0" stroke="#000" strokeWidth="1" />
-            <text x="200" y="58" textAnchor="middle" fill="#38BDF8" fontSize="7" fontWeight="bold">SDA</text>
-
-            {/* Glass OLED Panel in Center */}
-            <rect x="70" y="75" width="180" height="120" rx="4" fill="#000000" stroke="#475569" strokeWidth="1.5" />
-
-            {/* Ribbon Cable Connector at Bottom */}
-            <rect x="120" y="195" width="80" height="20" fill="#92400E" stroke="#78350F" strokeWidth="0.5" />
-
-            {/* Live OLED Display Text Preview */}
-            <text x="160" y="105" textAnchor="middle" fill="#22D3EE" fontSize="12" fontWeight="extrabold" fontFamily="monospace">
-              NXPLORERS IoT
-            </text>
-            <text x="160" y="125" textAnchor="middle" fill="#FFFFFF" fontSize="10" fontWeight="bold" fontFamily="monospace">
-              CyberKnights
-            </text>
-            <text x="160" y="145" textAnchor="middle" fill="#34D399" fontSize="9" fontFamily="monospace">
-              T: 27°C | Soil: 42%
-            </text>
-            <text x="160" y="165" textAnchor="middle" fill="#94A3B8" fontSize="7.5" fontFamily="monospace">
-              I2C Bus: 400kHz @ 0x3C
-            </text>
-            <line x1="85" y1="172" x2="235" y2="172" stroke="#06B6D4" strokeWidth="1" opacity="0.6" />
+            <PartHover
+              meta={oledMeta}
+              x={25}
+              y={15}
+              scale={1.4}
+            />
           </svg>
-          <span className="text-xs text-[#576875] font-mono mt-2 font-bold">Physical 0.96" SSD1306 OLED Breakout</span>
+          <span className="text-xs text-[#576875] font-mono mt-2 font-bold">Physical 0.96" SSD1306 I2C OLED Breakout</span>
         </div>
 
         {/* Interactive Pixel Sandbox: Click pixels to draw! */}
@@ -170,7 +135,7 @@ export const OLEDAnatomyCard: React.FC = () => {
               <button
                 key={idx}
                 onClick={() => togglePixel(idx)}
-                className={`w-7 h-7 rounded-sm border transition-all ${
+                className={`w-7 h-7 rounded-sm border transition-all cursor-pointer ${
                   active
                     ? 'bg-[#2A9D8F] border-[#21867A] shadow-sm scale-95'
                     : 'bg-[#1E293B] border-[#334155] hover:border-gray-500'

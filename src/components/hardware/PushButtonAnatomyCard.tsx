@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
-import { HelpCircle, CheckCircle2, Radio, Compass } from 'lucide-react';
+import { HelpCircle, CheckCircle2, Radio, Compass, Sparkles } from 'lucide-react';
+import { PushButton, pushButtonMeta, PartHover } from '../../hardware/index.js';
 
 export const PushButtonAnatomyCard: React.FC = () => {
   const [isPressed, setIsPressed] = useState(false);
+  const [btnColor, setBtnColor] = useState<'green' | 'red' | 'blue' | 'yellow' | 'black'>('green');
+
+  const colors: Array<'green' | 'red' | 'blue' | 'yellow' | 'black'> = ['green', 'red', 'blue', 'yellow', 'black'];
 
   return (
     <div className="bg-white border border-[#EBE6DC] rounded-3xl p-6 lg:p-8 space-y-6 shadow-sm">
@@ -17,95 +21,76 @@ export const PushButtonAnatomyCard: React.FC = () => {
           </h3>
         </div>
 
-        <div className="text-xs text-[#576875] font-mono bg-[#FFFDF7] px-3 py-1.5 rounded-xl border border-[#EBE6DC]">
-          6×6 mm Tactile Momentary Switch
+        {/* Color Switcher */}
+        <div className="flex items-center gap-1 bg-[#FFFDF7] border border-[#EBE6DC] p-1 rounded-xl shadow-xs self-start sm:self-auto">
+          {colors.map((c) => (
+            <button
+              key={c}
+              onClick={() => setBtnColor(c)}
+              className={`px-2 py-1 rounded-lg text-xs font-bold capitalize transition-all ${
+                btnColor === c
+                  ? 'bg-[#2A9D8F] text-white shadow-xs'
+                  : 'text-[#576875] hover:text-[#24313A]'
+              }`}
+            >
+              {c}
+            </button>
+          ))}
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
         
-        {/* Left Side: Authentic 4-Pin Tactile Button SVG with Interactive Click */}
+        {/* Left Side: Authentic Wokwi Push Button with Interactive Click & Hover */}
         <div className="bg-[#FFFDF7] border border-[#EBE6DC] rounded-2xl p-6 flex flex-col items-center justify-center min-h-[300px] shadow-inner">
-          
-          <svg viewBox="0 0 320 280" className="w-full max-w-[290px] select-none">
-            <defs>
-              <linearGradient id="metalPlateBright" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#F8FAFC" />
-                <stop offset="50%" stopColor="#E2E8F0" />
-                <stop offset="100%" stopColor="#CBD5E1" />
-              </linearGradient>
-            </defs>
+          <span className="text-[11px] font-mono font-bold text-[#899AA8] mb-2 uppercase tracking-wider">
+            Click plunger to press • Hover pins for specs
+          </span>
 
-            {/* 4 Curved Metal Legs */}
-            {/* Top-Left Leg (Pin 1) */}
-            <path d="M 80 80 C 40 80, 40 100, 30 110" fill="none" stroke="#94A3B8" strokeWidth="5.5" strokeLinecap="round" />
-            <text x="25" y="125" fill="#2A9D8F" fontSize="8.5" fontWeight="bold">Pin 1 (GP14)</text>
+          <svg 
+            viewBox="0 0 200 150" 
+            className="w-full max-w-[240px] select-none cursor-pointer"
+            style={{ overflow: 'visible' }}
+            onMouseDown={() => setIsPressed(true)}
+            onMouseUp={() => setIsPressed(false)}
+            onTouchStart={() => setIsPressed(true)}
+            onTouchEnd={() => setIsPressed(false)}
+          >
+            {/* Authentic PushButton */}
+            <PushButton
+              x={30}
+              y={25}
+              scale={2.1}
+              color={btnColor}
+              pressed={isPressed}
+            />
 
-            {/* Bottom-Left Leg (Pin 2) */}
-            <path d="M 80 180 C 40 180, 40 160, 30 150" fill="none" stroke="#94A3B8" strokeWidth="5.5" strokeLinecap="round" />
-            <text x="25" y="165" fill="#899AA8" fontSize="8">Pin 2 (Linked)</text>
-
-            {/* Top-Right Leg (Pin 3) */}
-            <path d="M 240 80 C 280 80, 280 100, 290 110" fill="none" stroke="#94A3B8" strokeWidth="5.5" strokeLinecap="round" />
-            <text x="295" y="125" fill="#F28C75" fontSize="8.5" fontWeight="bold">Pin 3 (GND)</text>
-
-            {/* Bottom-Right Leg (Pin 4) */}
-            <path d="M 240 180 C 280 180, 280 160, 290 150" fill="none" stroke="#94A3B8" strokeWidth="5.5" strokeLinecap="round" />
-            <text x="295" y="165" fill="#899AA8" fontSize="8">Pin 4 (Linked)</text>
-
-            {/* Square Housing Body */}
-            <rect x="75" y="55" width="170" height="150" rx="10" fill="#334155" stroke="#1E293B" strokeWidth="2" />
-
-            {/* Metal Top Shield Plate */}
-            <rect x="85" y="65" width="150" height="130" rx="8" fill="url(#metalPlateBright)" stroke="#94A3B8" strokeWidth="1" />
-            {/* 4 Corner Rivets */}
-            <circle cx="95" cy="75" r="3" fill="#64748B" />
-            <circle cx="225" cy="75" r="3" fill="#64748B" />
-            <circle cx="95" cy="185" r="3" fill="#64748B" />
-            <circle cx="225" cy="185" r="3" fill="#64748B" />
-
-            {/* Center Circular Well */}
-            <circle cx="160" cy="130" r="42" fill="#1E293B" stroke="#475569" strokeWidth="1.5" />
-
-            {/* Interactive Round Tactile Plunger Button */}
-            <g
-              className="cursor-pointer"
-              onMouseDown={() => setIsPressed(true)}
-              onMouseUp={() => setIsPressed(false)}
-              onTouchStart={() => setIsPressed(true)}
-              onTouchEnd={() => setIsPressed(false)}
-            >
-              <circle
-                cx="160"
-                cy="130"
-                r={isPressed ? "33" : "36"}
-                fill={isPressed ? '#F28C75' : '#2A9D8F'}
-                stroke={isPressed ? '#E06E55' : '#21867A'}
-                strokeWidth="2"
-                className="transition-all duration-100"
-              />
-              <text x="160" y="134" textAnchor="middle" fill="#FFFFFF" fontSize="9" fontWeight="extrabold">
-                {isPressed ? 'PRESSED' : 'PRESS ME'}
-              </text>
+            {/* Pin Callouts */}
+            <g fontFamily="sans-serif" fontSize="6" fontWeight="bold">
+              <text x="24" y="55" textAnchor="end" fill="#2A9D8F">1.l (GP14)</text>
+              <text x="24" y="94" textAnchor="end" fill="#899AA8">2.l (Linked)</text>
+              <text x="175" y="55" textAnchor="start" fill="#F28C75">1.r (GND)</text>
+              <text x="175" y="94" textAnchor="start" fill="#899AA8">2.r (Linked)</text>
             </g>
 
-            {/* Internal Circuit Indicator Arrows */}
-            {isPressed ? (
-              <path d="M 80 130 L 240 130" stroke="#F28C75" strokeWidth="3" strokeDasharray="4 2" />
-            ) : (
-              <path d="M 80 130 L 130 130 M 190 130 L 240 130" stroke="#94A3B8" strokeWidth="2" strokeDasharray="2 2" />
-            )}
+            {/* Hover Tooltip Layer */}
+            <PartHover
+              meta={pushButtonMeta}
+              x={30}
+              y={25}
+              scale={2.1}
+            />
           </svg>
 
           {/* Interactive Status Indicator */}
-          <div className="mt-3 text-center">
+          <div className="mt-4 text-center">
             <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-all ${
               isPressed 
                 ? 'bg-[#FDF1EE] border border-[#F8C8BE] text-[#F28C75]' 
                 : 'bg-[#E6F4F2] border border-[#B2DFDB] text-[#21867A]'
             }`}>
               <Radio className="w-3.5 h-3.5" />
-              <span>{isPressed ? 'Contact Made: Signal Pulled to 0V (LOW)' : 'Contact Open: Pin Pulled UP to 3.3V (HIGH)'}</span>
+              <span>{isPressed ? 'Button Down: GP14 pulled to 0V (LOW)' : 'Button Up: GP14 pulled UP to 3.3V (HIGH)'}</span>
             </span>
           </div>
         </div>
@@ -118,25 +103,25 @@ export const PushButtonAnatomyCard: React.FC = () => {
               <span>Why Does a Push Button Have 4 Legs?</span>
             </h4>
             <p className="text-xs text-[#576875] leading-relaxed">
-              Inside the plastic housing, the 4 legs are actually <strong>2 linked pairs</strong>:
+              Inside the tactile casing, the 4 legs are arranged as <strong>2 permanently linked pairs</strong>:
             </p>
             <ul className="text-xs text-[#576875] space-y-1.5 list-disc pl-4 leading-relaxed">
-              <li><strong>Left Legs (Pins 1 & 2):</strong> Permanently connected together.</li>
-              <li><strong>Right Legs (Pins 3 & 4):</strong> Permanently connected together.</li>
-              <li>When you push the plunger, an internal spring dome snaps down, bridging the left pair to the right pair!</li>
+              <li><strong>Left Legs (Pins 1.l & 2.l):</strong> Continuously shorted together.</li>
+              <li><strong>Right Legs (Pins 1.r & 2.r):</strong> Continuously shorted together.</li>
+              <li>When you press down on the plunger, the internal metallic disc snaps down, bridging the left pair to the right pair!</li>
             </ul>
           </div>
 
           <div className="p-5 rounded-2xl bg-[#FFFDF7] border border-[#EBE6DC] space-y-2">
             <h4 className="text-sm font-bold text-[#24313A] flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-[#2A9D8F]" />
-              <span>Why Straddle the Center Trench?</span>
+              <span>Why Straddle the Central Divider Trench?</span>
             </h4>
             <p className="text-xs text-[#576875] leading-relaxed">
-              On a breadboard, all 5 holes in a row (A, B, C, D, E) touch each other. If both sides were plugged into the same column strip, the button would be short-circuited and stuck "always on"!
+              On a breadboard, each column strip of 5 holes (A–E) connects together underneath. If you plugged both sides of the switch into the same strip, the switch would be short-circuited and permanently locked on!
             </p>
             <p className="text-xs text-[#21867A] font-bold pt-1">
-              ✓ Straddling across Row 10 Col E and Col F keeps the two sides electrically separate until you physically press down.
+              ✓ Straddling across the center trench keeps the input pin and ground wire isolated until you physically click the button.
             </p>
           </div>
         </div>

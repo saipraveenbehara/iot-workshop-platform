@@ -10,6 +10,7 @@ import {
   Activity,
   Compass
 } from 'lucide-react';
+import { PicoW, picoWMeta, PartHover } from '../../hardware/index.js';
 
 export const ComputerVsMicrocontrollerCard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'visual' | 'timingTest'>('visual');
@@ -199,68 +200,14 @@ export const ComputerVsMicrocontrollerCard: React.FC = () => {
               <span className="text-xs text-[#21867A] font-mono font-bold">RP2040 Dual ARM @ 133MHz</span>
             </div>
 
-            {/* Authentic Raspberry Pi Pico WH Graphic */}
-            <div className="w-full flex justify-center py-2">
-              <svg viewBox="0 0 320 200" className="w-full max-w-[280px] drop-shadow-sm select-none">
-                <defs>
-                  <linearGradient id="picoGreenPcbBright" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#047857" />
-                    <stop offset="100%" stopColor="#065F46" />
-                  </linearGradient>
-                  <linearGradient id="silverCanBright" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#F8FAFC" />
-                    <stop offset="50%" stopColor="#E2E8F0" />
-                    <stop offset="100%" stopColor="#CBD5E1" />
-                  </linearGradient>
-                </defs>
-
-                {/* Green PCB Board */}
-                <rect x="70" y="15" width="180" height="170" rx="10" fill="url(#picoGreenPcbBright)" stroke="#10B981" strokeWidth="2" />
-                
-                {/* 4 Corner Mounting Holes */}
-                <circle cx="82" cy="27" r="4.5" fill="#047857" stroke="#D4AF37" strokeWidth="1.5" />
-                <circle cx="238" cy="27" r="4.5" fill="#047857" stroke="#D4AF37" strokeWidth="1.5" />
-                <circle cx="82" cy="173" r="4.5" fill="#047857" stroke="#D4AF37" strokeWidth="1.5" />
-                <circle cx="238" cy="173" r="4.5" fill="#047857" stroke="#D4AF37" strokeWidth="1.5" />
-
-                {/* Micro-USB Port Metal Housing */}
-                <rect x="135" y="7" width="50" height="24" rx="3" fill="url(#silverCanBright)" stroke="#475569" strokeWidth="1.2" />
-                <rect x="145" y="10" width="30" height="6" rx="1" fill="#0F172A" />
-
-                {/* CYW43439 Wi-Fi Shield Box */}
-                <rect x="120" y="42" width="80" height="52" rx="4" fill="url(#silverCanBright)" stroke="#64748B" strokeWidth="1" />
-                <text x="160" y="65" textAnchor="middle" fill="#0F172A" fontSize="8" fontWeight="900">CYW43439</text>
-                <text x="160" y="76" textAnchor="middle" fill="#334155" fontSize="6.5" fontWeight="bold">2.4GHz Wi-Fi</text>
-                <circle cx="160" cy="84" r="2.5" fill="#BE123C" />
-
-                {/* RP2040 Chip */}
-                <rect x="135" y="112" width="50" height="50" rx="4" fill="#090D16" stroke="#334155" strokeWidth="1.5" />
-                <circle cx="142" cy="119" r="1.5" fill="#64748B" />
-                <text x="160" y="136" textAnchor="middle" fill="#E2E8F0" fontSize="8" fontWeight="bold" fontFamily="monospace">RP2040</text>
-                <text x="160" y="146" textAnchor="middle" fill="#38BDF8" fontSize="6" fontFamily="monospace">133 MHz</text>
-
-                {/* BOOTSEL Button */}
-                <rect x="195" y="104" width="12" height="16" rx="2" fill="#E2E8F0" stroke="#64748B" strokeWidth="0.8" />
-                <circle cx="201" cy="112" r="3" fill="#F8FAFC" />
-                <text x="201" y="99" textAnchor="middle" fill="#A7F3D0" fontSize="5" fontWeight="bold">BOOTSEL</text>
-
-                {/* Onboard LED */}
-                <circle cx="112" cy="34" r="4" fill="#10B981" />
-                <text x="112" y="46" textAnchor="middle" fill="#A7F3D0" fontSize="5" fontWeight="bold">LED</text>
-
-                {/* Castellated Header Pins */}
-                {Array.from({ length: 14 }).map((_, i) => (
-                  <g key={`pin-l-${i}`}>
-                    <rect x="66" y="38 + i * 9" width="10" height="6" rx="1.5" fill="#D4AF37" stroke="#92400E" strokeWidth="0.5" />
-                    <circle cx="71" cy="41 + i * 9" r="2" fill="#065F46" />
-                  </g>
-                ))}
-                {Array.from({ length: 14 }).map((_, i) => (
-                  <g key={`pin-r-${i}`}>
-                    <rect x="244" y="38 + i * 9" width="10" height="6" rx="1.5" fill="#D4AF37" stroke="#92400E" strokeWidth="0.5" />
-                    <circle cx="249" cy="41 + i * 9" r="2" fill="#065F46" />
-                  </g>
-                ))}
+            {/* Authentic Raspberry Pi Pico WH Graphic with PartHover */}
+            <div className="w-full flex flex-col items-center justify-center py-2">
+              <span className="text-[11px] font-mono font-bold text-[#21867A] mb-1 uppercase tracking-wider">
+                Hover over pins or board for specs
+              </span>
+              <svg viewBox="0 0 120 220" className="w-full max-w-[200px] select-none" style={{ overflow: 'visible' }}>
+                <PicoW x={20} y={10} scale={1} />
+                <PartHover meta={picoWMeta} x={20} y={10} scale={1} />
               </svg>
             </div>
 
