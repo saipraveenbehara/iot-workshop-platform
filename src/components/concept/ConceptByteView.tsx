@@ -39,7 +39,7 @@ export const ConceptByteView: React.FC<ConceptByteViewProps> = ({
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#E6F4F2] border border-[#B2DFDB] text-[#21867A] text-xs font-bold uppercase tracking-wider font-mono">
               <Compass className="w-3.5 h-3.5" />
-              <span>Step 1: Concept Blueprint</span>
+              <span>Stage {levelNumber} · Step 1 of 3: Concept Blueprint</span>
             </div>
             <h2 className="text-2xl lg:text-3xl font-black text-[#24313A] tracking-tight">
               {concept.title}

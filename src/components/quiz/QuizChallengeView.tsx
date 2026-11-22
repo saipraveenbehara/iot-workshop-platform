@@ -53,7 +53,7 @@ export const QuizChallengeView: React.FC<QuizChallengeViewProps> = ({
     }
   };
 
-  // Note 1: Try Again action - re-enables selecting options
+  // Try Again action - re-enables selecting options
   const handleTryAgain = () => {
     setSelectedAnswer(null);
     setIsAnswerChecked(false);
@@ -61,7 +61,6 @@ export const QuizChallengeView: React.FC<QuizChallengeViewProps> = ({
 
   const handleNextQuestion = () => {
     if (isLastQuestion) {
-      // Subtle confetti on completion
       confetti({
         particleCount: 50,
         spread: 60,
@@ -127,19 +126,19 @@ export const QuizChallengeView: React.FC<QuizChallengeViewProps> = ({
   return (
     <div className="space-y-8 animate-fade-in max-w-4xl mx-auto">
       
-      {/* Top Header & Back Navigation */}
+      {/* Top Header & Back Navigation with Clarified Step Numbering */}
       <div className="flex items-center justify-between pb-4 border-b border-[#EBE6DC]">
         <button
           onClick={onBack}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-[#EBE6DC] hover:border-[#D5CFC2] text-[#24313A] text-xs font-bold transition-all shadow-sm"
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-[#EBE6DC] hover:border-[#D5CFC2] text-[#24313A] text-xs font-bold transition-all shadow-sm cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4 text-[#2A9D8F]" />
           <span>Back to Build Guide</span>
         </button>
 
-        <span className="text-xs font-bold uppercase tracking-wider text-[#2A9D8F] flex items-center gap-1.5">
+        <span className="text-xs font-bold uppercase tracking-wider text-[#2A9D8F] flex items-center gap-1.5 bg-[#E6F4F2] px-3 py-1 rounded-full border border-[#B2DFDB]">
           <Sparkles className="w-4 h-4" />
-          <span>Stage 3 of 3: Check Understanding</span>
+          <span>Stage {levelNumber} · Step 3 of 3: Check Understanding</span>
         </span>
       </div>
 
@@ -155,7 +154,7 @@ export const QuizChallengeView: React.FC<QuizChallengeViewProps> = ({
               Stage Complete & Verified
             </span>
             <h3 className="text-2xl lg:text-3xl font-extrabold text-[#24313A] tracking-tight">
-              Activity {levelNumber} Mastered
+              Stage {levelNumber} Completed
             </h3>
             <p className="text-sm text-[#576875] max-w-md mx-auto leading-relaxed">
               Your team successfully connected the concepts, built the circuit, and passed the understanding check.
@@ -170,9 +169,9 @@ export const QuizChallengeView: React.FC<QuizChallengeViewProps> = ({
           <div className="pt-4 max-w-md mx-auto">
             <button
               onClick={onCompleteLevel}
-              className="w-full py-4 px-6 rounded-2xl bg-[#2A9D8F] hover:bg-[#21867A] text-white font-extrabold text-sm shadow-sm hover:shadow-md flex items-center justify-center gap-2 transition-all transform hover:-translate-y-0.5"
+              className="w-full py-4 px-6 rounded-2xl bg-[#2A9D8F] hover:bg-[#21867A] text-white font-extrabold text-sm shadow-md flex items-center justify-center gap-2 transition-all transform hover:-translate-y-0.5 cursor-pointer"
             >
-              <span>Advance to Next Activity</span>
+              <span>Advance to Next Stage</span>
               <Rocket className="w-4 h-4" />
             </button>
           </div>
@@ -204,20 +203,20 @@ export const QuizChallengeView: React.FC<QuizChallengeViewProps> = ({
             {currentQ.question}
           </h3>
 
-          {/* Multiple Choice Options */}
+          {/* Multiple Choice Options with Unmistakable Selection Indicator */}
           <div className="space-y-3 pt-2">
             {currentQ.options.map((option, idx) => {
               const isSelected = selectedAnswer === idx;
-              let optionStyle = 'bg-[#FFFDF7] border-[#EBE6DC] text-[#24313A] hover:border-[#D5CFC2] hover:bg-white';
+              let optionStyle = 'bg-[#FFFDF7] border-[#EBE6DC] text-[#24313A] hover:border-[#2A9D8F] hover:bg-white';
 
               if (isAnswerChecked) {
                 if (idx === currentQ.correctIndex) {
-                  optionStyle = 'bg-[#E6F4F2] border-2 border-[#2A9D8F] text-[#24313A] font-semibold';
+                  optionStyle = 'bg-[#E6F4F2] border-2 border-[#2A9D8F] text-[#24313A] font-bold ring-2 ring-[#2A9D8F]/20';
                 } else if (isSelected && !isCorrect) {
-                  optionStyle = 'bg-[#FDF1EE] border-2 border-[#F28C75] text-[#24313A]';
+                  optionStyle = 'bg-[#FDF1EE] border-2 border-[#F28C75] text-[#24313A] ring-2 ring-[#F28C75]/20';
                 }
               } else if (isSelected) {
-                optionStyle = 'bg-[#E6F4F2] border-2 border-[#2A9D8F] text-[#24313A] font-semibold';
+                optionStyle = 'bg-[#E6F4F2] border-2 border-[#2A9D8F] text-[#24313A] font-bold shadow-xs ring-2 ring-[#2A9D8F]/25';
               }
 
               return (
@@ -229,14 +228,25 @@ export const QuizChallengeView: React.FC<QuizChallengeViewProps> = ({
                   <div className="flex items-start gap-3.5">
                     <span className={`w-7 h-7 rounded-xl flex items-center justify-center shrink-0 text-xs font-bold transition-all ${
                       isSelected 
-                        ? 'bg-[#2A9D8F] text-white' 
+                        ? 'bg-[#2A9D8F] text-white shadow-xs' 
                         : 'bg-white border border-[#EBE6DC] text-[#576875]'
                     }`}>
                       {String.fromCharCode(65 + idx)}
                     </span>
                     <span className="text-sm pt-0.5 leading-relaxed">{option}</span>
                   </div>
-                  {renderBoardIllustration(idx)}
+
+                  <div className="flex items-center gap-3 shrink-0">
+                    {/* Unmistakable Radio/Check Selection Indicator */}
+                    {isSelected ? (
+                      <div className="w-6 h-6 rounded-full bg-[#2A9D8F] text-white flex items-center justify-center shadow-xs">
+                        <Check className="w-3.5 h-3.5 stroke-[3]" />
+                      </div>
+                    ) : (
+                      <div className="w-6 h-6 rounded-full border-2 border-[#CBD5E1] bg-white" />
+                    )}
+                    {renderBoardIllustration(idx)}
+                  </div>
                 </button>
               );
             })}
@@ -270,11 +280,11 @@ export const QuizChallengeView: React.FC<QuizChallengeViewProps> = ({
             </div>
           )}
 
-          {/* Controls Bottom Bar (Note 1 Implementation) */}
+          {/* Controls Bottom Bar */}
           <div className="pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-[#EBE6DC]">
             <button
               onClick={() => setShowHint(true)}
-              className="text-xs text-[#576875] hover:text-[#2A9D8F] flex items-center gap-1.5 font-bold transition-colors"
+              className="text-xs text-[#576875] hover:text-[#2A9D8F] flex items-center gap-1.5 font-bold transition-colors cursor-pointer"
             >
               <HelpCircle className="w-4 h-4 text-[#F4C95D]" />
               <span>{showHint ? `Hint: ${currentQ.hint}` : 'Need a hint?'}</span>
@@ -285,19 +295,30 @@ export const QuizChallengeView: React.FC<QuizChallengeViewProps> = ({
               {isAnswerChecked && !isCorrect && (
                 <button
                   onClick={handleTryAgain}
-                  className="px-5 py-2.5 rounded-xl bg-[#FEF9EC] hover:bg-[#FDF1D6] border border-[#F4C95D] text-[#B88719] font-bold text-xs shadow-xs flex items-center gap-2 transition-all"
+                  className="px-5 py-2.5 rounded-xl bg-[#FEF9EC] hover:bg-[#FDF1D6] border border-[#F4C95D] text-[#B88719] font-bold text-xs shadow-xs flex items-center gap-2 transition-all cursor-pointer"
                 >
                   <RotateCcw className="w-4 h-4" />
                   <span>Try Again</span>
                 </button>
               )}
 
-              {/* Submit Answer Button */}
+              {/* Helper prompt when no option is selected yet */}
+              {!isAnswerChecked && selectedAnswer === null && (
+                <span className="text-xs font-semibold text-[#899AA8] italic">
+                  Choose an answer to continue
+                </span>
+              )}
+
+              {/* Submit Answer Button (Strengthened contrast: vibrant deep teal #2A9D8F with white text #FFFFFF) */}
               {!isAnswerChecked && (
                 <button
                   disabled={selectedAnswer === null}
                   onClick={handleCheckAnswer}
-                  className="px-6 py-2.5 rounded-xl bg-[#2A9D8F] hover:bg-[#21867A] disabled:opacity-40 text-white font-bold text-xs shadow-xs transition-all cursor-pointer disabled:cursor-not-allowed"
+                  className={`px-8 py-3 rounded-xl font-extrabold text-sm transition-all shadow-sm ${
+                    selectedAnswer !== null
+                      ? 'bg-[#2A9D8F] hover:bg-[#21867A] text-white shadow-md cursor-pointer transform hover:-translate-y-0.5'
+                      : 'bg-[#E2E8F0] text-[#899AA8] cursor-not-allowed border border-[#CBD5E1]'
+                  }`}
                 >
                   Check Answer
                 </button>
@@ -307,9 +328,9 @@ export const QuizChallengeView: React.FC<QuizChallengeViewProps> = ({
               {isAnswerChecked && isCorrect && (
                 <button
                   onClick={handleNextQuestion}
-                  className="px-6 py-2.5 rounded-xl bg-[#2A9D8F] hover:bg-[#21867A] text-white font-bold text-xs shadow-xs flex items-center gap-2 transition-all cursor-pointer"
+                  className="px-8 py-3 rounded-xl bg-[#2A9D8F] hover:bg-[#21867A] text-white font-extrabold text-sm shadow-md flex items-center gap-2 transition-all cursor-pointer transform hover:-translate-y-0.5"
                 >
-                  <span>{isLastQuestion ? 'Complete Activity' : 'Next Question'}</span>
+                  <span>{isLastQuestion ? 'Complete Stage' : 'Next Question'}</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               )}

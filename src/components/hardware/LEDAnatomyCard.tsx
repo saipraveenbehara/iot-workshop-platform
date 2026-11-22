@@ -133,20 +133,16 @@ export const LEDAnatomyCard: React.FC = () => {
           <div className="p-5 rounded-2xl bg-[#FFFDF7] border border-[#EBE6DC] space-y-2.5">
             <h4 className="text-sm font-bold text-[#24313A] flex items-center gap-2">
               <Compass className="w-4 h-4 text-[#2A9D8F]" />
-              <span>Three Ways to Identify LED Polarity</span>
+              <span>Two Dependable Ways to Identify LED Polarity</span>
             </h4>
             <ul className="text-xs text-[#576875] space-y-2 leading-relaxed">
               <li className="flex items-start gap-2">
-                <span className="text-[#21867A] font-bold">1. Leg Length:</span>
-                <span>The <strong>longer leg</strong> is always the Anode (+), which connects to the 3.3V GPIO signal.</span>
+                <span className="text-[#21867A] font-bold">1. Lead Length (Untrimmed):</span>
+                <span>The <strong>longer metal lead</strong> is the Anode (+), which connects to the 3.3V GPIO signal. The shorter lead is the Cathode (-).</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-[#F28C75] font-bold">2. Rim Flat:</span>
-                <span>The plastic base rim has a tiny <strong>flat notch</strong> on the Cathode (-) side, which connects to Ground.</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-[#DBAF40] font-bold">3. Internal Flags:</span>
-                <span>The larger triangular flag inside the plastic dome is the Cathode (-).</span>
+                <span className="text-[#F28C75] font-bold">2. Flat Edge on Casing Rim:</span>
+                <span>The plastic rim at the base of the LED has a distinct <strong>flat edge</strong> on the Cathode (-) side, which connects to Ground. This remains reliable even after leads are trimmed!</span>
               </li>
             </ul>
           </div>

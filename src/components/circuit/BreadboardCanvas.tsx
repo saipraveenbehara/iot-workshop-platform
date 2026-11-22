@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CircuitStep } from '../../types/curriculum.js';
 import { 
   ChevronRight, 
@@ -7,7 +7,10 @@ import {
   Info,
   Sparkles,
   Layers,
-  Zap
+  Zap,
+  Radio,
+  Eye,
+  CheckCircle2
 } from 'lucide-react';
 import { 
   Breadboard, 
@@ -41,42 +44,54 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
   steps,
   currentStepIndex,
   onStepChange,
-  levelNumber = 2,
+  levelNumber = 0,
 }) => {
   const activeStep = steps[currentStepIndex];
   const [interactivePressed, setInteractivePressed] = useState(false);
+  const [onboardBlink, setOnboardBlink] = useState(true);
   const [hoveredHoleInfo, setHoveredHoleInfo] = useState<Hole | null>(null);
 
-  // Layout origin anchors
-  const PICO = { x: 22, y: 35 };
-  const BB = { x: 135, y: 30 };
+  // Auto-blink for Level 1 onboard LED
+  useEffect(() => {
+    if (levelNumber === 1) {
+      const interval = setInterval(() => {
+        setOnboardBlink((prev) => !prev);
+      }, 700);
+      return () => clearInterval(interval);
+    }
+  }, [levelNumber]);
+
+  // Viewport & placement geometry
+  // PICO: placed with ample top/bottom margin so the USB port, top pins, and whole board are 100% visible
+  const PICO = { x: 20, y: 45 };
+  const BB = { x: 135, y: 40 };
   const at = (h: { x: number; y: number }) => ({ x: BB.x + h.x, y: BB.y + h.y });
 
-  // Calculate target hole highlights for active steps
+  // Target hole highlights for each step
   const getHighlightHoles = (): string[] => {
     if (levelNumber === 2) {
       if (currentStepIndex === 0) return ['b-2'];
-      if (currentStepIndex === 1) return ['b-2', 'b-4', 'f18'];
-      if (currentStepIndex === 2) return ['b-2', 'b-4', 'f18', 'a15'];
-      if (currentStepIndex === 3) return ['b-2', 'b-4', 'f18', 'a15', 'c15', 'c21'];
-      return ['b-2', 'b-4', 'f18', 'a15', 'c15', 'c21', 'a21', 'a20', 'e20'];
+      if (currentStepIndex === 1) return ['b-2', 'b-4', 'e20'];
+      if (currentStepIndex === 2) return ['b-2', 'b-4', 'e20', 'a15'];
+      if (currentStepIndex === 3) return ['b-2', 'b-4', 'e20', 'a15', 'c15', 'c21'];
+      return ['b-2', 'b-4', 'e20', 'a15', 'c15', 'c21', 'a21', 'a20'];
     }
     if (levelNumber === 3) {
       if (currentStepIndex === 0) return ['c30', 'e30', 'c37', 'e37'];
       if (currentStepIndex === 1) return ['c30', 'e30', 'c37', 'e37', 'a30'];
       if (currentStepIndex === 2) return ['c30', 'e30', 'c37', 'e37', 'a30', 't-6'];
-      return ['c30', 'e30', 'c37', 'e37', 'a30', 't-6', 'a15', 'a25'];
+      return ['c30', 'e30', 'c37', 'e37', 'a30', 't-6', 'a15', 'a24'];
     }
     if (levelNumber === 4) {
       return ['f38', 'f39', 'f40', 'f41', 'b-7', 'b+7'];
     }
     if (levelNumber === 5) {
-      return ['f38', 'f39', 'f40', 'f41', 'f24', 'f25'];
+      return ['f38', 'f39', 'f40', 'f41', 'f24'];
     }
     return [];
   };
 
-  // Helper for drawing realistic DuPont jumper wire paths
+  // Helper for drawing realistic DuPont jumper wires
   const renderWire = (
     from: { x: number; y: number },
     to: { x: number; y: number },
@@ -97,53 +112,50 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
           d={`M ${from.x} ${from.y} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${to.x} ${to.y}`}
           fill="none"
           stroke={color}
-          strokeWidth="3.2"
+          strokeWidth="3.4"
           strokeLinecap="round"
         />
-        {/* DuPont connector pin collars */}
-        <circle cx={from.x} cy={from.y} r="2.8" fill="#1E293B" stroke={color} strokeWidth="0.8" />
-        <circle cx={to.x} cy={to.y} r="2.8" fill="#1E293B" stroke={color} strokeWidth="0.8" />
+        {/* DuPont connector sleeves */}
+        <circle cx={from.x} cy={from.y} r="3" fill="#1E293B" stroke={color} strokeWidth="1" />
+        <circle cx={to.x} cy={to.y} r="3" fill="#1E293B" stroke={color} strokeWidth="1" />
       </g>
     );
   };
 
-  // Pre-calculated component coordinates
-  // Level 2: LED & Resistor
+  // Component positions using exact breadboard coordinate mapping
   const l2Resistor = placeByPin(resistorMeta, '1', at(getHole('c', 15)));
   const l2Led = placeByPin(ledMeta, 'C', at(getHole('a', 20)));
 
-  // Level 3: Button & Dual LEDs
   const l3Btn = placeByPin(pushButtonMeta, '1.l', at(getHole('c', 30)));
   const l3GreenLed = placeByPin(ledMeta, 'C', at(getHole('f', 15)));
   const l3OrangeLed = placeByPin(ledMeta, 'C', at(getHole('f', 24)));
   const l3ResGreen = placeByPin(resistorMeta, '1', at(getHole('h', 15)));
   const l3ResOrange = placeByPin(resistorMeta, '1', at(getHole('h', 24)));
 
-  // Level 4 & 5: OLED display
   const l4Oled = placeByPin(oledMeta, 'GND', at(getHole('f', 38)));
 
   return (
     <div className="bg-white border border-[#EBE6DC] rounded-3xl p-6 shadow-sm flex flex-col gap-5">
-      {/* Step Header & Controls */}
+      {/* Step Header & Step Numbering */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#EBE6DC]">
         <div>
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-[#2A9D8F]" />
             <span className="text-xs font-bold text-[#21867A] uppercase tracking-wider font-mono bg-[#E6F4F2] px-2.5 py-0.5 rounded-md border border-[#B2DFDB]">
-              Step {currentStepIndex + 1} of {steps.length}
+              Stage {levelNumber} · Step {currentStepIndex + 1} of {steps.length}
             </span>
           </div>
           <h3 className="text-lg font-black text-[#24313A] mt-1">
-            {activeStep ? activeStep.title : 'Circuit Blueprint Complete'}
+            {activeStep ? activeStep.title : 'Circuit Blueprint Ready'}
           </h3>
         </div>
 
-        {/* Step Navigation Buttons */}
+        {/* Step Navigation Controls */}
         <div className="flex items-center gap-2">
           <button
             disabled={currentStepIndex === 0}
             onClick={() => onStepChange(currentStepIndex - 1)}
-            className="p-2.5 rounded-xl bg-white border border-[#EBE6DC] hover:border-[#D5CFC2] disabled:opacity-30 text-[#24313A] transition-all shadow-xs cursor-pointer disabled:cursor-not-allowed"
+            className="p-2 rounded-xl bg-white border border-[#EBE6DC] hover:border-[#D5CFC2] disabled:opacity-30 text-[#24313A] transition-all shadow-xs cursor-pointer disabled:cursor-not-allowed"
             title="Previous Step"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -154,7 +166,7 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
           <button
             disabled={currentStepIndex === steps.length - 1}
             onClick={() => onStepChange(currentStepIndex + 1)}
-            className="p-2.5 rounded-xl bg-white border border-[#EBE6DC] hover:border-[#D5CFC2] disabled:opacity-30 text-[#24313A] transition-all shadow-xs cursor-pointer disabled:cursor-not-allowed"
+            className="p-2 rounded-xl bg-white border border-[#EBE6DC] hover:border-[#D5CFC2] disabled:opacity-30 text-[#24313A] transition-all shadow-xs cursor-pointer disabled:cursor-not-allowed"
             title="Next Step"
           >
             <ChevronRight className="w-4 h-4" />
@@ -183,8 +195,8 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
         </div>
       )}
 
-      {/* Orthographic Hardware Blueprint SVG Canvas */}
-      <div className="relative w-full overflow-x-auto bg-[#F8F9FA] rounded-2xl border border-[#EBE6DC] p-4 flex justify-center">
+      {/* Primary Visual Circuit Stage (Focused on Pico + Active Circuit Area) */}
+      <div className="relative w-full overflow-x-auto bg-[#F8F9FA] rounded-2xl border border-[#EBE6DC] p-4 flex justify-center shadow-inner scrollbar-thin">
         
         {/* Hovered Hole Info Badge */}
         {hoveredHoleInfo && (
@@ -193,278 +205,287 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
           </div>
         )}
 
+        {/* 
+          SVG Canvas: Focused Viewport (520x290)
+          Ensures Raspberry Pi Pico WH, wires, and active circuit components are 100% visible right in the first go.
+          Remaining empty columns of the 63-column breadboard extend into the scrollable background!
+        */}
         <svg
-          viewBox="0 0 830 310"
-          className="w-full max-w-[830px] select-none"
-          style={{ minWidth: '680px', overflow: 'visible' }}
+          viewBox="0 0 540 290"
+          className="w-full max-w-[540px] select-none"
+          style={{ minWidth: '480px', overflow: 'visible' }}
         >
           <defs>
             <filter id="wireShadow" x="-10%" y="-10%" width="130%" height="130%">
-              <feDropShadow dx="0.5" dy="2" stdDeviation="1.5" floodColor="#24313A" floodOpacity="0.15" />
+              <feDropShadow dx="0.5" dy="2" stdDeviation="1.5" floodColor="#24313A" floodOpacity="0.18" />
             </filter>
             <filter id="picoGlow" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="2" result="blur" />
+              <feGaussianBlur stdDeviation="3" result="blur" />
               <feComposite in="SourceGraphic" in2="blur" operator="over" />
             </filter>
           </defs>
 
-          {/* 1. Raspberry Pi Pico WH Board (Left Side) */}
-          <PicoW x={PICO.x} y={PICO.y} />
+          {/* === STAGE 0: PICO WH ARCHITECTURE INSPECTION === */}
+          {levelNumber === 0 && (
+            <g>
+              {/* Raspberry Pi Pico WH at comfortable inspection scale */}
+              <PicoW x={70} y={45} scale={1.05} />
+              <PartHover meta={picoWMeta} x={70} y={45} scale={1.05} />
 
-          {/* Micro-USB Cable connected to Pico (Levels >= 1) */}
-          {levelNumber >= 1 && (
-            <g className="pointer-events-none">
-              <rect x={PICO.x + 28} y={PICO.y - 30} width="22" height="24" rx="2" fill="#334155" stroke="#1E293B" strokeWidth="0.8" />
-              <line x1={PICO.x + 39} y1={PICO.y - 30} x2={PICO.x + 39} y2={PICO.y - 50} stroke="#475569" strokeWidth="5" strokeLinecap="round" />
+              {/* Callout badges pointing to authentic features */}
+              <g fontFamily="sans-serif" fontSize="7" fontWeight="bold">
+                {/* Micro-USB Port */}
+                <line x1="112" y1="40" x2="160" y2="20" stroke="#2A9D8F" strokeWidth="1" strokeDasharray="2 2" />
+                <rect x="160" y="10" width="115" height="18" rx="4" fill="#FFFFFF" stroke="#2A9D8F" strokeWidth="1" filter="url(#wireShadow)" />
+                <text x="168" y="22" fill="#21867A">1. Micro-USB Port (Power & Code)</text>
+
+                {/* CYW43439 Wi-Fi */}
+                <line x1="150" y1="95" x2="200" y2="95" stroke="#2A9D8F" strokeWidth="1" strokeDasharray="2 2" />
+                <rect x="200" y="86" width="125" height="18" rx="4" fill="#FFFFFF" stroke="#2A9D8F" strokeWidth="1" filter="url(#wireShadow)" />
+                <text x="208" y="98" fill="#21867A">2. CYW43439 2.4GHz Wi-Fi Shield</text>
+
+                {/* RP2040 Chip */}
+                <line x1="150" y1="165" x2="200" y2="165" stroke="#2A9D8F" strokeWidth="1" strokeDasharray="2 2" />
+                <rect x="200" y="156" width="110" height="18" rx="4" fill="#FFFFFF" stroke="#2A9D8F" strokeWidth="1" filter="url(#wireShadow)" />
+                <text x="208" y="168" fill="#21867A">3. RP2040 Dual ARM Core</text>
+
+                {/* 40 Pre-soldered GPIO Pins */}
+                <line x1="72" y1="210" x2="35" y2="245" stroke="#F4C95D" strokeWidth="1" strokeDasharray="2 2" />
+                <rect x="10" y="245" width="125" height="18" rx="4" fill="#FFFFFF" stroke="#F4C95D" strokeWidth="1" filter="url(#wireShadow)" />
+                <text x="18" y="257" fill="#B88719">4. 40 Gold-Plated Header Pins</text>
+              </g>
             </g>
           )}
 
-          {/* 2. Full-Size Breadboard (63 Columns, Power Rails) */}
-          <Breadboard
-            x={BB.x}
-            y={BB.y}
-            highlight={getHighlightHoles()}
-          />
-
-          {/* === LEVEL 2: External LED Circuit === */}
-          {levelNumber === 2 && (
+          {/* === STAGE 1: ONBOARD BLINK & USB CABLE === */}
+          {levelNumber === 1 && (
             <g>
-              {/* Step 1: Main Ground Wire (Pico GND.38 -> Breadboard Bottom Blue Rail) */}
-              {renderWire(
-                pinPosition(picoWMeta, 'GND.38', PICO),
-                at(getRailHole('bottom', '-', 2)),
-                '#1E293B',
-                45,
-                'l2-w1'
-              )}
+              {/* Pico WH */}
+              <PicoW x={70} y={45} scale={1.05} />
+              
+              {/* USB Cable connected to top */}
+              <g filter="url(#wireShadow)">
+                <rect x={70 + 29} y={15} width="24" height="28" rx="3" fill="#1E293B" stroke="#475569" strokeWidth="1" />
+                <line x1={70 + 41} y1={15} x2={70 + 41} y2={-10} stroke="#334155" strokeWidth="6" strokeLinecap="round" />
+              </g>
 
-              {/* Step 2: Ground Extension Wire (Blue Rail -> Row 18) */}
-              {currentStepIndex >= 1 && (
-                <>
+              {/* Pulsing Onboard LED on the PCB */}
+              <circle
+                cx={70 + 23.5}
+                cy={45 + 23}
+                r={onboardBlink ? "4.5" : "3"}
+                fill={onboardBlink ? "#2A9D8F" : "#1E293B"}
+                filter={onboardBlink ? "url(#picoGlow)" : undefined}
+                className="transition-all duration-300"
+              />
+              
+              {/* Callout box */}
+              <g fontFamily="sans-serif" fontSize="7" fontWeight="bold">
+                <line x1={70 + 24} y1={45 + 23} x2={180} y2={65} stroke="#2A9D8F" strokeWidth="1" strokeDasharray="2 2" />
+                <rect x="180" y="52" width="135" height="26" rx="6" fill="#FFFFFF" stroke="#2A9D8F" strokeWidth="1" filter="url(#wireShadow)" />
+                <text x="190" y="66" fill="#21867A">Onboard Wireless LED</text>
+                <text x="190" y="75" fill={onboardBlink ? "#2A9D8F" : "#899AA8"} fontSize="6.5">
+                  State: {onboardBlink ? 'HIGH (3.3V ON)' : 'LOW (0V OFF)'}
+                </text>
+              </g>
+
+              <PartHover meta={picoWMeta} x={70} y={45} scale={1.05} />
+            </g>
+          )}
+
+          {/* === STAGES 2–5: BREADBOARD CIRCUITS === */}
+          {levelNumber >= 2 && (
+            <g>
+              {/* 1. Raspberry Pi Pico WH (Left side, fully visible with USB connection) */}
+              <PicoW x={PICO.x} y={PICO.y} />
+              
+              {/* Micro-USB Cable plugged into top */}
+              <g className="pointer-events-none" filter="url(#wireShadow)">
+                <rect x={PICO.x + 28} y={PICO.y - 25} width="22" height="24" rx="2" fill="#334155" stroke="#1E293B" strokeWidth="0.8" />
+                <line x1={PICO.x + 39} y1={PICO.y - 25} x2={PICO.x + 39} y2={PICO.y - 40} stroke="#475569" strokeWidth="5" strokeLinecap="round" />
+              </g>
+
+              {/* 2. Full Breadboard (Active columns 1-28 front and center) */}
+              <Breadboard
+                x={BB.x}
+                y={BB.y}
+                highlight={getHighlightHoles()}
+              />
+
+              {/* === LEVEL 2: External LED Circuit === */}
+              {levelNumber === 2 && (
+                <g>
+                  {/* Step 1: Main Ground Wire (Pico GND.38 -> Breadboard Bottom Blue Rail) */}
                   {renderWire(
-                    at(getRailHole('bottom', '-', 4)),
-                    at(getHole('e', 20)),
+                    pinPosition(picoWMeta, 'GND.38', PICO),
+                    at(getRailHole('bottom', '-', 2)),
                     '#1E293B',
-                    -25,
-                    'l2-w2'
+                    40,
+                    'l2-gnd-main'
                   )}
-                </>
-              )}
 
-              {/* Step 3: GP15 Wire (Pico GP15 -> Row 15 Col a) */}
-              {currentStepIndex >= 2 && (
-                <>
-                  {renderWire(
-                    pinPosition(picoWMeta, 'GP15', PICO),
-                    at(getHole('a', 15)),
-                    '#2A9D8F',
-                    65,
-                    'l2-w3'
+                  {/* Step 2: Ground Extension Wire (Bottom Blue Rail -> Col 20 Row e) */}
+                  {currentStepIndex >= 1 && (
+                    renderWire(
+                      at(getRailHole('bottom', '-', 4)),
+                      at(getHole('e', 20)),
+                      '#1E293B',
+                      -20,
+                      'l2-gnd-ext'
+                    )
                   )}
-                </>
-              )}
 
-              {/* Step 4: 220Ω Resistor across Col 15 -> Col 21 */}
-              {currentStepIndex >= 3 && (
-                <g>
-                  <Resistor
-                    {...l2Resistor}
-                    ohms={220}
-                  />
-                  <PartHover meta={resistorMeta} {...l2Resistor} />
+                  {/* Step 3: GP15 Wire (Pico GP15 -> Col 15 Row a) */}
+                  {currentStepIndex >= 2 && (
+                    renderWire(
+                      pinPosition(picoWMeta, 'GP15', PICO),
+                      at(getHole('a', 15)),
+                      '#2A9D8F',
+                      55,
+                      'l2-sig-gp15'
+                    )
+                  )}
+
+                  {/* Step 4: 220Ω Resistor across Col 15 -> Col 21 */}
+                  {currentStepIndex >= 3 && (
+                    <g>
+                      <Resistor {...l2Resistor} ohms={220} />
+                      <PartHover meta={resistorMeta} {...l2Resistor} />
+                    </g>
+                  )}
+
+                  {/* Step 5: 5mm Green LED (Anode in Col 21, Cathode in Col 20) */}
+                  {currentStepIndex >= 4 && (
+                    <g>
+                      <Led
+                        {...l2Led}
+                        color="green"
+                        lit={true}
+                        brightness={1.3}
+                      />
+                      <PartHover meta={ledMeta} {...l2Led} />
+                    </g>
+                  )}
                 </g>
               )}
 
-              {/* Step 5: 5mm Green LED (Anode in Col 21, Cathode in Col 20) */}
-              {currentStepIndex >= 4 && (
+              {/* === LEVEL 3: Push Button & Dual LEDs Circuit === */}
+              {levelNumber === 3 && (
                 <g>
-                  <Led
-                    {...l2Led}
+                  {/* Ground Wire from Pico GND to Top Rail (-) */}
+                  {renderWire(
+                    pinPosition(picoWMeta, 'GND.38', PICO),
+                    at(getRailHole('top', '-', 6)),
+                    '#1E293B',
+                    -35,
+                    'l3-w1'
+                  )}
+
+                  {/* Push Button mounted across Col 30 and Col 37 */}
+                  <PushButton
+                    {...l3Btn}
                     color="green"
-                    lit={true}
-                    brightness={1.3}
+                    pressed={interactivePressed}
+                    onMouseDown={() => setInteractivePressed(true)}
+                    onMouseUp={() => setInteractivePressed(false)}
+                    className="cursor-pointer"
                   />
-                  <PartHover meta={ledMeta} {...l2Led} />
+
+                  {/* GP14 Signal Wire (Pico GP14 -> Col 30 Row a) */}
+                  {currentStepIndex >= 1 && (
+                    renderWire(
+                      pinPosition(picoWMeta, 'GP14', PICO),
+                      at(getHole('a', 30)),
+                      '#EAB308',
+                      50,
+                      'l3-w2'
+                    )
+                  )}
+
+                  {/* Button Ground Wire (Col 37 Row a -> Top Rail -) */}
+                  {currentStepIndex >= 2 && (
+                    renderWire(
+                      at(getHole('a', 37)),
+                      at(getRailHole('top', '-', 6)),
+                      '#1E293B',
+                      -20,
+                      'l3-w3'
+                    )
+                  )}
+
+                  {/* Dual LEDs on Breadboard (Step 4) */}
+                  {currentStepIndex >= 3 && (
+                    <g>
+                      <Led {...l3GreenLed} color="green" lit={!interactivePressed} brightness={1.2} />
+                      <Resistor {...l3ResGreen} ohms={220} />
+                      <Led {...l3OrangeLed} color="orange" lit={interactivePressed} brightness={1.2} />
+                      <Resistor {...l3ResOrange} ohms={220} />
+
+                      {renderWire(pinPosition(picoWMeta, 'GP15', PICO), at(getHole('j', 15)), '#2A9D8F', 55, 'l3-w-green')}
+                      {renderWire(pinPosition(picoWMeta, 'GP16', PICO), at(getHole('j', 24)), '#F4C95D', 55, 'l3-w-orange')}
+                    </g>
+                  )}
+
+                  <PartHover meta={pushButtonMeta} {...l3Btn} />
                 </g>
               )}
-            </g>
-          )}
 
-          {/* === LEVEL 3: Push Button & Dual LEDs Circuit === */}
-          {levelNumber === 3 && (
-            <g>
-              {/* Ground Wire from Pico GND to Top Rail (-) */}
-              {renderWire(
-                pinPosition(picoWMeta, 'GND.38', PICO),
-                at(getRailHole('top', '-', 6)),
-                '#1E293B',
-                -35,
-                'l3-w1'
-              )}
-
-              {/* Push Button mounted on Breadboard */}
-              <PushButton
-                {...l3Btn}
-                color="green"
-                pressed={interactivePressed}
-                onMouseDown={() => setInteractivePressed(true)}
-                onMouseUp={() => setInteractivePressed(false)}
-                className="cursor-pointer"
-              />
-
-              {/* GP14 Signal Wire (Pico GP14 -> Col 30 Row a) */}
-              {currentStepIndex >= 1 && (
-                renderWire(
-                  pinPosition(picoWMeta, 'GP14', PICO),
-                  at(getHole('a', 30)),
-                  '#EAB308',
-                  55,
-                  'l3-w2'
-                )
-              )}
-
-              {/* Button Ground Wire (Col 37 Row a -> Top Rail -) */}
-              {currentStepIndex >= 2 && (
-                renderWire(
-                  at(getHole('a', 37)),
-                  at(getRailHole('top', '-', 6)),
-                  '#1E293B',
-                  -20,
-                  'l3-w3'
-                )
-              )}
-
-              {/* Dual LEDs on Breadboard (Step 4) */}
-              {currentStepIndex >= 3 && (
+              {/* === LEVEL 4: SSD1306 OLED Display === */}
+              {levelNumber === 4 && (
                 <g>
-                  {/* Normal Green LED on Col 15 */}
-                  <Led
-                    {...l3GreenLed}
-                    color="green"
-                    lit={!interactivePressed}
-                    brightness={1.2}
-                  />
-                  <Resistor {...l3ResGreen} ohms={220} />
+                  <Oled {...l4Oled} scale={1}>
+                    <text x="64" y="16" fill="#38BDF8" fontFamily="monospace" fontSize="10" textAnchor="middle">NXPLORERS IoT</text>
+                    <text x="64" y="32" fill="#FFFFFF" fontFamily="monospace" fontSize="11" fontWeight="bold" textAnchor="middle">CyberKnights</text>
+                    <text x="64" y="46" fill="#4ADE80" fontFamily="monospace" fontSize="8" textAnchor="middle">Age: 13 | Subbiah</text>
+                    <text x="64" y="58" fill="#94A3B8" fontFamily="monospace" fontSize="7" textAnchor="middle">I2C: 0x3C ONLINE</text>
+                  </Oled>
 
-                  {/* Alert Orange LED on Col 24 */}
-                  <Led
-                    {...l3OrangeLed}
-                    color="orange"
-                    lit={interactivePressed}
-                    brightness={1.2}
-                  />
-                  <Resistor {...l3ResOrange} ohms={220} />
+                  {/* Power Rails Wires */}
+                  {renderWire(at(getHole('j', 38)), at(getRailHole('bottom', '-', 7)), '#1E293B', 20, 'l4-gnd')}
+                  {renderWire(at(getHole('j', 39)), at(getRailHole('bottom', '+', 7)), '#EF4444', 25, 'l4-vcc')}
 
-                  {/* Wires to GP15 & GP16 */}
-                  {renderWire(
-                    pinPosition(picoWMeta, 'GP15', PICO),
-                    at(getHole('j', 15)),
-                    '#2A9D8F',
-                    60,
-                    'l3-w-green'
+                  {/* I2C Signal Wires */}
+                  {currentStepIndex >= 1 && (
+                    renderWire(pinPosition(picoWMeta, 'GP4', PICO), at(getHole('j', 41)), '#3B82F6', 50, 'l4-sda')
                   )}
-                  {renderWire(
-                    pinPosition(picoWMeta, 'GP16', PICO),
-                    at(getHole('j', 24)),
-                    '#F4C95D',
-                    60,
-                    'l3-w-orange'
+                  {currentStepIndex >= 2 && (
+                    renderWire(pinPosition(picoWMeta, 'GP5', PICO), at(getHole('j', 40)), '#EAB308', 45, 'l4-scl')
                   )}
+
+                  <PartHover meta={oledMeta} {...l4Oled} />
                 </g>
               )}
 
-              <PartHover meta={pushButtonMeta} {...l3Btn} />
-            </g>
-          )}
+              {/* === LEVEL 5: Grand IoT Challenge Node === */}
+              {levelNumber === 5 && (
+                <g>
+                  <Oled {...l4Oled} scale={1}>
+                    <text x="64" y="14" fill="#F4C95D" fontFamily="monospace" fontSize="9" textAnchor="middle">LIVE CLOUD FEED</text>
+                    <text x="64" y="28" fill="#FFFFFF" fontFamily="monospace" fontSize="10" fontWeight="bold" textAnchor="middle">TEMP: 26.8°C</text>
+                    <text x="64" y="42" fill="#38BDF8" fontFamily="monospace" fontSize="10" textAnchor="middle">HUMID: 55.4%</text>
+                    <text x="64" y="56" fill="#4ADE80" fontFamily="monospace" fontSize="9" textAnchor="middle">SOIL: 42.1% OK</text>
+                  </Oled>
+                  {renderWire(at(getHole('j', 38)), at(getRailHole('bottom', '-', 7)), '#1E293B', 20, 'l5-gnd')}
+                  {renderWire(at(getHole('j', 39)), at(getRailHole('bottom', '+', 7)), '#EF4444', 25, 'l5-vcc')}
+                  {renderWire(pinPosition(picoWMeta, 'GP4', PICO), at(getHole('j', 41)), '#3B82F6', 50, 'l5-sda')}
+                  {renderWire(pinPosition(picoWMeta, 'GP5', PICO), at(getHole('j', 40)), '#EAB308', 45, 'l5-scl')}
 
-          {/* === LEVEL 4: SSD1306 OLED Display === */}
-          {levelNumber === 4 && (
-            <g>
-              {/* OLED Display plugged into Breadboard */}
-              <Oled {...l4Oled} scale={1}>
-                <text x="64" y="16" fill="#38BDF8" fontFamily="monospace" fontSize="10" textAnchor="middle">NXPLORERS IoT</text>
-                <text x="64" y="32" fill="#FFFFFF" fontFamily="monospace" fontSize="11" fontWeight="bold" textAnchor="middle">CyberKnights</text>
-                <text x="64" y="46" fill="#4ADE80" fontFamily="monospace" fontSize="8" textAnchor="middle">Age: 13 | Subbiah</text>
-                <text x="64" y="58" fill="#94A3B8" fontFamily="monospace" fontSize="7" textAnchor="middle">I2C: 0x3C ONLINE</text>
-              </Oled>
+                  <Led {...l3OrangeLed} color="red" lit={true} brightness={1.4} />
+                  {renderWire(pinPosition(picoWMeta, 'GP17', PICO), at(getHole('j', 24)), '#EF4444', 55, 'l5-led')}
 
-              {/* Step 1: VCC & GND Power Wires */}
-              {renderWire(
-                at(getHole('j', 38)),
-                at(getRailHole('bottom', '-', 7)),
-                '#1E293B',
-                20,
-                'l4-gnd'
-              )}
-              {renderWire(
-                at(getHole('j', 39)),
-                at(getRailHole('bottom', '+', 7)),
-                '#EF4444',
-                25,
-                'l4-vcc'
+                  <PartHover meta={oledMeta} {...l4Oled} />
+                </g>
               )}
 
-              {/* Step 2: SDA Wire (Pico GP4 -> OLED SDA at col 41) */}
-              {currentStepIndex >= 1 && (
-                renderWire(
-                  pinPosition(picoWMeta, 'GP4', PICO),
-                  at(getHole('j', 41)),
-                  '#3B82F6',
-                  50,
-                  'l4-sda'
-                )
-              )}
-
-              {/* Step 3: SCL Wire (Pico GP5 -> OLED SCL at col 40) */}
-              {currentStepIndex >= 2 && (
-                renderWire(
-                  pinPosition(picoWMeta, 'GP5', PICO),
-                  at(getHole('j', 40)),
-                  '#EAB308',
-                  45,
-                  'l4-scl'
-                )
-              )}
-
-              <PartHover meta={oledMeta} {...l4Oled} />
-            </g>
-          )}
-
-          {/* === LEVEL 5: Grand IoT Challenge Node === */}
-          {levelNumber === 5 && (
-            <g>
-              {/* OLED Telemetry Display */}
-              <Oled {...l4Oled} scale={1}>
-                <text x="64" y="14" fill="#F4C95D" fontFamily="monospace" fontSize="9" textAnchor="middle">LIVE CLOUD FEED</text>
-                <text x="64" y="28" fill="#FFFFFF" fontFamily="monospace" fontSize="10" fontWeight="bold" textAnchor="middle">TEMP: 26.8°C</text>
-                <text x="64" y="42" fill="#38BDF8" fontFamily="monospace" fontSize="10" textAnchor="middle">HUMID: 55.4%</text>
-                <text x="64" y="56" fill="#4ADE80" fontFamily="monospace" fontSize="9" textAnchor="middle">SOIL: 42.1% OK</text>
-              </Oled>
-              {renderWire(at(getHole('j', 38)), at(getRailHole('bottom', '-', 7)), '#1E293B', 20, 'l5-gnd')}
-              {renderWire(at(getHole('j', 39)), at(getRailHole('bottom', '+', 7)), '#EF4444', 25, 'l5-vcc')}
-              {renderWire(pinPosition(picoWMeta, 'GP4', PICO), at(getHole('j', 41)), '#3B82F6', 50, 'l5-sda')}
-              {renderWire(pinPosition(picoWMeta, 'GP5', PICO), at(getHole('j', 40)), '#EAB308', 45, 'l5-scl')}
-
-              {/* Red Alarm LED */}
-              <Led
-                {...l3OrangeLed}
-                color="red"
-                lit={true}
-                brightness={1.4}
+              {/* Hover layers for live feedback */}
+              <PartHover meta={picoWMeta} x={PICO.x} y={PICO.y} />
+              <BreadboardHover
+                x={BB.x}
+                y={BB.y}
+                onHoleHover={(h) => setHoveredHoleInfo(h)}
               />
-              {renderWire(pinPosition(picoWMeta, 'GP17', PICO), at(getHole('j', 24)), '#EF4444', 60, 'l5-led')}
-
-              <PartHover meta={oledMeta} {...l4Oled} />
             </g>
           )}
-
-          {/* 3. Hover Layers on Top of Everything */}
-          <PartHover meta={picoWMeta} x={PICO.x} y={PICO.y} />
-          <BreadboardHover
-            x={BB.x}
-            y={BB.y}
-            onHoleHover={(h) => setHoveredHoleInfo(h)}
-          />
         </svg>
       </div>
 

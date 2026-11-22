@@ -179,13 +179,13 @@
         "id": "q2-1",
         "question": "How can you instantly identify the positive leg (Anode) of an LED with your eyes?",
         "options": [
-          "It is the longer metal leg (and the round side of the plastic dome)",
-          "It is the shorter metal leg (near the flat rim)",
+          "It is the longer metal lead (while the shorter lead and flat edge on the casing rim mark the Cathode)",
+          "It is the shorter metal lead near the flat edge of the casing",
           "Both legs are identical; direction does not matter"
         ],
         "correctIndex": 0,
-        "hint": "Remember: The longer leg is the Anode (+); the shorter leg near the flat notch is the Cathode (-).",
-        "explanation": "The longer leg is the Anode (+). It connects towards the 3.3V GPIO signal. The shorter leg (Cathode) connects to Ground."
+        "hint": "Remember: The longer lead is the Anode (+); the shorter lead and the flat edge on the casing rim mark the Cathode (-).",
+        "explanation": "The longer lead is the Anode (+) and connects to 3.3V power or GPIO. The shorter lead and the flat edge on the casing rim mark the Cathode (-), connecting to Ground."
       },
       {
         "id": "q2-2",
