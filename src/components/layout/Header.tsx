@@ -5,10 +5,10 @@ import {
   Hand, 
   HeartHandshake, 
   LogOut, 
-  ShieldAlert, 
   CheckCircle2, 
   CircleDot,
-  Radio
+  Radio,
+  BookOpen
 } from 'lucide-react';
 import { useTeamStore } from '../../store/useTeamStore.js';
 import { useSocketStore } from '../../store/useSocketStore.js';
@@ -32,7 +32,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAdmin, isAdminView }) => {
     logout 
   } = useTeamStore();
 
-  const { isConnected, raiseHand, cancelHand, awardPeerBonus, leaderboard } = useSocketStore();
+  const { isConnected, raiseHand, cancelHand, awardPeerBonus } = useSocketStore();
   const [showPeerModal, setShowPeerModal] = useState(false);
   const [selectedPeer, setSelectedPeer] = useState('');
   const [peerBonusSent, setPeerBonusSent] = useState(false);
@@ -58,39 +58,41 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAdmin, isAdminView }) => {
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-[#0B0F19]/90 backdrop-blur-md border-b border-gray-800 px-4 lg:px-8 py-3 transition-all">
+      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#EBE6DC] px-4 lg:px-8 py-3 transition-all">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-3">
           
-          {/* Logo & Platform Title */}
+          {/* Logo & Platform Title (Editorial Science Magazine Header) */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-                <Cpu className="w-6 h-6 text-white" />
+              <div className="w-10 h-10 rounded-xl bg-[#2A9D8F] flex items-center justify-center text-white shadow-sm">
+                <BookOpen className="w-5 h-5" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h1 className="text-lg font-bold text-white tracking-wide">NXplorers IoT</h1>
-                  <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                    Live Workshop
+                  <h1 className="text-base lg:text-lg font-extrabold text-[#24313A] tracking-tight">
+                    NXplorers Maker Lab
+                  </h1>
+                  <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-[#E6F4F2] text-[#21867A] border border-[#B2DFDB]">
+                    Workbench
                   </span>
                 </div>
-                <p className="text-xs text-gray-400">Raspberry Pi Pico WH MicroPython Platform</p>
+                <p className="text-xs text-[#576875] font-medium">Raspberry Pi Pico WH • MicroPython</p>
               </div>
             </div>
 
             {/* Connection Indicator & Admin Toggle (Mobile) */}
             <div className="flex items-center gap-2 md:hidden">
-              <span className={`w-2.5 h-2.5 rounded-full ${isConnected ? 'bg-emerald-500 shadow-sm shadow-emerald-400 animate-pulse' : 'bg-rose-500'}`} />
+              <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-[#2A9D8F]' : 'bg-[#F28C75]'}`} />
               <button
                 onClick={onOpenAdmin}
-                className="text-xs text-gray-400 hover:text-white px-2 py-1 rounded bg-gray-800/60"
+                className="text-xs font-semibold text-[#576875] hover:text-[#24313A] px-2.5 py-1 rounded-lg bg-[#FFFDF7] border border-[#EBE6DC]"
               >
-                {isAdminView ? 'Student View' : 'Admin'}
+                {isAdminView ? 'Student App' : 'Facilitator'}
               </button>
             </div>
           </div>
 
-          {/* Level Progress Stepper */}
+          {/* Level Progress Stepper (Clear & Purposeful) */}
           {!isAdminView && teamName && (
             <div className="flex items-center gap-1.5 overflow-x-auto py-1 scrollbar-none justify-center">
               {curriculum.map((lvl) => {
@@ -103,26 +105,26 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAdmin, isAdminView }) => {
                     key={lvl.levelNumber}
                     disabled={isLocked}
                     onClick={() => setActiveLevelView(lvl.levelNumber)}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
                       isCurrent
-                        ? 'bg-emerald-500 text-gray-950 shadow-md shadow-emerald-500/30'
+                        ? 'bg-[#2A9D8F] text-white shadow-sm'
                         : isCompleted
-                        ? 'bg-emerald-950/40 text-emerald-300 border border-emerald-800/50 hover:bg-emerald-900/40'
+                        ? 'bg-[#E6F4F2] text-[#21867A] border border-[#B2DFDB] hover:bg-[#D1ECE8]'
                         : isLocked
-                        ? 'bg-gray-900/60 text-gray-500 cursor-not-allowed border border-gray-800/40'
-                        : 'bg-gray-800/60 text-gray-300 hover:bg-gray-700/60'
+                        ? 'bg-[#FFFDF7] text-[#899AA8] cursor-not-allowed border border-[#EBE6DC]/60'
+                        : 'bg-white text-[#576875] border border-[#EBE6DC] hover:border-[#D5CFC2]'
                     }`}
                   >
                     {isCompleted ? (
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-[#2A9D8F]" />
                     ) : isCurrent ? (
-                      <CircleDot className="w-3.5 h-3.5 animate-pulse text-gray-950" />
+                      <CircleDot className="w-3.5 h-3.5 text-white animate-pulse" />
                     ) : (
                       <span className="w-3.5 h-3.5 text-center leading-none text-[10px] font-bold">
                         {lvl.levelNumber}
                       </span>
                     )}
-                    <span>L{lvl.levelNumber}</span>
+                    <span>Stage {lvl.levelNumber}</span>
                   </button>
                 );
               })}
@@ -134,46 +136,46 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAdmin, isAdminView }) => {
             {teamName ? (
               <>
                 {/* Score Pill */}
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 font-bold text-xs shadow-sm">
-                  <Trophy className="w-3.5 h-3.5 text-amber-400" />
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FEF9EC] border border-[#FCEFCB] text-[#24313A] font-extrabold text-xs">
+                  <Trophy className="w-3.5 h-3.5 text-[#DBAF40]" />
                   <span>{score} pts</span>
                 </div>
 
                 {/* Peer-Help Bonus Button */}
                 <button
                   onClick={() => setShowPeerModal(true)}
-                  title="Award bonus points to a team that helped you!"
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-500/10 border border-blue-500/30 text-blue-400 hover:bg-blue-500/20 text-xs font-semibold transition-all"
+                  title="Thank a team that helped you"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#F1F7FA] border border-[#D4EBF2] text-[#24313A] hover:bg-[#E0F0F5] text-xs font-bold transition-all"
                 >
-                  <HeartHandshake className="w-3.5 h-3.5" />
+                  <HeartHandshake className="w-3.5 h-3.5 text-[#2A9D8F]" />
                   <span className="hidden sm:inline">Thank Peer</span>
                 </button>
 
                 {/* Raise Hand Button */}
                 <button
                   onClick={handleToggleHand}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-md ${
+                  className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition-all ${
                     handRaised
-                      ? 'bg-rose-500 text-white animate-bounce shadow-rose-500/40'
-                      : 'bg-gray-800 hover:bg-gray-700 text-gray-200 border border-gray-700'
+                      ? 'bg-[#F28C75] text-white shadow-sm'
+                      : 'bg-white hover:bg-[#FFFDF7] text-[#24313A] border border-[#EBE6DC] hover:border-[#D5CFC2]'
                   }`}
                 >
-                  <Hand className={`w-3.5 h-3.5 ${handRaised ? 'text-white' : 'text-rose-400'}`} />
-                  <span>{handRaised ? 'Hand Raised!' : 'Raise Hand'}</span>
+                  <Hand className={`w-3.5 h-3.5 ${handRaised ? 'text-white' : 'text-[#F28C75]'}`} />
+                  <span>{handRaised ? 'Mentor Summoned' : 'Ask Mentor'}</span>
                 </button>
 
                 {/* Team Badge & Logout */}
-                <div className="flex items-center gap-2 pl-2 border-l border-gray-800">
+                <div className="flex items-center gap-2 pl-2 border-l border-[#EBE6DC]">
                   <div className="text-right hidden sm:block">
-                    <p className="text-xs font-bold text-white truncate max-w-[120px]">{teamName}</p>
-                    <p className="text-[10px] text-gray-400 flex items-center justify-end gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Connected
+                    <p className="text-xs font-bold text-[#24313A] truncate max-w-[120px]">{teamName}</p>
+                    <p className="text-[10px] text-[#576875] flex items-center justify-end gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#2A9D8F]" /> Ready
                     </p>
                   </div>
                   <button
                     onClick={logout}
                     title="Switch team / Logout"
-                    className="p-1.5 text-gray-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-all"
+                    className="p-1.5 text-[#899AA8] hover:text-[#F28C75] hover:bg-[#FDF1EE] rounded-lg transition-all"
                   >
                     <LogOut className="w-4 h-4" />
                   </button>
@@ -181,17 +183,17 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAdmin, isAdminView }) => {
               </>
             ) : null}
 
-            {/* Admin Switcher (Desktop) */}
+            {/* Facilitator Switcher (Desktop) */}
             <button
               onClick={onOpenAdmin}
-              className={`hidden md:flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
+              className={`hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${
                 isAdminView
-                  ? 'bg-purple-600/20 text-purple-300 border-purple-500/40 hover:bg-purple-600/30'
-                  : 'bg-gray-800/80 text-gray-300 border-gray-700 hover:text-white'
+                  ? 'bg-[#E6F4F2] text-[#21867A] border-[#B2DFDB]'
+                  : 'bg-white text-[#576875] border-[#EBE6DC] hover:border-[#D5CFC2] hover:text-[#24313A]'
               }`}
             >
-              <Radio className="w-3.5 h-3.5 text-purple-400" />
-              <span>{isAdminView ? 'Student App' : 'Facilitator'}</span>
+              <Radio className="w-3.5 h-3.5 text-[#2A9D8F]" />
+              <span>{isAdminView ? 'Student View' : 'Facilitator View'}</span>
             </button>
           </div>
         </div>
@@ -199,30 +201,30 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAdmin, isAdminView }) => {
 
       {/* Peer-Help Modal */}
       {showPeerModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in">
-          <div className="bg-[#111827] border border-gray-700 rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
-            <h3 className="text-lg font-bold text-white flex items-center gap-2">
-              <HeartHandshake className="w-5 h-5 text-blue-400" />
-              Award Peer-Help Bonus
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#24313A]/40 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white border border-[#EBE6DC] rounded-3xl max-w-md w-full p-6 shadow-2xl relative">
+            <h3 className="text-lg font-bold text-[#24313A] flex items-center gap-2">
+              <HeartHandshake className="w-5 h-5 text-[#2A9D8F]" />
+              Award Peer-Help Credit
             </h3>
-            <p className="text-xs text-gray-300 mt-2">
-              Did another team jump in to help you fix a loose wire or troubleshoot code? Give them <strong className="text-emerald-400">+50 bonus points</strong> on the leaderboard! (Your team also receives +10 points for good sportsmanship).
+            <p className="text-xs text-[#576875] mt-2 leading-relaxed">
+              Did a fellow maker help your station troubleshoot a connection or debug code? Award them <strong className="text-[#2A9D8F] font-bold">+50 points</strong> as a token of teamwork!
             </p>
 
             {peerBonusSent ? (
-              <div className="my-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-center font-bold text-sm flex items-center justify-center gap-2">
+              <div className="my-6 p-4 rounded-2xl bg-[#E6F4F2] border border-[#B2DFDB] text-[#21867A] text-center font-bold text-sm flex items-center justify-center gap-2">
                 <CheckCircle2 className="w-5 h-5" />
                 Bonus Awarded to {selectedPeer}!
               </div>
             ) : (
               <div className="my-5">
-                <label className="block text-xs font-semibold text-gray-400 mb-2">
+                <label className="block text-xs font-bold text-[#24313A] mb-2">
                   Select the team that helped:
                 </label>
                 <select
                   value={selectedPeer}
                   onChange={(e) => setSelectedPeer(e.target.value)}
-                  className="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                  className="w-full bg-[#FFFDF7] border border-[#EBE6DC] rounded-xl px-3 py-2.5 text-sm text-[#24313A] focus:outline-none focus:border-[#2A9D8F]"
                 >
                   <option value="">-- Choose Team --</option>
                   {whitelist
@@ -237,16 +239,16 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAdmin, isAdminView }) => {
                 <div className="flex items-center justify-end gap-3 mt-6">
                   <button
                     onClick={() => setShowPeerModal(false)}
-                    className="px-4 py-2 text-xs font-semibold text-gray-400 hover:text-white"
+                    className="px-4 py-2 text-xs font-bold text-[#576875] hover:text-[#24313A]"
                   >
                     Cancel
                   </button>
                   <button
                     disabled={!selectedPeer}
                     onClick={handleSendPeerBonus}
-                    className="px-5 py-2 text-xs font-bold bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white rounded-xl shadow-lg shadow-blue-500/20 transition-all"
+                    className="px-5 py-2.5 text-xs font-bold bg-[#2A9D8F] hover:bg-[#21867A] disabled:opacity-40 text-white rounded-xl shadow-sm transition-all"
                   >
-                    Send +50 Bonus Points
+                    Send Teamwork Credit
                   </button>
                 </div>
               </div>

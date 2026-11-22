@@ -120,17 +120,17 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
   };
 
   return (
-    <div className="bg-[#111827] border border-gray-800 rounded-3xl p-6 shadow-2xl flex flex-col gap-5">
+    <div className="bg-white border border-[#EBE6DC] rounded-3xl p-6 shadow-sm flex flex-col gap-5">
       {/* Step Header & Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-gray-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#EBE6DC]">
         <div>
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider font-mono">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#2A9D8F]" />
+            <span className="text-xs font-bold text-[#21867A] uppercase tracking-wider font-mono bg-[#E6F4F2] px-2.5 py-0.5 rounded-md border border-[#B2DFDB]">
               Step {currentStepIndex + 1} of {steps.length}
             </span>
           </div>
-          <h3 className="text-lg font-extrabold text-white mt-0.5">
+          <h3 className="text-lg font-black text-[#24313A] mt-1">
             {activeStep ? activeStep.title : 'Circuit Complete'}
           </h3>
         </div>
@@ -140,18 +140,18 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
           <button
             disabled={currentStepIndex === 0}
             onClick={() => onStepChange(currentStepIndex - 1)}
-            className="p-2.5 rounded-xl bg-gray-900 border border-gray-700 hover:border-gray-500 disabled:opacity-30 text-gray-300 hover:text-white transition-all shadow-md"
+            className="p-2.5 rounded-xl bg-white border border-[#EBE6DC] hover:border-[#D5CFC2] disabled:opacity-30 text-[#24313A] transition-all shadow-sm"
             title="Previous Step"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
-          <span className="text-xs font-mono font-bold text-gray-300 px-3 py-1.5 rounded-lg bg-gray-900 border border-gray-800">
+          <span className="text-xs font-mono font-bold text-[#24313A] px-3 py-1.5 rounded-lg bg-[#FFFDF7] border border-[#EBE6DC]">
             {currentStepIndex + 1} / {steps.length}
           </span>
           <button
             disabled={currentStepIndex === steps.length - 1}
             onClick={() => onStepChange(currentStepIndex + 1)}
-            className="p-2.5 rounded-xl bg-gray-900 border border-gray-700 hover:border-gray-500 disabled:opacity-30 text-gray-300 hover:text-white transition-all shadow-md"
+            className="p-2.5 rounded-xl bg-white border border-[#EBE6DC] hover:border-[#D5CFC2] disabled:opacity-30 text-[#24313A] transition-all shadow-sm"
             title="Next Step"
           >
             <ChevronRight className="w-4 h-4" />
@@ -161,18 +161,18 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
 
       {/* Instruction Card */}
       {activeStep && (
-        <div className="p-4 rounded-2xl bg-gray-900/90 border border-gray-800 flex items-start gap-3.5 text-sm">
+        <div className="p-4 rounded-2xl bg-[#FFFDF7] border border-[#EBE6DC] flex items-start gap-3.5 text-sm">
           <div
-            className="w-4 h-4 rounded-full shrink-0 mt-0.5 shadow-sm ring-2 ring-white/10"
+            className="w-4 h-4 rounded-full shrink-0 mt-0.5 shadow-sm ring-2 ring-white/60"
             style={{ backgroundColor: activeStep.color }}
           />
           <div className="flex-1 space-y-1">
-            <p className="text-gray-100 font-semibold leading-relaxed">
+            <p className="text-[#24313A] font-medium leading-relaxed">
               {activeStep.instruction}
             </p>
             {activeStep.polarityNote && (
-              <p className="text-xs text-amber-300 font-medium flex items-center gap-1.5 pt-0.5">
-                <HelpCircle className="w-3.5 h-3.5 shrink-0 text-amber-400" />
+              <p className="text-xs text-[#F28C75] font-bold flex items-center gap-1.5 pt-0.5">
+                <HelpCircle className="w-3.5 h-3.5 shrink-0 text-[#F28C75]" />
                 <span>{activeStep.polarityNote}</span>
               </p>
             )}
@@ -181,11 +181,11 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
       )}
 
       {/* Top-Down Orthographic Breadboard SVG Canvas */}
-      <div className="relative w-full overflow-x-auto bg-[#070B14] rounded-2xl border border-gray-800/80 p-4 flex justify-center">
+      <div className="relative w-full overflow-x-auto bg-[#F8F9FA] rounded-2xl border border-[#EBE6DC] p-4 flex justify-center">
         
         {/* Hovered Pin Info Callout */}
         {hoveredPin && (
-          <div className="absolute top-4 left-4 z-20 px-3 py-1.5 rounded-lg bg-gray-900/95 border border-emerald-500/50 text-emerald-300 text-xs font-mono shadow-xl animate-fade-in pointer-events-none">
+          <div className="absolute top-4 left-4 z-20 px-3 py-1.5 rounded-lg bg-white border border-[#B2DFDB] text-[#21867A] text-xs font-mono shadow-md animate-fade-in pointer-events-none font-bold">
             {pinDetails[hoveredPin] || hoveredPin}
           </div>
         )}
@@ -197,32 +197,32 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
         >
           <defs>
             <filter id="shadow" x="-10%" y="-10%" width="130%" height="130%">
-              <feDropShadow dx="2" dy="4" stdDeviation="4" floodColor="#000" floodOpacity="0.7" />
+              <feDropShadow dx="1" dy="3" stdDeviation="3" floodColor="#24313A" floodOpacity="0.12" />
             </filter>
             <filter id="glowGreen" x="-30%" y="-30%" width="160%" height="160%">
-              <feGaussianBlur stdDeviation="3.5" result="blur" />
+              <feGaussianBlur stdDeviation="3" result="blur" />
               <feComposite in="SourceGraphic" in2="blur" operator="over" />
             </filter>
             <filter id="glowAmber" x="-30%" y="-30%" width="160%" height="160%">
-              <feGaussianBlur stdDeviation="3.5" result="blur" />
+              <feGaussianBlur stdDeviation="3" result="blur" />
               <feComposite in="SourceGraphic" in2="blur" operator="over" />
             </filter>
             <filter id="glowRed" x="-30%" y="-30%" width="160%" height="160%">
-              <feGaussianBlur stdDeviation="3.5" result="blur" />
+              <feGaussianBlur stdDeviation="3" result="blur" />
               <feComposite in="SourceGraphic" in2="blur" operator="over" />
             </filter>
             <linearGradient id="picoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#065F46" />
-              <stop offset="100%" stopColor="#047857" />
+              <stop offset="0%" stopColor="#047857" />
+              <stop offset="100%" stopColor="#065F46" />
             </linearGradient>
             <linearGradient id="breadboardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#F8FAFC" />
-              <stop offset="100%" stopColor="#E2E8F0" />
+              <stop offset="0%" stopColor="#FFFFFF" />
+              <stop offset="100%" stopColor="#F8FAFC" />
             </linearGradient>
             <linearGradient id="metalPlate" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#E2E8F0" />
-              <stop offset="50%" stopColor="#CBD5E1" />
-              <stop offset="100%" stopColor="#94A3B8" />
+              <stop offset="0%" stopColor="#F8FAFC" />
+              <stop offset="50%" stopColor="#E2E8F0" />
+              <stop offset="100%" stopColor="#CBD5E1" />
             </linearGradient>
           </defs>
 

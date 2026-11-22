@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Send, CheckCircle2, Server, Radio, ArrowRight, Utensils, Database, Cpu } from 'lucide-react';
+import { Send, Server, Radio, Utensils, Database, Cpu, Compass, Layers } from 'lucide-react';
 
 export const APIExplainerCard: React.FC = () => {
   const [isOrdering, setIsOrdering] = useState(false);
@@ -14,23 +14,23 @@ export const APIExplainerCard: React.FC = () => {
         soil: (35 + Math.random() * 15).toFixed(1),
         status: '200 OK'
       });
-    }, 1200);
+    }, 900);
   };
 
   return (
-    <div className="bg-[#0B0F19] border border-gray-800 rounded-3xl p-6 lg:p-8 space-y-6 shadow-2xl">
+    <div className="bg-white border border-[#EBE6DC] rounded-3xl p-6 lg:p-8 space-y-6 shadow-sm">
       {/* Title */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-gray-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#EBE6DC]">
         <div>
-          <span className="text-xs font-bold text-purple-400 uppercase tracking-wider font-mono">
-            Internet of Things • Simplified for Builders
+          <span className="text-xs font-bold text-[#21867A] uppercase tracking-wider font-mono">
+            Internet of Things • Intuitive Model
           </span>
-          <h3 className="text-xl font-extrabold text-white mt-0.5">
-            What is an API? Explained Like You're at a Restaurant
+          <h3 className="text-xl lg:text-2xl font-black text-[#24313A] mt-0.5">
+            What is an API? The Restaurant Analogy
           </h3>
         </div>
 
-        <div className="text-xs text-purple-300 font-mono bg-purple-950/60 border border-purple-500/40 px-3 py-1 rounded-xl">
+        <div className="text-xs text-[#21867A] font-mono bg-[#E6F4F2] border border-[#B2DFDB] px-3.5 py-1.5 rounded-xl font-bold self-start sm:self-auto">
           Application Programming Interface
         </div>
       </div>
@@ -39,61 +39,61 @@ export const APIExplainerCard: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         
         {/* Customer */}
-        <div className="p-5 rounded-2xl bg-gray-900/80 border border-gray-800 space-y-3 relative overflow-hidden">
-          <div className="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
-            <Cpu className="w-6 h-6" />
+        <div className="p-5 rounded-2xl bg-[#FFFDF7] border border-[#EBE6DC] space-y-3 relative overflow-hidden">
+          <div className="w-11 h-11 rounded-xl bg-[#F1F7FA] border border-[#D4EBF2] flex items-center justify-center text-[#2A9D8F]">
+            <Cpu className="w-5 h-5" />
           </div>
           <div>
-            <span className="text-[10px] text-cyan-400 font-mono font-bold uppercase">The Customer</span>
-            <h4 className="text-base font-bold text-white">Your Raspberry Pi Pico</h4>
+            <span className="text-[10px] text-[#576875] font-mono font-bold uppercase">1. The Customer</span>
+            <h4 className="text-base font-bold text-[#24313A]">Your Pico Station</h4>
           </div>
-          <p className="text-xs text-gray-300 leading-relaxed">
-            Your Pico is sitting at a table hungry for information. It wants to know: <em>"What is the temperature in the room right now?"</em> But it has no permission to walk into the cloud server's private files.
+          <p className="text-xs text-[#576875] leading-relaxed">
+            Your Pico sits at the workbench hungry for live data. It needs to know: <em>"What is the temperature in the greenhouse?"</em> But it cannot reach directly into the cloud database on its own.
           </p>
         </div>
 
         {/* Waiter */}
-        <div className="p-5 rounded-2xl bg-purple-950/40 border border-purple-500/40 space-y-3 shadow-lg shadow-purple-500/10 relative overflow-hidden">
-          <div className="w-12 h-12 rounded-xl bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-purple-300">
-            <Utensils className="w-6 h-6" />
+        <div className="p-5 rounded-2xl bg-[#E6F4F2]/50 border border-[#B2DFDB] space-y-3 shadow-sm relative overflow-hidden">
+          <div className="w-11 h-11 rounded-xl bg-white border border-[#B2DFDB] flex items-center justify-center text-[#21867A]">
+            <Utensils className="w-5 h-5 text-[#2A9D8F]" />
           </div>
           <div>
-            <span className="text-[10px] text-purple-300 font-mono font-bold uppercase">The Waiter</span>
-            <h4 className="text-base font-bold text-white">The Web API</h4>
+            <span className="text-[10px] text-[#21867A] font-mono font-bold uppercase">2. The Waiter</span>
+            <h4 className="text-base font-bold text-[#24313A]">The Web API</h4>
           </div>
-          <p className="text-xs text-purple-200/90 leading-relaxed">
-            The API is your friendly waiter! It hands your Pico a <strong>Menu</strong> (the API URL). Your Pico says: <em>"I'd like to order <code>GET /api/feed</code> please!"</em> The waiter carries your order to the kitchen.
+          <p className="text-xs text-[#576875] leading-relaxed">
+            The API is the helpful waiter. Your Pico calls out an order: <em>"GET /api/feed please!"</em> The waiter carries this request across the Wi-Fi network straight into the cloud kitchen.
           </p>
         </div>
 
         {/* Kitchen */}
-        <div className="p-5 rounded-2xl bg-gray-900/80 border border-gray-800 space-y-3 relative overflow-hidden">
-          <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
-            <Database className="w-6 h-6" />
+        <div className="p-5 rounded-2xl bg-[#FFFDF7] border border-[#EBE6DC] space-y-3 relative overflow-hidden">
+          <div className="w-11 h-11 rounded-xl bg-[#FEF9EC] border border-[#FCEFCB] flex items-center justify-center text-[#DBAF40]">
+            <Database className="w-5 h-5" />
           </div>
           <div>
-            <span className="text-[10px] text-amber-400 font-mono font-bold uppercase">The Kitchen & Pantry</span>
-            <h4 className="text-base font-bold text-white">The Central Server Database</h4>
+            <span className="text-[10px] text-[#576875] font-mono font-bold uppercase">3. The Kitchen</span>
+            <h4 className="text-base font-bold text-[#24313A]">The Cloud Database</h4>
           </div>
-          <p className="text-xs text-gray-300 leading-relaxed">
-            The chefs in the kitchen receive live telemetry from sensors across the world. The waiter grabs the latest fresh sensor numbers, packages them into a neat box (JSON), and serves them to your Pico!
+          <p className="text-xs text-[#576875] leading-relaxed">
+            The cloud database receives real-time streams from field sensors. The waiter packages the freshest measurements into a neat, labeled meal box (JSON) and brings it back to your Pico!
           </p>
         </div>
 
       </div>
 
       {/* Interactive API Simulator */}
-      <div className="p-6 rounded-2xl bg-[#070B14] border border-gray-800 flex flex-col md:flex-row items-center justify-between gap-6">
+      <div className="p-6 rounded-2xl bg-[#FFFDF7] border border-[#EBE6DC] flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
         <div className="space-y-1.5 max-w-md">
-          <span className="text-xs font-bold text-purple-400 uppercase font-mono flex items-center gap-1.5">
-            <Radio className="w-3.5 h-3.5 animate-pulse" />
-            <span>Interactive API Request Simulator</span>
+          <span className="text-xs font-bold text-[#21867A] uppercase font-mono flex items-center gap-1.5">
+            <Radio className="w-3.5 h-3.5" />
+            <span>Interactive API Request Test</span>
           </span>
-          <h4 className="text-base font-extrabold text-white">
+          <h4 className="text-base font-extrabold text-[#24313A]">
             Send an HTTP GET Request to the Waiter
           </h4>
-          <p className="text-xs text-gray-400 leading-relaxed">
-            Click the button to watch how your MicroPython code queries the API waiter and receives structured JSON data back.
+          <p className="text-xs text-[#576875] leading-relaxed">
+            Click below to see how your MicroPython code queries the API and receives neatly packaged environmental readings.
           </p>
         </div>
 
@@ -101,15 +101,15 @@ export const APIExplainerCard: React.FC = () => {
           <button
             disabled={isOrdering}
             onClick={handleOrderFromAPI}
-            className="w-full md:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-400 hover:to-indigo-400 disabled:opacity-50 text-white font-extrabold text-xs shadow-lg shadow-purple-500/20 flex items-center justify-center gap-2 transition-all transform hover:-translate-y-0.5"
+            className="w-full md:w-auto px-6 py-3 rounded-xl bg-[#2A9D8F] hover:bg-[#21867A] disabled:opacity-50 text-white font-extrabold text-xs shadow-sm flex items-center justify-center gap-2 transition-all"
           >
             <Send className={`w-4 h-4 ${isOrdering ? 'animate-spin' : ''}`} />
-            <span>{isOrdering ? 'Waiter is fetching from kitchen...' : 'Order Data: GET /api/feed'}</span>
+            <span>{isOrdering ? 'Waiter Fetching Telemetry...' : 'Order Data: GET /api/feed'}</span>
           </button>
 
           {receivedMeal && (
-            <div className="p-3 bg-gray-900 border border-purple-500/40 rounded-xl font-mono text-xs text-purple-200 animate-fade-in text-center space-y-0.5">
-              <span className="text-[10px] text-emerald-400 font-bold block">{receivedMeal.status} Payload Received:</span>
+            <div className="p-3 bg-white border border-[#B2DFDB] rounded-xl font-mono text-xs text-[#24313A] animate-fade-in text-center space-y-0.5 shadow-sm">
+              <span className="text-[10px] text-[#21867A] font-bold block">{receivedMeal.status} Response Delivered:</span>
               <span>{`{"temp": "${receivedMeal.temp}°C", "soil": "${receivedMeal.soil}%"}`}</span>
             </div>
           )}
@@ -118,41 +118,41 @@ export const APIExplainerCard: React.FC = () => {
 
       {/* The 4-Layer IoT Tower */}
       <div className="space-y-3 pt-2">
-        <h4 className="text-sm font-bold text-white flex items-center gap-2">
-          <Server className="w-4 h-4 text-emerald-400" />
-          <span>The 4 Layers of Every IoT System on Earth</span>
+        <h4 className="text-sm font-bold text-[#24313A] flex items-center gap-2">
+          <Layers className="w-4 h-4 text-[#2A9D8F]" />
+          <span>The 4 Layers of Every IoT System</span>
         </h4>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          <div className="p-3.5 rounded-xl bg-gray-900/60 border border-gray-800">
-            <span className="text-[10px] font-mono text-gray-500 font-bold">LAYER 1</span>
-            <p className="text-xs font-bold text-emerald-400 mt-0.5">Perception Layer</p>
-            <p className="text-[11px] text-gray-400 mt-1 leading-relaxed">
-              Physical sensors directly touching water, dirt, sunlight, and air.
+          <div className="p-4 rounded-xl bg-[#FFFDF7] border border-[#EBE6DC]">
+            <span className="text-[10px] font-mono text-[#899AA8] font-bold">LAYER 1</span>
+            <p className="text-xs font-bold text-[#21867A] mt-0.5">Perception Layer</p>
+            <p className="text-[11px] text-[#576875] mt-1 leading-relaxed">
+              Physical sensors touching sunlight, temperature, soil, and moisture.
             </p>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-gray-900/60 border border-gray-800">
-            <span className="text-[10px] font-mono text-gray-500 font-bold">LAYER 2</span>
-            <p className="text-xs font-bold text-cyan-400 mt-0.5">Network Layer</p>
-            <p className="text-[11px] text-gray-400 mt-1 leading-relaxed">
-              2.4 GHz Wi-Fi radio waves flying through the air to the internet router.
+          <div className="p-4 rounded-xl bg-[#FFFDF7] border border-[#EBE6DC]">
+            <span className="text-[10px] font-mono text-[#899AA8] font-bold">LAYER 2</span>
+            <p className="text-xs font-bold text-[#2A9D8F] mt-0.5">Network Layer</p>
+            <p className="text-[11px] text-[#576875] mt-1 leading-relaxed">
+              Wi-Fi radio waves beaming data packets between the Pico and the local router.
             </p>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-gray-900/60 border border-gray-800">
-            <span className="text-[10px] font-mono text-gray-500 font-bold">LAYER 3</span>
-            <p className="text-xs font-bold text-purple-400 mt-0.5">Cloud / Server Layer</p>
-            <p className="text-[11px] text-gray-400 mt-1 leading-relaxed">
-              ThingSpeak or central database storing and organizing records 24/7.
+          <div className="p-4 rounded-xl bg-[#FFFDF7] border border-[#EBE6DC]">
+            <span className="text-[10px] font-mono text-[#899AA8] font-bold">LAYER 3</span>
+            <p className="text-xs font-bold text-[#DBAF40] mt-0.5">Cloud Storage Layer</p>
+            <p className="text-[11px] text-[#576875] mt-1 leading-relaxed">
+              The central server database storing time-stamped records 24/7.
             </p>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-gray-900/60 border border-gray-800">
-            <span className="text-[10px] font-mono text-gray-500 font-bold">LAYER 4</span>
-            <p className="text-xs font-bold text-amber-400 mt-0.5">Application Layer</p>
-            <p className="text-[11px] text-gray-400 mt-1 leading-relaxed">
-              Your team's OLED display, buzzers, and automated sirens alerting humans.
+          <div className="p-4 rounded-xl bg-[#FFFDF7] border border-[#EBE6DC]">
+            <span className="text-[10px] font-mono text-[#899AA8] font-bold">LAYER 4</span>
+            <p className="text-xs font-bold text-[#F28C75] mt-0.5">Application Layer</p>
+            <p className="text-[11px] text-[#576875] mt-1 leading-relaxed">
+              Your station's OLED display, buzzers, and automated sirens alerting people.
             </p>
           </div>
         </div>

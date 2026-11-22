@@ -1,61 +1,93 @@
 @import "tailwindcss";
 
 :root {
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-sans: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   
-  --bg-canvas: #070B14;
-  --bg-surface: #111827;
-  --bg-card: #0F172A;
-  --bg-card-subtle: #1E293B;
+  --bg-page: #FFFDF7;
+  --bg-card: #FFFFFF;
+  --text-ink: #24313A;
+  --text-ink-light: #576875;
+  --text-ink-subtle: #899AA8;
 
-  --border-subtle: #1F2937;
-  --border-strong: #374151;
+  --color-teal: #2A9D8F;
+  --color-teal-dark: #21867A;
+  --color-teal-light: #E6F4F2;
+  
+  --color-coral: #F28C75;
+  --color-coral-light: #FDF1EE;
 
-  --signal-emerald: #10B981;
-  --signal-emerald-glow: rgba(16, 185, 129, 0.25);
-  --signal-amber: #F59E0B;
-  --signal-cyan: #06B6D4;
-  --signal-rose: #F43F5E;
+  --color-yellow: #F4C95D;
+  --color-yellow-light: #FEF9EC;
+
+  --color-sky: #B9DCE8;
+  --color-sky-light: #F1F7FA;
+
+  --border-subtle: #EBE6DC;
+  --border-strong: #D5CFC2;
 }
 
 html, body {
   overflow-x: clip;
-  background-color: var(--bg-canvas);
-  color: #F8FAFC;
+  background-color: #FFFDF7;
+  color: #24313A;
   font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background-color: #D1ECE8;
+  color: #21867A;
+}
+
+/* Editorial Maker Cards & Borders */
+.maker-card {
+  background-color: #FFFFFF;
+  border: 1px solid #EBE6DC;
+  border-radius: 1.25rem;
+  box-shadow: 0 2px 8px -2px rgba(36, 49, 58, 0.05), 0 1px 3px 0 rgba(36, 49, 58, 0.03);
+}
+
+.maker-card-hover {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.maker-card-hover:hover {
+  border-color: #D5CFC2;
+  box-shadow: 0 8px 20px -4px rgba(36, 49, 58, 0.08), 0 2px 6px -1px rgba(36, 49, 58, 0.04);
+  transform: translateY(-1px);
 }
 
 @layer utilities {
   .animate-fade-in {
-    animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
 
   .animate-scale-up {
-    animation: scaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: scaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
 
-  .animate-bounce-short {
-    animation: bounceShort 0.5s ease-out forwards;
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
   }
-
-  .animate-dash {
-    animation: dashFlow 1s linear infinite;
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: #F5F2EB;
+    border-radius: 8px;
   }
-
-  .scrollbar-none::-webkit-scrollbar {
-    display: none;
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: #D5CFC2;
+    border-radius: 8px;
   }
-  .scrollbar-none {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: #B9DCE8;
   }
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: scale(0.98) translateY(6px);
+    transform: scale(0.99) translateY(4px);
   }
   to {
     opacity: 1;
@@ -66,30 +98,10 @@ html, body {
 @keyframes scaleUp {
   from {
     opacity: 0;
-    transform: scale(0.94);
+    transform: scale(0.96);
   }
   to {
     opacity: 1;
     transform: scale(1);
-  }
-}
-
-@keyframes bounceShort {
-  0% {
-    opacity: 0;
-    transform: translateY(16px) scale(0.95);
-  }
-  60% {
-    transform: translateY(-4px) scale(1.02);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes dashFlow {
-  to {
-    stroke-dashoffset: -20;
   }
 }

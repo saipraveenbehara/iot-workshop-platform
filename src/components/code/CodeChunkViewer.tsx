@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Copy, Check, Terminal, Code2, ChevronDown, ChevronUp } from 'lucide-react';
+import { Copy, Check, Terminal, Code2, ChevronDown, ChevronUp, Sparkles, Sliders } from 'lucide-react';
 import { CodeChunk } from '../../types/curriculum.js';
 
 interface CodeChunkViewerProps {
@@ -21,19 +21,24 @@ export const CodeChunkViewer: React.FC<CodeChunkViewerProps> = ({
   };
 
   return (
-    <div className="bg-[#111827] border border-gray-800 rounded-3xl p-6 shadow-2xl flex flex-col gap-5">
+    <div className="bg-white border border-[#EBE6DC] rounded-3xl p-6 shadow-sm flex flex-col gap-5">
       {/* Header */}
-      <div className="flex items-center justify-between pb-3 border-b border-gray-800">
-        <div className="flex items-center gap-2">
-          <Terminal className="w-5 h-5 text-emerald-400" />
-          <h3 className="text-base font-extrabold text-white">MicroPython Code Chunks</h3>
+      <div className="flex items-center justify-between pb-3.5 border-b border-[#EBE6DC]">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-xl bg-[#E6F4F2] border border-[#B2DFDB] flex items-center justify-center text-[#2A9D8F]">
+            <Terminal className="w-4 h-4" />
+          </div>
+          <div>
+            <h3 className="text-base font-extrabold text-[#24313A]">MicroPython Code Blocks</h3>
+            <p className="text-xs text-[#576875]">Follow along chunk by chunk or copy the complete file</p>
+          </div>
         </div>
         <button
           onClick={() => handleCopy(fullScript, 'full')}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 hover:bg-emerald-500/20 text-emerald-300 text-xs font-bold transition-all"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#E6F4F2] border border-[#B2DFDB] hover:bg-[#D5EFEA] text-[#2A9D8F] text-xs font-bold transition-all shadow-sm"
         >
           {copiedId === 'full' ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-          <span>{copiedId === 'full' ? 'Full Code Copied!' : 'Copy Full Script'}</span>
+          <span>{copiedId === 'full' ? 'Full Script Copied!' : 'Copy Full Script'}</span>
         </button>
       </div>
 
@@ -42,26 +47,32 @@ export const CodeChunkViewer: React.FC<CodeChunkViewerProps> = ({
         {chunks.map((chunk) => (
           <div
             key={chunk.blockId}
-            className={`rounded-2xl border transition-all ${
+            className={`rounded-2xl border transition-all overflow-hidden ${
               chunk.isConfigurable
-                ? 'bg-amber-950/20 border-amber-500/40 shadow-sm shadow-amber-500/5'
-                : 'bg-gray-900/70 border-gray-800 hover:border-gray-700'
+                ? 'bg-[#FEF9EC] border-[#F4C95D] shadow-sm'
+                : 'bg-[#FFFDF7] border-[#EBE6DC] hover:border-[#D5CFC2]'
             }`}
           >
             {/* Chunk Header */}
-            <div className="px-4 py-2.5 bg-gray-900/90 rounded-t-2xl border-b border-gray-800 flex items-center justify-between">
-              <span className="text-xs font-bold text-gray-200 flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                {chunk.title}
-              </span>
+            <div className="px-4 py-2.5 bg-white border-b border-[#EBE6DC] flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className={`w-2 h-2 rounded-full ${chunk.isConfigurable ? 'bg-[#F4C95D]' : 'bg-[#2A9D8F]'}`} />
+                <span className="text-xs font-bold text-[#24313A]">{chunk.title}</span>
+                {chunk.isConfigurable && (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FEF9EC] text-[#B88719] border border-[#F4C95D]">
+                    <Sliders className="w-2.5 h-2.5" />
+                    Customize This
+                  </span>
+                )}
+              </div>
               <button
                 onClick={() => handleCopy(chunk.code, chunk.blockId)}
-                className="text-gray-400 hover:text-white p-1 text-[11px] font-semibold flex items-center gap-1"
+                className="text-[#576875] hover:text-[#2A9D8F] p-1 text-[11px] font-bold flex items-center gap-1 transition-colors"
               >
                 {copiedId === chunk.blockId ? (
                   <>
-                    <Check className="w-3 h-3 text-emerald-400" />
-                    <span className="text-emerald-400">Copied!</span>
+                    <Check className="w-3 h-3 text-[#2A9D8F]" />
+                    <span className="text-[#2A9D8F]">Copied!</span>
                   </>
                 ) : (
                   <>
@@ -73,33 +84,33 @@ export const CodeChunkViewer: React.FC<CodeChunkViewerProps> = ({
             </div>
 
             {/* Code Block */}
-            <div className="p-4 overflow-x-auto font-mono text-sm text-emerald-300 bg-[#0B0F19]/80 leading-relaxed font-medium">
+            <div className="p-4 overflow-x-auto font-mono text-xs sm:text-sm text-[#1E293B] bg-[#F8F9FA] leading-relaxed font-medium">
               <pre>{chunk.code}</pre>
             </div>
 
             {/* Plain English Explanation */}
-            <div className="px-4 py-3 bg-gray-900/60 rounded-b-2xl border-t border-gray-800/80 text-xs text-gray-300 leading-relaxed">
-              <span className="font-semibold text-emerald-400">Explanation:</span> <span>{chunk.explanation}</span>
+            <div className="px-4 py-3 bg-white border-t border-[#EBE6DC] text-xs text-[#576875] leading-relaxed">
+              <span className="font-bold text-[#2A9D8F]">What this does:</span> <span>{chunk.explanation}</span>
             </div>
           </div>
         ))}
       </div>
 
       {/* Full Script Accordion View */}
-      <div className="pt-2 border-t border-gray-800">
+      <div className="pt-2 border-t border-[#EBE6DC]">
         <button
           onClick={() => setShowFullCode(!showFullCode)}
-          className="w-full flex items-center justify-between text-xs font-bold text-gray-400 hover:text-white p-2"
+          className="w-full flex items-center justify-between text-xs font-bold text-[#576875] hover:text-[#24313A] p-2 transition-colors"
         >
           <span className="flex items-center gap-1.5">
-            <Code2 className="w-4 h-4 text-emerald-400" />
+            <Code2 className="w-4 h-4 text-[#2A9D8F]" />
             {showFullCode ? 'Hide Full Ready-to-Run Script' : 'View Full Ready-to-Run Script'}
           </span>
-          {showFullCode ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          {showFullCode ? <ChevronUp className="w-4 h-4 text-[#2A9D8F]" /> : <ChevronDown className="w-4 h-4 text-[#2A9D8F]" />}
         </button>
 
         {showFullCode && (
-          <div className="mt-3 p-4 rounded-2xl bg-gray-950 border border-gray-800 font-mono text-xs text-emerald-300 overflow-x-auto animate-fade-in">
+          <div className="mt-3 p-4 rounded-2xl bg-[#F8F9FA] border border-[#EBE6DC] font-mono text-xs text-[#1E293B] overflow-x-auto animate-fade-in shadow-inner">
             <pre>{fullScript}</pre>
           </div>
         )}
