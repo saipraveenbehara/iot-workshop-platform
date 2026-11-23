@@ -45,10 +45,10 @@ export const APIExplainerCard: React.FC = () => {
           </div>
           <div>
             <span className="text-[10px] text-[#576875] font-mono font-bold uppercase">1. The Customer</span>
-            <h4 className="text-base font-bold text-[#24313A]">Your Pico Station</h4>
+            <h4 className="text-base font-bold text-[#24313A]">Your ESP32 Station</h4>
           </div>
           <p className="text-xs text-[#576875] leading-relaxed">
-            Your Pico sits at the workbench hungry for live data. It needs to know: <em>"What is the temperature in the greenhouse?"</em> But it cannot reach directly into the cloud database on its own.
+            Your ESP32 sits at the workbench hungry for live data. It needs to know: <em>"What is the temperature in the greenhouse?"</em> But it cannot reach directly into the cloud database on its own.
           </p>
         </div>
 
@@ -62,7 +62,7 @@ export const APIExplainerCard: React.FC = () => {
             <h4 className="text-base font-bold text-[#24313A]">The Web API</h4>
           </div>
           <p className="text-xs text-[#576875] leading-relaxed">
-            The API is the helpful waiter. Your Pico calls out an order: <em>"GET /api/feed please!"</em> The waiter carries this request across the Wi-Fi network straight into the cloud kitchen.
+            The API is the helpful waiter. Your ESP32 calls out an order: <em>"GET /api/feed please!"</em> The waiter carries this request across the Wi-Fi network straight into the cloud kitchen.
           </p>
         </div>
 
@@ -76,7 +76,7 @@ export const APIExplainerCard: React.FC = () => {
             <h4 className="text-base font-bold text-[#24313A]">The Cloud Database</h4>
           </div>
           <p className="text-xs text-[#576875] leading-relaxed">
-            The cloud database receives real-time streams from field sensors. The waiter packages the freshest measurements into a neat, labeled meal box (JSON) and brings it back to your Pico!
+            The cloud database receives real-time streams from field sensors. The waiter packages the freshest measurements into a neat, labeled meal box (JSON) and brings it back to your ESP32!
           </p>
         </div>
 
@@ -93,7 +93,7 @@ export const APIExplainerCard: React.FC = () => {
             Send an HTTP GET Request to the Waiter
           </h4>
           <p className="text-xs text-[#576875] leading-relaxed">
-            Click below to see how your MicroPython code queries the API and receives neatly packaged environmental readings.
+            Click below to see how your C code queries the API and receives neatly packaged environmental readings.
           </p>
         </div>
 
@@ -136,7 +136,7 @@ export const APIExplainerCard: React.FC = () => {
             <span className="text-[10px] font-mono text-[#899AA8] font-bold">LAYER 2</span>
             <p className="text-xs font-bold text-[#2A9D8F] mt-0.5">Network Layer</p>
             <p className="text-[11px] text-[#576875] mt-1 leading-relaxed">
-              Wi-Fi radio waves beaming data packets between the Pico and the local router.
+              Wi-Fi radio waves beaming data packets between the ESP32 and the local router.
             </p>
           </div>
 

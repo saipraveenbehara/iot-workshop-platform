@@ -2,8 +2,8 @@
   {
     "levelNumber": 0,
     "id": "level-0",
-    "title": "Level 0: Meet the Brain",
-    "subtitle": "Discovering the Raspberry Pi Pico WH",
+    "title": "Level 0: Meet the ESP32 Brain",
+    "subtitle": "Discovering the ESP32 DevKit & C Architecture",
     "estimatedMinutes": 10,
     "conceptByte": {
       "id": "byte-1",
@@ -12,44 +12,44 @@
       "readTimeSeconds": 60,
       "svgType": "brain_vs_pc",
       "keyTakeaways": [
-        "Your laptop or phone is a general-purpose computer. It runs a massive operating system, renders graphics, and browses YouTube, but cannot toggle electrical pins at microsecond speed.",
-        "The Raspberry Pi Pico WH is a microcontroller. It has no screen, no mouse, and no operating system lag. It runs your code directly on bare silicon.",
-        "The black square in the middle is the RP2040 chip: a dual-core brain running at 133 million calculations per second. The 40 metal pins along the edges connect your code directly to the real world."
+        "Your laptop or phone is a general-purpose computer. It runs a massive operating system, renders desktop windows, and browses websites, but cannot toggle physical electrical pins at microsecond speed.",
+        "The ESP32 DevKit V1 is a microcontroller. It has no screen, no mouse, and no operating system lag. It executes your compiled C code directly on bare silicon.",
+        "Under the silver metal shield is the dual-core 32-bit Xtensa LX6 processor running at 240 MHz (240 million calculations per second) with 520 KB SRAM and built-in 2.4 GHz Wi-Fi + Bluetooth. The 30 metal pins along the edges connect your C code directly to the real world."
       ],
-      "analogyStory": "If your laptop is a massive library with millions of books, the Raspberry Pi Pico is an Olympic sprinter waiting on the starting block. It doesn't waste time loading desktop windows or checking notifications. It boots up in 5 milliseconds and focuses 100% of its brainpower on reading sensors and switching electrical signals."
+      "analogyStory": "If your laptop is a massive library with millions of books, the ESP32 is an Olympic sprinter waiting on the starting block. It doesn't waste time loading desktop windows or checking background notifications. It boots up in 5 milliseconds and focuses 100% of its silicon brainpower on executing your C setup() and loop() instructions, reading sensors, and switching electrical pins."
     },
     "quizGate": [
       {
         "id": "q0-1",
         "question": "Which microcontroller board is sitting in your kit on the desk right now?",
         "options": [
-          "Arduino Uno (Big blue board with a bulky USB-B cable)",
-          "ESP32 NodeMCU",
-          "Raspberry Pi Pico WH (Green board with pre-soldered header pins and a silver metal Wi-Fi box)"
+          "ESP32 DevKit V1 (Black board with 30 pre-soldered header pins, dual push buttons, and a silver ESP-WROOM-32 Wi-Fi shield)",
+          "Raspberry Pi Pico (Green board with an RP2040 chip)",
+          "Arduino Uno (Big blue board with a bulky USB-B cable)"
         ],
-        "correctIndex": 2,
-        "hint": "Look for the green board with the Raspberry Pi logo and the shiny silver Wi-Fi shield.",
-        "explanation": "You are using the Raspberry Pi Pico WH, powered by the RP2040 dual-core processor with built-in Wi-Fi and Bluetooth."
+        "correctIndex": 0,
+        "hint": "Look for the black board with the ESP-WROOM-32 metal shield and the onboard EN and BOOT buttons.",
+        "explanation": "You are using the ESP32 DevKit V1, powered by the dual-core 32-bit Xtensa LX6 processor at 240 MHz with built-in Wi-Fi and Bluetooth."
       },
       {
         "id": "q0-2",
-        "question": "Why do engineers use microcontrollers instead of just plugging sensors into a normal laptop?",
+        "question": "Why do engineers program microcontrollers in C instead of running scripts through a laptop operating system?",
         "options": [
           "Laptops are not powerful enough to read temperature",
-          "Microcontrollers can directly read electrical voltages and switch physical pins with microsecond accuracy",
+          "Microcontrollers execute compiled C instructions directly on silicon with zero operating system lag, switching voltages in nanoseconds",
           "Microcontrollers are only used for playing music"
         ],
         "correctIndex": 1,
-        "hint": "Laptops have complex operating systems that add lag; microcontrollers connect directly to electrical circuits.",
-        "explanation": "Microcontrollers bridge pure software logic to real electrical voltages (0V and 3.3V) with zero operating system delay."
+        "hint": "Laptops have complex operating systems that add unpredictable lag; compiled C connects directly to electrical hardware.",
+        "explanation": "Microcontrollers execute compiled C code directly on bare metal, bridging software logic to real electrical voltages (0V and 3.3V) with deterministic microsecond precision."
       }
     ],
     "circuitSteps": [
       {
         "stepNumber": 1,
-        "title": "Inspect Your Pico WH",
-        "instruction": "Gently remove the Raspberry Pi Pico WH from its protective foam. Notice the silver micro-USB port at the top, the silver Wi-Fi shield box in the upper half, and the 40 pre-soldered gold-plated pins.",
-        "component": "Raspberry Pi Pico WH",
+        "title": "Inspect Your ESP32 DevKit V1",
+        "instruction": "Gently remove the ESP32 DevKit V1 from its anti-static foam. Notice the micro-USB port at the top, the silver ESP-WROOM-32 metal RF shield, the EN and BOOT tactile buttons, the red power LED, and the 30 pre-soldered header pins.",
+        "component": "ESP32 DevKit V1",
         "fromPin": "Board",
         "toBreadboardHole": "Desk",
         "color": "#10B981"
@@ -59,69 +59,69 @@
       {
         "blockId": "c0-1",
         "title": "Hardware Inspection Check",
-        "language": "python",
-        "code": "# Hardware Profile:\n# Board: Raspberry Pi Pico WH\n# Silicon: Dual-Core ARM Cortex-M0+ (RP2040)\n# Memory: 264KB SRAM + 2MB Flash\n# Wireless: CYW43439 (2.4GHz 802.11n Wi-Fi)",
-        "explanation": "No code needed for this level. Once you verify your hardware, click next to start programming."
+        "language": "c",
+        "code": "// ESP32 DevKit V1 Hardware Profile\n// Silicon: Dual-Core 32-bit Xtensa LX6 @ 240 MHz\n// Memory: 520 KB SRAM + 4 MB Flash\n// Wireless: 2.4 GHz 802.11 b/g/n Wi-Fi + BLE 4.2\n// Logic Level: 3.3V (Pins tolerate up to 3.3V)\n\nvoid setup() {\n  Serial.begin(115200);\n  Serial.println(\"ESP32 DevKit V1 Initialized!\");\n}\n\nvoid loop() {\n  // Idle heartbeat\n}",
+        "explanation": "In C, every Arduino/ESP32 program requires two fundamental functions: setup() runs once on boot, and loop() runs repeatedly forever."
       }
     ],
-    "fullScript": "# Hardware check complete!\nprint('Raspberry Pi Pico WH verified and ready for MicroPython!')",
+    "fullScript": "// ESP32 DevKit V1 - Hardware Verification\nvoid setup() {\n  Serial.begin(115200);\n  Serial.println(\"ESP32 DevKit V1 verified and ready for C programming!\");\n}\n\nvoid loop() {\n  // Heartbeat loop\n}",
     "verificationChallenge": {
-      "instruction": "Inspect your board and verify that the 40 pre-soldered pins are straight and the micro-USB port is clean.",
-      "expectedObservableResult": "Your team is ready to connect the USB cable and launch MicroPython in Level 1."
+      "instruction": "Inspect your ESP32 DevKit V1 board. Verify that the 30 pins are straight and the micro-USB port is clean.",
+      "expectedObservableResult": "Your team is ready to connect the USB cable and upload your first C program in Level 1."
     }
   },
   {
     "levelNumber": 1,
     "id": "level-1",
-    "title": "Level 1: The First Spark",
-    "subtitle": "Blinking the On-Board Wireless LED",
+    "title": "Level 1: The First Spark in C",
+    "subtitle": "Blinking the ESP32 Onboard LED (GPIO 2)",
     "estimatedMinutes": 15,
     "conceptByte": {
       "id": "byte-2",
-      "title": "Digital Output & The Speed of Code",
-      "metaphor": "The Flashlight Switch & The Clock",
+      "title": "Digital Output & The Speed of C",
+      "metaphor": "The Light Switch & The Stopwatch",
       "readTimeSeconds": 75,
       "svgType": "digital_switch",
       "keyTakeaways": [
-        "A Digital Output pin has only two states: 1 (HIGH, supplying 3.3 volts of electricity) or 0 (LOW, cutting voltage to 0 volts).",
-        "MicroPython executes line by line. Writing led.value(1) turns on the pin. Writing led.value(0) shuts off the pin.",
-        "The RP2040 chip executes over 100,000 commands every millisecond! If you don't pause with time.sleep(0.5), the LED blinks millions of times a second and looks permanently frozen on."
+        "A Digital Output pin has only two electrical states: HIGH (supplying 3.3 volts of electrical pressure) or LOW (cutting voltage to 0 volts / Ground).",
+        "In C, you configure pin directions in setup() using pinMode(2, OUTPUT). Then in loop(), you use digitalWrite(2, HIGH) to turn it ON and digitalWrite(2, LOW) to turn it OFF.",
+        "The ESP32 executes over 240 million clock cycles every second! If you don't pause with delay(500), the LED toggles millions of times a second and looks permanently frozen on. We pause with delay(500) so human eyes can see the blink!"
       ],
-      "analogyStory": "Imagine holding a flashlight switch. Flicking it up turns the bulb on; flicking it down turns it off. The Pico can flick that switch millions of times every single second. Without time.sleep(0.5) to pause execution, human eyes only see a continuous blur. We pause so our human eyes can keep up with the computer!"
+      "analogyStory": "Imagine holding a flashlight switch. Flicking it up turns the bulb on; flicking it down turns it off. The ESP32 processor can flick that switch millions of times every single second. Without delay(500) to pause execution, human eyes only perceive a continuous blur. We pause so our human visual system can keep up with the speed of silicon!"
     },
     "quizGate": [
       {
         "id": "q1-1",
-        "question": "What does a Digital Output pin do when you set its value to 1 in MicroPython?",
+        "question": "What does a Digital Output pin do when you call digitalWrite(2, HIGH) in C?",
         "options": [
-          "It plays a loud sound",
-          "It pushes 3.3 volts of electrical power out through the pin",
-          "It shuts down the Pico to save battery"
+          "It plays a loud sound through the computer speaker",
+          "It connects the pin to 3.3 volts of electrical potential",
+          "It shuts down the ESP32 to save battery"
         ],
         "correctIndex": 1,
-        "hint": "1 means HIGH, which supplies the operating voltage of 3.3V.",
-        "explanation": "Setting a pin to 1 (HIGH) supplies 3.3 volts. Setting it to 0 (LOW) connects it to 0 volts (Ground)."
+        "hint": "HIGH means electrical 1, which supplies the operating voltage of 3.3V.",
+        "explanation": "Calling digitalWrite(pin, HIGH) connects the internal transistor to 3.3 volts. Calling digitalWrite(pin, LOW) connects it to 0 volts (Ground)."
       },
       {
         "id": "q1-2",
-        "question": "Why is time.sleep(0.5) necessary inside a blink loop?",
+        "question": "Why is delay(500) necessary inside the C loop() function?",
         "options": [
-          "Without a pause, the chip runs so fast that the LED blinks millions of times a second and looks solid",
-          "The Pico runs out of memory if it does not rest",
-          "MicroPython requires sleep commands to save code to the hard drive"
+          "Without delay, the ESP32 toggles the pin millions of times a second, making the LED appear solid to human eyes",
+          "The ESP32 runs out of memory if it does not rest",
+          "C requires delay commands to compile the binary"
         ],
         "correctIndex": 0,
-        "hint": "Microcontrollers think in nanoseconds; human vision needs half a second to register changes.",
-        "explanation": "Without time.sleep(), the LED toggles at megahertz speeds, appearing solid to human eyes."
+        "hint": "Microcontrollers think in nanoseconds; human persistence of vision needs half a second to register changes.",
+        "explanation": "Without delay(), the LED toggles at megahertz frequencies. Human eyes see an average glow rather than distinct pulses."
       }
     ],
     "circuitSteps": [
       {
         "stepNumber": 1,
         "title": "Connect the Micro-USB Cable",
-        "instruction": "Plug the micro-USB cable into the Pico WH. Plug the other end into your laptop. If your laptop only has USB-C ports, use the USB-C adapter from your kit.",
+        "instruction": "Plug the micro-USB cable into the ESP32 DevKit V1. Plug the other end into your laptop. If your laptop only has USB-C ports, use the USB-C adapter from your kit.",
         "component": "Micro-USB Data Cable",
-        "fromPin": "Pico Micro-USB",
+        "fromPin": "ESP32 Micro-USB",
         "toBreadboardHole": "Laptop USB Port",
         "color": "#3B82F6"
       }
@@ -129,37 +129,37 @@
     "codeChunks": [
       {
         "blockId": "c1-1",
-        "title": "Step 1: Import Hardware Tools",
-        "language": "python",
-        "code": "from machine import Pin\nimport time",
-        "explanation": "Imports the Pin class to control electrical voltages, and the time module to pause."
+        "title": "Step 1: Declare Constant Pin Variable",
+        "language": "c",
+        "code": "const int ONBOARD_LED = 2; // Built-in blue LED on ESP32 GPIO 2",
+        "explanation": "On the ESP32 DevKit V1, the built-in blue surface-mount LED is hardwired to GPIO 2."
       },
       {
         "blockId": "c1-2",
-        "title": "Step 2: Configure the Onboard LED",
-        "language": "python",
-        "code": "led = Pin('LED', Pin.OUT)",
-        "explanation": "On the Pico WH, the wireless chip controls the onboard LED using the special name 'LED'."
+        "title": "Step 2: Configure Pin in setup()",
+        "language": "c",
+        "code": "void setup() {\n  // Configure GPIO 2 as an electrical output\n  pinMode(ONBOARD_LED, OUTPUT);\n  Serial.begin(115200);\n  Serial.println(\"Level 1: ESP32 Blinking LED active!\");\n}",
+        "explanation": "setup() runs once when the board powers on. pinMode(2, OUTPUT) enables the pin's output driver."
       },
       {
         "blockId": "c1-3",
-        "title": "Step 3: The Infinite Blink Loop",
-        "language": "python",
-        "code": "while True:\n    led.value(1)       # Supply 3.3V (Turn ON)\n    time.sleep(0.5)    # Wait 0.5 seconds\n    led.value(0)       # Cut voltage to 0V (Turn OFF)\n    time.sleep(0.5)    # Wait 0.5 seconds",
-        "explanation": "Repeats forever: turns the LED ON, pauses half a second, turns it OFF, pauses, and repeats."
+        "title": "Step 3: The Infinite Blink loop()",
+        "language": "c",
+        "code": "void loop() {\n  digitalWrite(ONBOARD_LED, HIGH); // Supply 3.3V (Turn ON)\n  delay(500);                      // Wait 500 milliseconds\n  digitalWrite(ONBOARD_LED, LOW);  // Cut voltage to 0V (Turn OFF)\n  delay(500);                      // Wait 500 milliseconds\n}",
+        "explanation": "loop() executes continuously forever, cycling the LED ON and OFF every half second."
       }
     ],
-    "fullScript": "from machine import Pin\nimport time\n\n# Configure onboard LED on Pico WH\nled = Pin('LED', Pin.OUT)\n\nprint('Level 1: Blinking onboard LED! Press Stop in Thonny to pause.')\n\nwhile True:\n    led.value(1)\n    time.sleep(0.5)\n    led.value(0)\n    time.sleep(0.5)",
+    "fullScript": "const int ONBOARD_LED = 2; // Built-in blue LED on ESP32 GPIO 2\n\nvoid setup() {\n  pinMode(ONBOARD_LED, OUTPUT);\n  Serial.begin(115200);\n  Serial.println(\"Level 1: ESP32 Blinker Started!\");\n}\n\nvoid loop() {\n  digitalWrite(ONBOARD_LED, HIGH);\n  delay(500);\n  digitalWrite(ONBOARD_LED, LOW);\n  delay(500);\n}",
     "verificationChallenge": {
-      "instruction": "Paste the code into Thonny and click the Green Play button. Look directly at the tiny green LED near the USB port.",
-      "expectedObservableResult": "A crisp, bright green LED on the Pico PCB pulsing steadily on and off once every second."
+      "instruction": "Upload the code to your ESP32. Look directly at the board next to the silver shield: the built-in blue LED should pulse steadily once every second.",
+      "expectedObservableResult": "A crisp, bright blue surface-mount LED on the ESP32 PCB flashing on and off steadily once per second."
     }
   },
   {
     "levelNumber": 2,
     "id": "level-2",
     "title": "Level 2: Building on the Breadboard",
-    "subtitle": "LED Anatomy, Current-Limiting Resistors & Hidden Rails",
+    "subtitle": "LED Anatomy, Current-Limiting Resistors & ESP32 GPIO in C",
     "estimatedMinutes": 20,
     "conceptByte": {
       "id": "byte-3",
@@ -168,8 +168,8 @@
       "readTimeSeconds": 90,
       "svgType": "breadboard_cutaway",
       "keyTakeaways": [
-        "Inside an LED: LED stands for Light Emitting Diode. It is a one-way street for electricity! The longer leg is the Anode (+). The shorter leg with the flat notch on the plastic rim is the Cathode (-). If you wire it backwards, zero current flows and it stays dark.",
-        "The Resistor (Current Limiter): An LED has virtually no internal resistance once lit. If you connect it directly across 3.3V, a massive flood of current rushes through the tiny crystal and burns it out in a fraction of a second! The 220 ohm resistor acts like a water valve, choking the current to a safe 15 milliamps.",
+        "Inside an LED: LED stands for Light Emitting Diode. It is a one-way street for electricity! The longer metal lead is the Anode (+). The shorter lead and the flat edge on the plastic casing rim mark the Cathode (-). If you wire it backwards, zero current flows and it stays dark.",
+        "The Resistor (Current Limiter): An LED has almost zero resistance once lit. If you connect it directly across 3.3V, a massive rush of current will burn out the tiny semiconductor die and damage the ESP32 pin! A 220 ohm resistor acts like a water valve, restricting current to a safe 15 milliamps.",
         "Under the Breadboard: The white plastic breadboard is full of springy metal clips underneath. Groups of 5 holes (A-B-C-D-E) are joined together sideways. The outer blue (-) and red (+) strips run continuously all the way down the board to distribute power and Ground."
       ],
       "analogyStory": "Think of electrical current like high-pressure water rushing through a pipe. An LED is a fragile decorative water wheel that only spins in one direction. The 220 ohm resistor is a safety nozzle that restricts the rushing water to a gentle stream. Without the resistor nozzle, the water pressure blows the wheel right off its hinges!"
@@ -177,7 +177,7 @@
     "quizGate": [
       {
         "id": "q2-1",
-        "question": "How can you instantly identify the positive leg (Anode) of an LED with your eyes?",
+        "question": "How can you reliably identify the positive leg (Anode) of an LED with your eyes?",
         "options": [
           "It is the longer metal lead (while the shorter lead and flat edge on the casing rim mark the Cathode)",
           "It is the shorter metal lead near the flat edge of the casing",
@@ -189,28 +189,26 @@
       },
       {
         "id": "q2-2",
-        "question": "What happens if you connect an LED directly to 3.3V without a 220 ohm resistor?",
+        "question": "What happens if you connect an LED directly to an ESP32 GPIO pin without a 220 ohm resistor?",
         "options": [
           "The light turns blue",
-          "Too much current rushes through the semiconductor, overheating and permanently destroying the LED",
-          "The Pico WH increases its Wi-Fi speed"
+          "Too much current rushes through the semiconductor, overheating and permanently destroying the LED and risking the ESP32 GPIO pin",
+          "The ESP32 increases its Wi-Fi speed"
         ],
         "correctIndex": 1,
         "hint": "The resistor limits the flow of electric current.",
-        "explanation": "Without a current-limiting resistor, excessive current flows, burning out the LED diode and risking damage to the Pico GPIO pin."
+        "explanation": "Without a current-limiting resistor, excessive current flows, burning out the LED diode and risking damage to the ESP32 GPIO driver."
       }
     ],
     "circuitSteps": [
       {
         "stepNumber": 1,
-        "title": "Connect Main Ground to Blue Rail (-)",
-        "instruction": "Plug a black jumper wire from Pico Pin 38 (GND) into the long Blue Ground Rail (-) on the breadboard. This establishes your 0V reference line.",
+        "title": "Connect ESP32 Ground to Blue Rail (-)",
+        "instruction": "Plug a black jumper wire from ESP32 GND (Pin 14 or Pin 17) into the long Blue Ground Rail (-) on the breadboard. This establishes your 0V reference line.",
         "component": "Black Jumper Wire",
-        "fromPin": "Pico Pin 38 (GND)",
+        "fromPin": "ESP32 GND",
         "toBreadboardHole": "Blue Rail (-)",
-        "color": "#1E293B",
-        "fromCoords": { "x": 145, "y": 321, "label": "Pico Pin 38 (GND)" },
-        "toCoords": { "x": 190, "y": 320, "label": "Blue Rail (-)" }
+        "color": "#1E293B"
       },
       {
         "stepNumber": 2,
@@ -219,111 +217,103 @@
         "component": "Ground Extension Wire",
         "fromPin": "Blue Rail (-)",
         "toBreadboardHole": "Row 18, Col F",
-        "color": "#0F172A",
-        "fromCoords": { "x": 190, "y": 352, "label": "Blue Rail (-)" },
-        "toCoords": { "x": 324, "y": 352, "label": "Row 18, Col F" }
+        "color": "#0F172A"
       },
       {
         "stepNumber": 3,
-        "title": "Connect GP15 to Circuit Area (Row 15)",
-        "instruction": "Plug a green jumper wire from Pico GP15 (Pin 20) into Breadboard Row 15, Column B on the left side of the board. This brings the 3.3V control signal to this row.",
+        "title": "Connect ESP32 GPIO 15 (D15) to Row 15",
+        "instruction": "Plug a green jumper wire from ESP32 D15 (GPIO 15) into Breadboard Row 15, Column B on the left side of the board. This brings the 3.3V control signal to this row.",
         "component": "Green Jumper Wire",
-        "fromPin": "Pico GP15 (Pin 20)",
+        "fromPin": "ESP32 D15 (GPIO 15)",
         "toBreadboardHole": "Row 15, Col B",
-        "color": "#10B981",
-        "fromCoords": { "x": 30, "y": 347, "label": "GP15 (Pin 20)" },
-        "toCoords": { "x": 236, "y": 304, "label": "Row 15, Col B" }
+        "color": "#10B981"
       },
       {
         "stepNumber": 4,
-        "title": "Bridge 220Ω Resistor Across the Trench",
-        "instruction": "Insert one leg of the 220 ohm resistor (Red-Red-Brown-Gold) into Row 15, Column E (left side), and bridge it across the central trough into Row 15, Column F on the other side of the board.",
+        "title": "Bridge 220\u03a9 Resistor Across the Trench",
+        "instruction": "Insert one leg of the 220 ohm resistor (Red-Red-Brown-Gold) into Row 15, Column E, and bridge it across the central trough into Row 15, Column F on the other side of the board.",
         "component": "220 Ohm Resistor",
         "fromPin": "Row 15, Col E",
         "toBreadboardHole": "Row 15, Col F",
-        "color": "#D97706",
-        "fromCoords": { "x": 284, "y": 304, "label": "Row 15, Col E" },
-        "toCoords": { "x": 324, "y": 304, "label": "Row 15, Col F" }
+        "color": "#D97706"
       },
       {
         "stepNumber": 5,
         "title": "Insert 5mm Green LED (Anode & Cathode)",
-        "instruction": "Insert the longer leg (Anode +) into Row 15, Column H (connected to the resistor through Row 15's internal metal clip). Insert the shorter leg with the flat rim notch (Cathode -) into Row 18, Column H (connected to Ground through Row 18's internal metal clip).",
+        "instruction": "Insert the longer leg (Anode +) into Row 15, Column H (connected to the resistor). Insert the shorter leg with the flat rim notch (Cathode -) into Row 18, Column H (connected to Ground).",
         "component": "5mm Green LED",
         "fromPin": "Row 15, Col H (+)",
         "toBreadboardHole": "Row 18, Col H (-)",
         "color": "#10B981",
-        "polarityNote": "Anode (+) in Row 15 Col H (from Resistor); Cathode (-) with flat rim in Row 18 Col H (to Ground)",
-        "fromCoords": { "x": 356, "y": 304, "label": "Row 15, Col H (Anode +)" },
-        "toCoords": { "x": 356, "y": 352, "label": "Row 18, Col H (Cathode -)" }
+        "polarityNote": "Anode (+) in Row 15 Col H (from Resistor); Cathode (-) with flat rim in Row 18 Col H (to Ground)"
       }
     ],
     "codeChunks": [
       {
         "blockId": "c2-1",
-        "title": "Step 1: Declare External Pin GP15",
-        "language": "python",
-        "code": "from machine import Pin\nimport time\n\n# Configure GP15 (Pin 20) as an Output\nexternal_led = Pin(15, Pin.OUT)",
-        "explanation": "Configures physical pin GP15 to supply 3.3V when toggled."
+        "title": "Step 1: Declare External Pin GPIO 15",
+        "language": "c",
+        "code": "const int EXTERNAL_LED = 15; // ESP32 GPIO 15 (D15)\n\nvoid setup() {\n  pinMode(EXTERNAL_LED, OUTPUT);\n  Serial.begin(115200);\n  Serial.println(\"Level 2: External LED Output Ready!\");\n}",
+        "explanation": "Configures physical pin GPIO 15 (labeled D15 on the board) as an electrical output."
       },
       {
         "blockId": "c2-2",
-        "title": "Step 2: Toggle Method in While Loop",
-        "language": "python",
-        "code": "while True:\n    external_led.toggle()  # Flips state (0 -> 1 or 1 -> 0)\n    time.sleep(0.5)",
-        "explanation": "The .toggle() function automatically flips the voltage state every half second."
+        "title": "Step 2: Toggle LED in loop()",
+        "language": "c",
+        "code": "void loop() {\n  digitalWrite(EXTERNAL_LED, HIGH); // 3.3V ON\n  delay(500);\n  digitalWrite(EXTERNAL_LED, LOW);  // 0V OFF\n  delay(500);\n}",
+        "explanation": "Cycles the external green LED on and off every 500 milliseconds."
       }
     ],
-    "fullScript": "from machine import Pin\nimport time\n\n# External LED on GP15\nled = Pin(15, Pin.OUT)\n\nprint('Level 2: External breadboard LED blinking!')\n\nwhile True:\n    led.toggle()\n    time.sleep(0.5)",
+    "fullScript": "const int EXTERNAL_LED = 15; // ESP32 GPIO 15 (D15)\n\nvoid setup() {\n  pinMode(EXTERNAL_LED, OUTPUT);\n  Serial.begin(115200);\n  Serial.println(\"Level 2: External breadboard LED blinking!\");\n}\n\nvoid loop() {\n  digitalWrite(EXTERNAL_LED, HIGH);\n  delay(500);\n  digitalWrite(EXTERNAL_LED, LOW);\n  delay(500);\n}",
     "verificationChallenge": {
-      "instruction": "Run the script. The physical green LED standing in your breadboard should blink bright green.",
+      "instruction": "Upload the script. The physical green LED standing in your breadboard should blink bright green.",
       "expectedObservableResult": "A bright green 5mm LED blinking steadily on your breadboard. If it does not light, check whether the long and short legs are reversed."
     }
   },
   {
     "levelNumber": 3,
     "id": "level-3",
-    "title": "Level 3: Button & Digital Input",
-    "subtitle": "Floating Pins, Internal Pull-Up Resistors & Decision Trees",
+    "title": "Level 3: Button & Digital Input in C",
+    "subtitle": "Floating Pins, INPUT_PULLUP Resistors & Decision Trees",
     "estimatedMinutes": 20,
     "conceptByte": {
       "id": "byte-5",
       "title": "The 4-Pin Tactile Button & Floating Pins",
-      "metaphor": "The Helium Balloon & The Anchor",
+      "metaphor": "The Helium Balloon & The Floor Anchor",
       "readTimeSeconds": 85,
       "svgType": "pullup_tugofwar",
       "keyTakeaways": [
         "Inside a 4-Pin Tactile Button: The button has a square body and 4 metal legs. The legs on the top are permanently connected in pairs, and the legs on the bottom are connected in pairs. Pressing the button connects the top and bottom pairs together!",
-        "The Floating Pin Mystery: When a wire is left unconnected, it acts like a radio antenna. It picks up stray electrical noise from fluorescent lights, Wi-Fi, and your fingers, bouncing wildly between 0 and 1! That is a floating pin.",
-        "Internal Pull-Up Resistor (Pin.PULL_UP): The RP2040 chip has a built-in resistor that gently pulls the pin UP to 3.3V (value 1) when nobody is touching it. When you press the button, it bridges the pin straight to Ground (0V), pulling the reading down to 0.",
-        "Active-Low Rule: Released = 1 (HIGH), Pressed = 0 (LOW)."
+        "The Floating Pin Mystery: When an input wire is left unconnected, it acts like an antenna. It picks up stray electrical noise from Wi-Fi, lights, and static, fluctuating wildly between 0 and 1! That is a floating pin.",
+        "Internal Pull-Up Resistor (INPUT_PULLUP): The ESP32 chip has internal pull-up resistors on its GPIO pins. Calling pinMode(14, INPUT_PULLUP) gently holds the pin UP to 3.3V (reads HIGH / 1) when released. When you press the button, it connects the pin directly to Ground (0V / LOW).",
+        "Active-Low Rule in C: Released = 1 (HIGH), Pressed = 0 (LOW)."
       ],
-      "analogyStory": "An unconnected input pin is like a helium balloon floating in the wind: it blows around randomly. Setting Pin.PULL_UP is like tying that balloon to the ceiling at 3.3V. It stays firmly at 1. When you press the push button, you pull the balloon down to the floor (Ground = 0V). That is why a pressed button reads as 0!"
+      "analogyStory": "An unconnected input pin is like a helium balloon floating in the wind: it blows around randomly. Setting INPUT_PULLUP is like tying that balloon to the ceiling at 3.3V. It stays firmly at 1. When you press the push button, you pull the balloon down to the floor (Ground = 0V). That is why a pressed button reads as 0!"
     },
     "quizGate": [
       {
         "id": "q3-1",
-        "question": "When a push button is configured with Pin.PULL_UP in MicroPython, what does it read when RELEASED?",
+        "question": "When a push button is configured with pinMode(14, INPUT_PULLUP) in C, what does digitalRead(14) return when RELEASED?",
         "options": [
-          "0 (Ground / LOW)",
-          "1 (3.3V / HIGH)",
-          "Random static noise"
+          "LOW (0 / Ground)",
+          "HIGH (1 / 3.3V)",
+          "Random fluctuating noise"
         ],
         "correctIndex": 1,
-        "hint": "The pull-up resistor holds the pin UP to 3.3V until pressed.",
-        "explanation": "When released, the internal pull-up resistor holds the pin steady at 1 (HIGH). Pressing the button connects it to ground, pulling it down to 0."
+        "hint": "The internal pull-up resistor holds the pin UP to 3.3V until pressed.",
+        "explanation": "When released, the internal pull-up resistor holds the pin steady at 1 (HIGH / 3.3V). Pressing the button connects it to Ground, pulling it down to 0 (LOW)."
       },
       {
         "id": "q3-2",
         "question": "Why do engineers use internal pull-up resistors instead of leaving the input pin bare?",
         "options": [
-          "To prevent the pin from floating and generating false button presses from electrical static",
+          "To prevent the pin from floating and generating false button presses from ambient electromagnetic noise",
           "To make the button louder when clicked",
           "To turn on the Wi-Fi chip"
         ],
         "correctIndex": 0,
         "hint": "A bare wire acts like an antenna and picks up ambient static noise.",
-        "explanation": "A floating pin acts like an antenna, picking up static. An internal pull-up resistor holds it steady at 3.3V until pressed."
+        "explanation": "A floating pin acts like an antenna. An internal pull-up resistor holds it steady at 3.3V until physically grounded."
       }
     ],
     "circuitSteps": [
@@ -338,10 +328,10 @@
       },
       {
         "stepNumber": 2,
-        "title": "Wire GP14 Signal to Button",
-        "instruction": "Plug a yellow jumper wire from Pico GP14 (Pin 19) into Breadboard Row 10, Column D (same row as the left leg of the button).",
+        "title": "Wire ESP32 GPIO 14 (D14) to Button",
+        "instruction": "Plug a yellow jumper wire from ESP32 D14 (GPIO 14) into Breadboard Row 10, Column D (same row as the left leg of the button).",
         "component": "Yellow Jumper Wire",
-        "fromPin": "Pico GP14",
+        "fromPin": "ESP32 D14",
         "toBreadboardHole": "Row 10, Col D",
         "color": "#EAB308"
       },
@@ -356,10 +346,10 @@
       },
       {
         "stepNumber": 4,
-        "title": "Add Orange Alert LED on GP16",
-        "instruction": "Insert an Orange LED in Row 20 (long leg in Col C, short leg in GND rail through a 220 ohm resistor). Connect Pico GP16 to Row 20, Col E.",
+        "title": "Add Orange Alert LED on GPIO 4 (D4)",
+        "instruction": "Insert an Orange LED in Row 20 (long leg in Col C, short leg in GND rail through a 220 ohm resistor). Connect ESP32 D4 (GPIO 4) to Row 20, Col E.",
         "component": "Orange LED & Resistor",
-        "fromPin": "Pico GP16",
+        "fromPin": "ESP32 D4",
         "toBreadboardHole": "Row 20, Col E",
         "color": "#F97316"
       }
@@ -367,29 +357,29 @@
     "codeChunks": [
       {
         "blockId": "c3-1",
-        "title": "Step 1: Setup Button and Dual LEDs",
-        "language": "python",
-        "code": "from machine import Pin\nimport time\n\n# Configure Button with internal pull-up\nbutton = Pin(14, Pin.IN, Pin.PULL_UP)\ngreen_led = Pin(15, Pin.OUT)\norange_led = Pin(16, Pin.OUT)",
-        "explanation": "Configures GP14 as an input holding 3.3V, and GP15/GP16 as outputs for Normal and Alert states."
+        "title": "Step 1: Declare Button & Dual LEDs in C",
+        "language": "c",
+        "code": "const int BUTTON_PIN = 14; // ESP32 GPIO 14 (D14)\nconst int GREEN_LED = 15;  // ESP32 GPIO 15 (D15) - Normal\nconst int ORANGE_LED = 4;  // ESP32 GPIO 4 (D4)   - Alert\n\nvoid setup() {\n  pinMode(BUTTON_PIN, INPUT_PULLUP); // Internal pull-up to 3.3V\n  pinMode(GREEN_LED, OUTPUT);\n  pinMode(ORANGE_LED, OUTPUT);\n  Serial.begin(115200);\n}",
+        "explanation": "INPUT_PULLUP enables the internal pull-up resistor on GPIO 14, holding it at 3.3V until pressed."
       },
       {
         "blockId": "c3-2",
-        "title": "Step 2: Active-Low If/Else Decision",
-        "language": "python",
-        "code": "while True:\n    if button.value() == 0:  # Pressed down to Ground!\n        green_led.value(0)   # Normal OFF\n        orange_led.value(1)  # Alert ON\n    else:                    # Released (Pull-Up active)\n        green_led.value(1)   # Normal ON\n        orange_led.value(0)  # Alert OFF\n    time.sleep(0.05)         # 50ms button debounce delay",
-        "explanation": "If button is pressed (0), switch to Orange alert. If released, stay on Green normal."
+        "title": "Step 2: Active-Low If/Else Decision in loop()",
+        "language": "c",
+        "code": "void loop() {\n  int state = digitalRead(BUTTON_PIN);\n  if (state == LOW) { // Pressed down to Ground (0V)!\n    digitalWrite(GREEN_LED, LOW);   // Normal OFF\n    digitalWrite(ORANGE_LED, HIGH); // Alert ON\n  } else {            // Released (3.3V pull-up active)\n    digitalWrite(GREEN_LED, HIGH);  // Normal ON\n    digitalWrite(ORANGE_LED, LOW);  // Alert OFF\n  }\n  delay(50); // 50ms contact debounce delay\n}",
+        "explanation": "Reads the pin state with digitalRead(). If LOW (pressed), switches to the Orange alert LED."
       }
     ],
-    "fullScript": "from machine import Pin\nimport time\n\nbutton = Pin(14, Pin.IN, Pin.PULL_UP)\ngreen_led = Pin(15, Pin.OUT)\norange_led = Pin(16, Pin.OUT)\n\nprint('Level 3: Button controller active! Press button to trigger alert.')\n\nwhile True:\n    if button.value() == 0:\n        green_led.value(0)\n        orange_led.value(1)\n    else:\n        green_led.value(1)\n        orange_led.value(0)\n    time.sleep(0.05)",
+    "fullScript": "const int BUTTON_PIN = 14;\nconst int GREEN_LED = 15;\nconst int ORANGE_LED = 4;\n\nvoid setup() {\n  pinMode(BUTTON_PIN, INPUT_PULLUP);\n  pinMode(GREEN_LED, OUTPUT);\n  pinMode(ORANGE_LED, OUTPUT);\n  Serial.begin(115200);\n  Serial.println(\"Level 3: Button controller active! Press button to trigger alert.\");\n}\n\nvoid loop() {\n  if (digitalRead(BUTTON_PIN) == LOW) {\n    digitalWrite(GREEN_LED, LOW);\n    digitalWrite(ORANGE_LED, HIGH);\n  } else {\n    digitalWrite(GREEN_LED, HIGH);\n    digitalWrite(ORANGE_LED, LOW);\n  }\n  delay(50);\n}",
     "verificationChallenge": {
-      "instruction": "Run code. The green LED should glow. Press and hold the push button; the green LED should turn off and the orange LED should light up instantly.",
+      "instruction": "Upload code. The green LED should glow. Press and hold the push button; the green LED should turn off and the orange LED should light up instantly.",
       "expectedObservableResult": "Immediate visual state change between green and orange whenever the push button is held down."
     }
   },
   {
     "levelNumber": 4,
     "id": "level-4",
-    "title": "Level 4: Drawing on Glass",
+    "title": "Level 4: Drawing on Glass in C",
     "subtitle": "Pixels, The I2C Two-Wire Highway & The Framebuffer",
     "estimatedMinutes": 25,
     "conceptByte": {
@@ -401,10 +391,10 @@
       "keyTakeaways": [
         "What is an OLED? OLED stands for Organic Light Emitting Diode. Unlike LCDs that have a big white backlight glowing behind liquid crystal blinds, an OLED display has 8,192 microscopic organic dots that each create their own light! When a pixel is OFF, it emits zero light, giving true pitch black.",
         "What is a Pixel? Pixel = Picture Element. Our 0.96 inch screen has 128 pixels across (X axis: 0 to 127) and 64 pixels down (Y axis: 0 to 63). That is 128 x 64 = 8,192 individual light dots.",
-        "The I2C Two-Wire Highway: Controlling 8,192 pixels individually would need thousands of wires. Instead, the I2C protocol uses just 2 wires: SDA (Serial Data: carries the pixel bits) and SCL (Serial Clock: provides the beat, ticking 400,000 times a second).",
-        "The Framebuffer Rule: The Pico has a secret sketchpad in its RAM called the Framebuffer. Calling oled.text() draws words on the sketchpad in memory, but nothing appears on screen yet! You MUST call oled.show() to blast that memory map down the I2C wires and light up the glass."
+        "The I2C Two-Wire Highway: Controlling 8,192 pixels individually would need thousands of wires. Instead, the I2C protocol uses just 2 wires on ESP32: SDA on GPIO 21 (Serial Data) and SCL on GPIO 22 (Serial Clock, ticking 400,000 times a second).",
+        "The Framebuffer Rule in C: The ESP32 prepares the graphic in a 1,024-byte RAM sketchpad called the Framebuffer. Calling display.println() writes text to memory, but nothing appears on screen yet! You MUST call display.display() to blast that memory map down the I2C wires and light up the glass."
       ],
-      "analogyStory": "Imagine an artist painting behind a thick velvet curtain. Every time you call oled.text(), the artist paints words on the canvas in the dark. If you forget to call oled.show(), the curtain stays shut and the glass stays black! Calling oled.show() pulls open the curtain in one millisecond, revealing your name in bright glowing white pixels."
+      "analogyStory": "Imagine an artist painting behind a thick velvet curtain. Every time you call display.print(), the artist paints words on the canvas in the dark. If you forget to call display.display(), the curtain stays shut and the glass stays black! Calling display.display() pulls open the curtain in one millisecond, revealing your team name in bright glowing pixels."
     },
     "quizGate": [
       {
@@ -421,15 +411,15 @@
       },
       {
         "id": "q4-2",
-        "question": "Why does nothing appear on the OLED screen until you call oled.show()?",
+        "question": "Why does nothing appear on the OLED screen until you call display.display() in C?",
         "options": [
-          "MicroPython draws into an off-screen RAM buffer first; oled.show() transmits that image over I2C to the glass",
-          "oled.show() connects the board to Wi-Fi",
-          "The Pico needs permission from the operating system"
+          "Adafruit GFX draws into an off-screen RAM buffer first; display.display() transmits that image over I2C to the glass",
+          "display.display() connects the board to Wi-Fi",
+          "The ESP32 needs permission from an operating system"
         ],
         "correctIndex": 0,
         "hint": "Remember the artist painting on the sketchpad behind the closed curtain.",
-        "explanation": "All drawing functions update an off-screen memory buffer (Framebuffer). Calling oled.show() pushes the buffer data across the I2C bus to the physical pixels."
+        "explanation": "All drawing functions update an off-screen memory buffer (Framebuffer). Calling display.display() pushes the buffer data across the I2C bus to the physical pixels."
       }
     ],
     "circuitSteps": [
@@ -444,19 +434,19 @@
       },
       {
         "stepNumber": 2,
-        "title": "Wire OLED SDA (Data Highway)",
-        "instruction": "Connect a blue jumper wire from Pico GP4 (Pin 6) to the OLED SDA pin.",
+        "title": "Wire OLED SDA to ESP32 D21 (GPIO 21)",
+        "instruction": "Connect a blue jumper wire from ESP32 D21 (GPIO 21) to the OLED SDA pin.",
         "component": "Blue Jumper Wire",
-        "fromPin": "Pico GP4",
+        "fromPin": "ESP32 D21 (SDA)",
         "toBreadboardHole": "OLED SDA",
         "color": "#3B82F6"
       },
       {
         "stepNumber": 3,
-        "title": "Wire OLED SCL (Clock Highway)",
-        "instruction": "Connect a yellow jumper wire from Pico GP5 (Pin 7) to the OLED SCL pin.",
+        "title": "Wire OLED SCL to ESP32 D22 (GPIO 22)",
+        "instruction": "Connect a yellow jumper wire from ESP32 D22 (GPIO 22) to the OLED SCL pin.",
         "component": "Yellow Jumper Wire",
-        "fromPin": "Pico GP5",
+        "fromPin": "ESP32 D22 (SCL)",
         "toBreadboardHole": "OLED SCL",
         "color": "#EAB308"
       }
@@ -464,38 +454,38 @@
     "codeChunks": [
       {
         "blockId": "c4-1",
-        "title": "Step 1: Initialize I2C Bus & OLED Driver",
-        "language": "python",
-        "code": "from machine import Pin, I2C\nimport ssd1306\n\n# Configure I2C on GP4 (SDA) and GP5 (SCL) at 400kHz\ni2c = I2C(0, scl=Pin(5), sda=Pin(4), freq=400000)\noled = ssd1306.SSD1306_I2C(128, 64, i2c)",
-        "explanation": "Initializes the I2C0 communication peripheral and links it to the 128x64 SSD1306 OLED driver."
+        "title": "Step 1: Include Libraries & Create Display Object",
+        "language": "c",
+        "code": "#include <Wire.h>\n#include <Adafruit_GFX.h>\n#include <Adafruit_SSD1306.h>\n\n#define SCREEN_WIDTH 128\n#define SCREEN_HEIGHT 64\n#define OLED_RESET -1\n#define SCREEN_ADDRESS 0x3C\n\nAdafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);",
+        "explanation": "Imports the Wire (I2C) and Adafruit OLED graphics drivers, configuring the 128x64 display at address 0x3C."
       },
       {
         "blockId": "c4-2",
         "title": "Step 2: Personalize Your Team Variables",
-        "language": "python",
-        "code": "# Customize these strings with your team's real info:\nTEAM_NAME = 'CyberKnights'\nSTUDENT_AGE = '13'\nSCHOOL_NAME = 'Subbiah Vidyalayam'",
-        "explanation": "Update these variables so your team name and school appear on the OLED display.",
+        "language": "c",
+        "code": "// Customize these C string literals with your team's real info:\nconst char* TEAM_NAME = \"CyberKnights\";\nconst char* STUDENT_AGE = \"13\";\nconst char* SCHOOL_NAME = \"Subbiah Vidyalayam\";",
+        "explanation": "Update these character arrays so your team name and school appear on the OLED display.",
         "isConfigurable": true
       },
       {
         "blockId": "c4-3",
         "title": "Step 3: Draw on Buffer & Blast to Glass",
-        "language": "python",
-        "code": "oled.fill(0)  # Wipe sketchpad clean\noled.text('NXPLORERS IoT', 10, 0)\noled.text('Team: ' + TEAM_NAME, 0, 20)\noled.text('Age: ' + STUDENT_AGE, 0, 36)\noled.text('Sch: ' + SCHOOL_NAME, 0, 50)\noled.show()   # Blasts the buffer to the physical pixels!",
-        "explanation": "Clears the screen buffer, writes formatted text lines, and calls oled.show() to display it on the glass."
+        "language": "c",
+        "code": "void setup() {\n  Serial.begin(115200);\n  Wire.begin(21, 22); // ESP32 I2C pins: SDA=21, SCL=22\n  display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS);\n\n  display.clearDisplay(); // Wipe sketchpad clean\n  display.setTextSize(1);\n  display.setTextColor(SSD1306_WHITE);\n\n  display.setCursor(12, 0);\n  display.println(\"NXPLORERS IoT\");\n  display.setCursor(0, 20);\n  display.print(\"Team: \"); display.println(TEAM_NAME);\n  display.setCursor(0, 36);\n  display.print(\"Age:  \"); display.println(STUDENT_AGE);\n  display.setCursor(0, 50);\n  display.print(\"Sch:  \"); display.println(SCHOOL_NAME);\n\n  display.display(); // Blast buffer over I2C to glass!\n}",
+        "explanation": "Clears the screen buffer, writes formatted text lines, and calls display.display() to illuminate the physical pixels."
       }
     ],
-    "fullScript": "from machine import Pin, I2C\nimport ssd1306\n\n# Configure I2C bus\ni2c = I2C(0, scl=Pin(5), sda=Pin(4), freq=400000)\noled = ssd1306.SSD1306_I2C(128, 64, i2c)\n\n# --- EDIT YOUR DETAILS HERE ---\nTEAM_NAME = 'CyberKnights'\nSTUDENT_AGE = '13'\nSCHOOL_NAME = 'Subbiah Vidyalayam'\n# ------------------------------\n\noled.fill(0)\noled.text('NXPLORERS IoT', 12, 0)\noled.text('Team: ' + TEAM_NAME, 0, 20)\noled.text('Age: ' + STUDENT_AGE, 0, 36)\noled.text('Sch: ' + SCHOOL_NAME, 0, 50)\noled.show()\n\nprint('Level 4: Personalized OLED display active.')",
+    "fullScript": "#include <Wire.h>\n#include <Adafruit_GFX.h>\n#include <Adafruit_SSD1306.h>\n\n#define SCREEN_WIDTH 128\n#define SCREEN_HEIGHT 64\nAdafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);\n\n// --- EDIT YOUR DETAILS HERE ---\nconst char* TEAM_NAME = \"CyberKnights\";\nconst char* STUDENT_AGE = \"13\";\nconst char* SCHOOL_NAME = \"Subbiah Vidyalayam\";\n// ------------------------------\n\nvoid setup() {\n  Serial.begin(115200);\n  Wire.begin(21, 22); // SDA = GPIO 21, SCL = GPIO 22\n  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);\n\n  display.clearDisplay();\n  display.setTextSize(1);\n  display.setTextColor(SSD1306_WHITE);\n\n  display.setCursor(12, 0);\n  display.println(\"NXPLORERS IoT\");\n  display.setCursor(0, 20);\n  display.print(\"Team: \"); display.println(TEAM_NAME);\n  display.setCursor(0, 36);\n  display.print(\"Age:  \"); display.println(STUDENT_AGE);\n  display.setCursor(0, 50);\n  display.print(\"Sch:  \"); display.println(SCHOOL_NAME);\n  display.display();\n\n  Serial.println(\"Level 4: Personalized OLED display active.\");\n}\n\nvoid loop() {\n  // Idle\n}",
     "verificationChallenge": {
-      "instruction": "Update the team name and school name strings in the code. Run the script in Thonny.",
+      "instruction": "Update the team name and school name strings in the code. Upload to your ESP32.",
       "expectedObservableResult": "Sharp, glowing white text rendered across the OLED screen displaying your team name and school."
     }
   },
   {
     "levelNumber": 5,
     "id": "level-5",
-    "title": "Level 5: The Grand IoT Challenge",
-    "subtitle": "Connecting to the Cloud: APIs, Wi-Fi & Closed-Loop Alarms",
+    "title": "Level 5: The Grand IoT Challenge in C",
+    "subtitle": "Connecting to the Cloud: ESP32 Wi-Fi, APIs & Closed-Loop Alarms",
     "estimatedMinutes": 45,
     "conceptByte": {
       "id": "byte-9",
@@ -504,13 +494,13 @@
       "readTimeSeconds": 90,
       "svgType": "iot_4_layers",
       "keyTakeaways": [
-        "What is an API? Imagine you are at a restaurant. You cannot walk into the kitchen, open the fridge, and start chopping vegetables yourself! Instead, you look at the menu and give your order to the Waiter. The waiter carries your order to the kitchen and brings back a neat plate of food. An API (Application Programming Interface) is the digital waiter! Your Pico doesn't dig into ThingSpeak's servers. It sends a polite request: 'Hey API, give me the latest temperature!' The API fetches the number and hands it back in a neat JSON box.",
+        "What is an API? Imagine you are at a restaurant. You cannot walk into the kitchen, open the fridge, and start chopping vegetables yourself! Instead, you look at the menu and give your order to the Waiter. The waiter carries your order to the kitchen and brings back a neat plate of food. An API (Application Programming Interface) is the digital waiter! Your ESP32 sends a polite HTTP GET request: 'Hey API, give me the latest temperature!' The API fetches the data and hands it back in a neat JSON box.",
         "Layer 1 (Perception): Physical sensors touching nature (temperature probes, humidity chips, soil moisture sensors in dirt).",
-        "Layer 2 (Network): Wi-Fi radio waves transmitting 0s and 1s through the air to the internet router.",
+        "Layer 2 (Network): ESP32 Wi-Fi radio waves transmitting data packets through the air to the internet router.",
         "Layer 3 (Cloud Data): The central server (ThingSpeak or classroom server) recording and organizing sensor numbers 24/7.",
         "Layer 4 (Application): Your team's OLED display and warning buzzer automatically alerting you when soil dries out or temperatures spike."
       ],
-      "analogyStory": "When the teacher dips a soil probe into water at the front of the classroom, that measurement climbs a 4-story tower: from wet soil (Layer 1), through invisible Wi-Fi airwaves (Layer 2), into the central cloud database (Layer 3), and down to your team's OLED screen (Layer 4). Your Pico acts like a customer ordering fresh numbers from the API waiter every 15 seconds!"
+      "analogyStory": "When the teacher dips a soil probe into water at the front of the classroom, that measurement climbs a 4-story tower: from wet soil (Layer 1), through invisible Wi-Fi airwaves (Layer 2), into the central cloud database (Layer 3), and down to your team's OLED screen (Layer 4). Your ESP32 acts like a customer ordering fresh numbers from the API waiter every 15 seconds!"
     },
     "quizGate": [
       {
@@ -541,19 +531,19 @@
     "circuitSteps": [
       {
         "stepNumber": 1,
-        "title": "Wire Active Buzzer to GP18",
-        "instruction": "Plug the Active Buzzer Signal pin into Pico GP18 (Pin 24). Connect Buzzer VCC to the 3.3V rail and GND to the ground rail.",
+        "title": "Wire Active Buzzer to ESP32 D19 (GPIO 19)",
+        "instruction": "Plug the Active Buzzer Signal pin into ESP32 D19 (GPIO 19). Connect Buzzer VCC to the 3.3V rail and GND to the ground rail.",
         "component": "Active Buzzer Module",
-        "fromPin": "Pico GP18",
+        "fromPin": "ESP32 D19",
         "toBreadboardHole": "Buzzer Signal",
         "color": "#EF4444"
       },
       {
         "stepNumber": 2,
-        "title": "Wire Red Alert LED to GP17",
-        "instruction": "Connect Red LED Anode to GP17 (through a 220 ohm resistor) and Cathode to the Ground rail.",
+        "title": "Wire Red Alert LED to ESP32 D18 (GPIO 18)",
+        "instruction": "Connect Red LED Anode to ESP32 D18 (GPIO 18) through a 220 ohm resistor and Cathode to the Ground rail.",
         "component": "Red 5mm LED",
-        "fromPin": "Pico GP17",
+        "fromPin": "ESP32 D18",
         "toBreadboardHole": "Row 25",
         "color": "#EF4444"
       }
@@ -561,27 +551,27 @@
     "codeChunks": [
       {
         "blockId": "c5-1",
-        "title": "Step 1: Connect to Wi-Fi",
-        "language": "python",
-        "code": "import network, time\n\nwlan = network.WLAN(network.STA_IF)\nwlan.active(True)\nwlan.connect('NXPLORERS_WIFI', 'iotworkshop2026')\n\nwhile not wlan.isconnected():\n    print('Connecting to Wi-Fi...')\n    time.sleep(1)\nprint('Connected! IP:', wlan.ifconfig()[0])",
-        "explanation": "Turns on the onboard 2.4 GHz radio and connects to the classroom wireless network."
+        "title": "Step 1: Connect ESP32 to Wi-Fi",
+        "language": "c",
+        "code": "#include <WiFi.h>\n\nconst char* ssid = \"NXPLORERS_WIFI\";\nconst char* password = \"iotworkshop2026\";\n\nvoid connectWiFi() {\n  WiFi.begin(ssid, password);\n  while (WiFi.status() != WL_CONNECTED) {\n    delay(500);\n    Serial.print(\".\");\n  }\n  Serial.println(\"\\nWiFi Connected! IP: \" + WiFi.localIP().toString());\n}",
+        "explanation": "Activates the ESP32's built-in 2.4 GHz radio and joins the classroom wireless network."
       },
       {
         "blockId": "c5-2",
-        "title": "Step 2: Order Data from the API Waiter",
-        "language": "python",
-        "code": "import urequests\n\n# Query the classroom telemetry feed\nURL = 'http://192.168.0.100:3001/api/feed'\nresponse = urequests.get(URL)\ndata = response.json()\nlatest = data['feeds'][0]\n\ntemp = latest['field1']     # Field 1: Temp\nsoil = latest['field4']     # Field 4: Soil Moisture\nresponse.close()",
-        "explanation": "Sends an HTTP GET request, receives the JSON payload, and extracts temperature and soil moisture."
+        "title": "Step 2: HTTP GET from API & Parse JSON",
+        "language": "c",
+        "code": "#include <HTTPClient.h>\n#include <ArduinoJson.h>\n\nHTTPClient http;\nhttp.begin(\"http://192.168.0.100:3001/api/feed\");\nint httpCode = http.GET();\n\nif (httpCode == 200) {\n  String payload = http.getString();\n  StaticJsonDocument<1024> doc;\n  deserializeJson(doc, payload);\n\n  float temp = doc[\"feeds\"][0][\"field1\"];\n  float soil = doc[\"feeds\"][0][\"field4\"];\n}\nhttp.end();",
+        "explanation": "Sends an HTTP GET request to the local API endpoint, deserializing the JSON payload into temperature and soil values."
       },
       {
         "blockId": "c5-3",
         "title": "Step 3: Closed-Loop Automated Alarm",
-        "language": "python",
-        "code": "# Autonomous Alert: Temp > 30C or Soil Moisture < 25%\nif float(temp) > 30.0 or float(soil) < 25.0:\n    red_led.value(1)\n    buzzer.value(1)\n    oled.text('ALERT: HAZARD!', 0, 52)\nelse:\n    red_led.value(0)\n    buzzer.value(0)\n    oled.text('STATUS: NORMAL', 0, 52)\noled.show()",
-        "explanation": "Evaluates environmental conditions. If hazardous, triggers the buzzer and red LED automatically."
+        "language": "c",
+        "code": "// Autonomous Alert: Temp > 30C or Soil Moisture < 25%\nif (temp > 30.0 || soil < 25.0) {\n  digitalWrite(RED_LED, HIGH);\n  digitalWrite(BUZZER, HIGH);\n  display.println(\"ALERT: HAZARD ACTIVE!\");\n} else {\n  digitalWrite(RED_LED, LOW);\n  digitalWrite(BUZZER, LOW);\n  display.println(\"STATUS: SAFE / NORMAL\");\n}\ndisplay.display();",
+        "explanation": "Evaluates incoming telemetry. If conditions cross hazardous thresholds, triggers the alarm buzzer and red LED automatically."
       }
     ],
-    "fullScript": "import network, time, urequests\nfrom machine import Pin, I2C\nimport ssd1306\n\n# Hardware Setup\ni2c = I2C(0, scl=Pin(5), sda=Pin(4))\noled = ssd1306.SSD1306_I2C(128, 64, i2c)\nred_led = Pin(17, Pin.OUT)\nbuzzer = Pin(18, Pin.OUT)\n\n# Wi-Fi Config\nwlan = network.WLAN(network.STA_IF)\nwlan.active(True)\nwlan.connect('NXPLORERS_WIFI', 'iotworkshop2026')\nwhile not wlan.isconnected():\n    time.sleep(0.5)\n\nFEED_URL = 'http://192.168.0.100:3001/api/feed'\nprint('Level 5: Live IoT Stream Connected!')\n\nwhile True:\n    try:\n        res = urequests.get(FEED_URL)\n        payload = res.json()['feeds'][0]\n        res.close()\n        \n        t = payload.get('field1', '0')\n        h = payload.get('field2', '0')\n        l = payload.get('field3', '0')\n        s = payload.get('field4', '0')\n        \n        oled.fill(0)\n        oled.text('LIVE TELEMETRY', 8, 0)\n        oled.text('Temp: ' + t + ' C', 0, 16)\n        oled.text('Humi: ' + h + ' %', 0, 28)\n        oled.text('Soil: ' + s + ' %', 0, 40)\n        \n        if float(t) > 30.0 or float(s) < 25.0:\n            red_led.value(1)\n            buzzer.value(1)\n            oled.text('ALERT ACTIVE!', 0, 54)\n        else:\n            red_led.value(0)\n            buzzer.value(0)\n            oled.text('SAFE / NORMAL', 0, 54)\n            \n        oled.show()\n    except Exception as e:\n        print('Fetch error:', e)\n        \n    time.sleep(15)",
+    "fullScript": "#include <WiFi.h>\n#include <HTTPClient.h>\n#include <ArduinoJson.h>\n#include <Wire.h>\n#include <Adafruit_GFX.h>\n#include <Adafruit_SSD1306.h>\n\n#define SCREEN_WIDTH 128\n#define SCREEN_HEIGHT 64\nAdafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);\n\nconst char* ssid = \"NXPLORERS_WIFI\";\nconst char* password = \"iotworkshop2026\";\nconst char* serverUrl = \"http://192.168.0.100:3001/api/feed\";\n\nconst int RED_LED = 18;  // ESP32 GPIO 18\nconst int BUZZER = 19;   // ESP32 GPIO 19\n\nvoid setup() {\n  Serial.begin(115200);\n  pinMode(RED_LED, OUTPUT);\n  pinMode(BUZZER, OUTPUT);\n\n  Wire.begin(21, 22);\n  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);\n  display.clearDisplay();\n  display.setTextSize(1);\n  display.setTextColor(SSD1306_WHITE);\n\n  WiFi.begin(ssid, password);\n  while (WiFi.status() != WL_CONNECTED) {\n    delay(500);\n    Serial.print(\".\");\n  }\n  Serial.println(\"\\nWiFi Connected!\");\n}\n\nvoid loop() {\n  if (WiFi.status() == WL_CONNECTED) {\n    HTTPClient http;\n    http.begin(serverUrl);\n    int httpCode = http.GET();\n\n    if (httpCode == 200) {\n      String payload = http.getString();\n      StaticJsonDocument<1024> doc;\n      deserializeJson(doc, payload);\n\n      JsonObject feed = doc[\"feeds\"][0];\n      float temp = feed[\"field1\"] | 0.0;\n      float humi = feed[\"field2\"] | 0.0;\n      float soil = feed[\"field4\"] | 0.0;\n\n      display.clearDisplay();\n      display.setCursor(12, 0);\n      display.println(\"LIVE CLOUD FEED\");\n      display.setCursor(0, 16);\n      display.printf(\"Temp: %.1f C\\n\", temp);\n      display.printf(\"Humi: %.1f %%\\n\", humi);\n      display.printf(\"Soil: %.1f %%\\n\", soil);\n\n      if (temp > 30.0 || soil < 25.0) {\n        digitalWrite(RED_LED, HIGH);\n        digitalWrite(BUZZER, HIGH);\n        display.setCursor(0, 52);\n        display.println(\"ALERT: HAZARD ACTIVE!\");\n      } else {\n        digitalWrite(RED_LED, LOW);\n        digitalWrite(BUZZER, LOW);\n        display.setCursor(0, 52);\n        display.println(\"STATUS: SAFE / NORMAL\");\n      }\n      display.display();\n    }\n    http.end();\n  }\n  delay(15000);\n}",
     "verificationChallenge": {
       "instruction": "Watch your OLED screen synchronize with the live classroom feed. When the facilitator triggers a temperature or soil spike in the dashboard, verify your OLED and buzzer react within 15 seconds.",
       "expectedObservableResult": "All team OLED screens and warning buzzers trigger in unison based on broadcast sensor changes."

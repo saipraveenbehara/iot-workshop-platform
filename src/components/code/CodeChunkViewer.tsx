@@ -29,8 +29,8 @@ export const CodeChunkViewer: React.FC<CodeChunkViewerProps> = ({
             <Terminal className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="text-base font-extrabold text-[#24313A]">MicroPython Code Blocks</h3>
-            <p className="text-xs text-[#576875]">Follow along chunk by chunk or copy the complete file</p>
+            <h3 className="text-base font-extrabold text-[#24313A]">C / C++ Code Blocks</h3>
+            <p className="text-xs text-[#576875]">Follow along chunk by chunk or copy the complete C sketch</p>
           </div>
         </div>
         <button
@@ -38,7 +38,7 @@ export const CodeChunkViewer: React.FC<CodeChunkViewerProps> = ({
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#E6F4F2] border border-[#B2DFDB] hover:bg-[#D5EFEA] text-[#2A9D8F] text-xs font-bold transition-all shadow-sm"
         >
           {copiedId === 'full' ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-          <span>{copiedId === 'full' ? 'Full Script Copied!' : 'Copy Full Script'}</span>
+          <span>{copiedId === 'full' ? 'Full Code Copied!' : 'Copy Full C Code'}</span>
         </button>
       </div>
 

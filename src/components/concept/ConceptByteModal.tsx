@@ -45,7 +45,7 @@ export const ConceptByteModal: React.FC<ConceptByteModalProps> = ({
             </div>
             <div className="text-center p-3 rounded-xl bg-emerald-950/40 border border-emerald-500/40 w-36 shadow-lg shadow-emerald-500/10">
               <Cpu className="w-8 h-8 text-emerald-400 mx-auto mb-1 animate-pulse" />
-              <p className="text-xs font-bold text-white">Pico WH</p>
+              <p className="text-xs font-bold text-white">ESP32 DevKit V1</p>
               <p className="text-[10px] text-emerald-300/80 mt-1">Direct electrical pin control in microseconds</p>
             </div>
           </div>

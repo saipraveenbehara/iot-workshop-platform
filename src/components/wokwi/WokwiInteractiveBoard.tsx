@@ -14,8 +14,8 @@ import {
 } from 'lucide-react';
 import { CircuitPanZoom } from '../circuit/CircuitPanZoom.js';
 import { 
-  PicoW, 
-  picoWMeta, 
+  ESP32, 
+  esp32Meta, 
   Led, 
   ledMeta, 
   PushButton, 
@@ -42,9 +42,10 @@ export const WokwiInteractiveBoard: React.FC<WokwiInteractiveBoardProps> = ({ le
   const [isButtonPressed, setIsButtonPressed] = useState(false);
   const [isSimRunning, setIsSimRunning] = useState(false);
   const [replLogs, setReplLogs] = useState<string[]>([
-    'MicroPython v1.22.0 on Raspberry Pi Pico WH with RP2040',
-    'Type "help()" for more information.',
-    '>>> '
+    '[ESP32 Boot] Chip: ESP32-D0WDQ6 (240MHz Dual-Core)',
+    '[ESP32] Flash: 4MB | RAM: 520KB | WiFi: 802.11 b/g/n',
+    '[Serial] Connected at 115200 baud.',
+    '>>> Serial.println("ESP32 DevKit V1 Initialized");'
   ]);
 
   const addReplLog = (command: string, response?: string) => {
@@ -62,7 +63,7 @@ export const WokwiInteractiveBoard: React.FC<WokwiInteractiveBoardProps> = ({ le
       interval = setInterval(() => {
         setLedState((prev) => {
           const next = !prev.onboard;
-          addReplLog(`led.value(${next ? 1 : 0})`, next ? 'LED turned ON (3.3V)' : 'LED turned OFF (0V)');
+          addReplLog(`digitalWrite(2, ${next ? 'HIGH' : 'LOW'});`, next ? 'GPIO 2 set HIGH (+3.3V ON)' : 'GPIO 2 set LOW (0V OFF)');
           return { ...prev, onboard: next };
         });
       }, 1000);
@@ -74,19 +75,20 @@ export const WokwiInteractiveBoard: React.FC<WokwiInteractiveBoardProps> = ({ le
   const handleButtonDown = () => {
     setIsButtonPressed(true);
     setLedState((prev) => ({ ...prev, green: false, orange: true }));
-    addReplLog('button.value() == 0', 'Switch closed to Ground: Green OFF, Orange ON');
+    addReplLog('digitalRead(14) == LOW', 'Switch closed to Ground (0V): Green OFF, Orange ON');
   };
 
   const handleButtonUp = () => {
     setIsButtonPressed(false);
     setLedState((prev) => ({ ...prev, green: true, orange: false }));
-    addReplLog('button.value() == 1', 'Button released: Pull-up active, Green ON');
+    addReplLog('digitalRead(14) == HIGH', 'Button released: INPUT_PULLUP active (+3.3V): Green ON');
   };
 
   const handleToggleLED = (color: 'green' | 'orange' | 'red') => {
+    const pinMap = { green: 15, orange: 4, red: 18 };
     setLedState((prev) => {
       const next = !prev[color];
-      addReplLog(`${color}_led.value(${next ? 1 : 0})`, `${color.toUpperCase()} LED set to ${next ? 'HIGH (3.3V)' : 'LOW (0V)'}`);
+      addReplLog(`digitalWrite(${pinMap[color]}, ${next ? 'HIGH' : 'LOW'});`, `GPIO ${pinMap[color]} (${color.toUpperCase()} LED) set to ${next ? 'HIGH (3.3V)' : 'LOW (0V)'}`);
       return { ...prev, [color]: next };
     });
   };
@@ -128,12 +130,12 @@ export const WokwiInteractiveBoard: React.FC<WokwiInteractiveBoardProps> = ({ le
           </button>
 
           <a
-            href="https://wokwi.com/projects/new/micropython-pi-pico"
+            href="https://wokwi.com/projects/new/esp32"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-[#EBE6DC] hover:border-[#2A9D8F] hover:bg-[#E6F4F2] text-[#576875] hover:text-[#2A9D8F] text-xs font-bold transition-all"
           >
-            <span>Open in Wokwi Web</span>
+            <span>Open in Wokwi ESP32 Web</span>
             <ExternalLink className="w-3 h-3" />
           </a>
         </div>
@@ -145,25 +147,25 @@ export const WokwiInteractiveBoard: React.FC<WokwiInteractiveBoardProps> = ({ le
         heightClass="min-h-[350px] h-[350px]"
         initialScale={1.0}
       >
-        {/* Level 0: Pico WH Architecture Inspector */}
+        {/* Level 0: ESP32 DevKit V1 Architecture Inspector */}
         {levelNumber === 0 && (
           <div className="flex flex-col items-center text-center space-y-4 max-w-md z-10 animate-fade-in">
             <span className="text-[11px] font-mono font-bold text-[#899AA8] uppercase tracking-wider">
               Hover over pins for names and specs
             </span>
             <div className="relative p-6 rounded-2xl bg-white border border-[#EBE6DC] shadow-sm flex justify-center">
-              <svg viewBox="0 0 100 215" className="w-[180px]" style={{ overflow: 'visible' }}>
-                <PicoW x={10} y={5} />
-                <PartHover meta={picoWMeta} x={10} y={5} />
+              <svg viewBox="0 0 107 201" className="w-[140px] h-[230px]" style={{ overflow: 'visible' }}>
+                <ESP32 x={0} y={0} scale={1} ledPower={true} led1={true} />
+                <PartHover meta={esp32Meta} x={0} y={0} scale={1} />
               </svg>
             </div>
             <p className="text-xs text-[#576875] bg-white border border-[#EBE6DC] p-3 rounded-xl shadow-sm">
-              Inspect your hardware kit and verify the pre-soldered pins are ready for breadboard insertion.
+              Inspect your ESP32 DevKit V1 and verify the 30 pins are ready for breadboard insertion.
             </p>
           </div>
         )}
 
-        {/* Level 1: Onboard LED Blink Simulator */}
+        {/* Level 1: Onboard LED Blink Simulator (GPIO 2) */}
         {levelNumber === 1 && (
           <div className="flex flex-col items-center text-center space-y-5 z-10 animate-fade-in">
             <div className="flex items-center gap-8 bg-white border border-[#EBE6DC] p-6 rounded-2xl shadow-sm">
@@ -176,12 +178,12 @@ export const WokwiInteractiveBoard: React.FC<WokwiInteractiveBoardProps> = ({ le
                   }`}
                 >
                   <svg viewBox="0 0 40 45" className="w-12 h-14" style={{ overflow: 'visible' }}>
-                    <Led x={5} y={5} scale={1} color="green" lit={ledState.onboard} brightness={1.4} />
+                    <Led x={5} y={5} scale={1} color="blue" lit={ledState.onboard} brightness={1.4} />
                     <PartHover meta={ledMeta} x={5} y={5} scale={1} />
                   </svg>
                 </div>
-                <span className="text-xs font-bold text-[#24313A]">Pico Onboard LED</span>
-                <span className="text-[10px] font-mono text-[#899AA8]">Pin("LED", Pin.OUT)</span>
+                <span className="text-xs font-bold text-[#24313A]">ESP32 Onboard LED</span>
+                <span className="text-[10px] font-mono text-[#899AA8]">digitalWrite(2, HIGH)</span>
               </div>
 
               <div className="h-16 w-px bg-[#EBE6DC]" />
@@ -197,7 +199,7 @@ export const WokwiInteractiveBoard: React.FC<WokwiInteractiveBoardProps> = ({ le
                   onClick={() => {
                     const next = !ledState.onboard;
                     setLedState((p) => ({ ...p, onboard: next }));
-                    addReplLog(`led.value(${next ? 1 : 0})`, next ? 'LED ON' : 'LED OFF');
+                    addReplLog(`digitalWrite(2, ${next ? 'HIGH' : 'LOW'});`, next ? 'GPIO 2: HIGH (+3.3V ON)' : 'GPIO 2: LOW (0V OFF)');
                   }}
                   className="px-4 py-2 rounded-xl bg-[#FFFDF7] hover:bg-[#E6F4F2] border border-[#EBE6DC] hover:border-[#2A9D8F] text-xs font-bold text-[#24313A] transition-all shadow-sm cursor-pointer"
                 >
@@ -206,7 +208,7 @@ export const WokwiInteractiveBoard: React.FC<WokwiInteractiveBoardProps> = ({ le
               </div>
             </div>
             <p className="text-xs text-[#576875] max-w-md">
-              Toggle the LED to see the corresponding MicroPython command and voltage state change in real time.
+              Toggle the LED to see the corresponding C command and voltage state change in real time.
             </p>
           </div>
         )}
@@ -219,13 +221,13 @@ export const WokwiInteractiveBoard: React.FC<WokwiInteractiveBoardProps> = ({ le
             </span>
             <div className="grid grid-cols-3 gap-6 bg-white border border-[#EBE6DC] p-6 rounded-2xl w-full max-w-lg shadow-sm">
               
-              {/* Green LED (GP15) */}
+              {/* Green LED (GPIO 15) */}
               <div className="flex flex-col items-center gap-2">
                 <svg viewBox="0 0 35 45" className="w-12 h-14" style={{ overflow: 'visible' }}>
                   <Led x={3} y={5} scale={1} color="green" lit={ledState.green} brightness={1.3} />
                   <PartHover meta={ledMeta} x={3} y={5} scale={1} />
                 </svg>
-                <span className="text-xs font-bold text-[#2A9D8F] font-mono">Green (GP15)</span>
+                <span className="text-xs font-bold text-[#2A9D8F] font-mono">Green (D15)</span>
                 <span className="text-[10px] text-[#576875]">220Ω in series</span>
                 <button
                   onClick={() => handleToggleLED('green')}
@@ -239,13 +241,13 @@ export const WokwiInteractiveBoard: React.FC<WokwiInteractiveBoardProps> = ({ le
                 </button>
               </div>
 
-              {/* Orange LED (GP16) */}
+              {/* Orange LED (GPIO 4) */}
               <div className="flex flex-col items-center gap-2">
                 <svg viewBox="0 0 35 45" className="w-12 h-14" style={{ overflow: 'visible' }}>
                   <Led x={3} y={5} scale={1} color="orange" lit={ledState.orange} brightness={1.3} />
                   <PartHover meta={ledMeta} x={3} y={5} scale={1} />
                 </svg>
-                <span className="text-xs font-bold text-[#B88719] font-mono">Orange (GP16)</span>
+                <span className="text-xs font-bold text-[#B88719] font-mono">Orange (D4)</span>
                 <span className="text-[10px] text-[#576875]">220Ω in series</span>
                 <button
                   onClick={() => handleToggleLED('orange')}
@@ -259,13 +261,13 @@ export const WokwiInteractiveBoard: React.FC<WokwiInteractiveBoardProps> = ({ le
                 </button>
               </div>
 
-              {/* Red LED (GP17) */}
+              {/* Red LED (GPIO 18) */}
               <div className="flex flex-col items-center gap-2">
                 <svg viewBox="0 0 35 45" className="w-12 h-14" style={{ overflow: 'visible' }}>
                   <Led x={3} y={5} scale={1} color="red" lit={ledState.red} brightness={1.3} />
                   <PartHover meta={ledMeta} x={3} y={5} scale={1} />
                 </svg>
-                <span className="text-xs font-bold text-[#D95D43] font-mono">Red (GP17)</span>
+                <span className="text-xs font-bold text-[#D95D43] font-mono">Red (D18)</span>
                 <span className="text-[10px] text-[#576875]">220Ω in series</span>
                 <button
                   onClick={() => handleToggleLED('red')}
@@ -281,7 +283,7 @@ export const WokwiInteractiveBoard: React.FC<WokwiInteractiveBoardProps> = ({ le
 
             </div>
             <p className="text-xs text-[#576875] text-center">
-              Each semiconductor LED connects through a 220Ω current-limiting resistor to protect the circuit.
+              Each semiconductor LED connects through a 220Ω current-limiting resistor to protect the ESP32 GPIO pin.
             </p>
           </div>
         )}
@@ -290,7 +292,7 @@ export const WokwiInteractiveBoard: React.FC<WokwiInteractiveBoardProps> = ({ le
         {levelNumber === 3 && (
           <div className="flex flex-col items-center space-y-6 z-10 animate-fade-in">
             <span className="text-[11px] font-mono font-bold text-[#899AA8] uppercase tracking-wider">
-              Click & Hold tactile button to test active-low pull-up
+              Click & Hold tactile button to test active-low pull-up in C
             </span>
             <div className="flex items-center gap-10 bg-white border border-[#EBE6DC] p-6 rounded-2xl shadow-sm">
               
@@ -308,17 +310,17 @@ export const WokwiInteractiveBoard: React.FC<WokwiInteractiveBoardProps> = ({ le
                     <PartHover meta={pushButtonMeta} x={6} y={5} scale={1} />
                   </svg>
                 </div>
-                <span className="text-xs font-bold text-[#24313A]">Tactile Switch (GP14)</span>
+                <span className="text-xs font-bold text-[#24313A]">Tactile Switch (D14)</span>
                 <span className="text-[10px] text-[#576875]">Click & Hold</span>
               </div>
 
               {/* Logical Arrow */}
               <div className="flex flex-col items-center text-center">
                 <span className="text-xs font-mono font-bold text-[#2A9D8F]">
-                  {isButtonPressed ? 'button.value() == 0' : 'button.value() == 1'}
+                  {isButtonPressed ? 'digitalRead(14) == LOW' : 'digitalRead(14) == HIGH'}
                 </span>
                 <span className="text-[10px] text-[#576875] mt-1 font-mono">
-                  {isButtonPressed ? 'GND (Active Low)' : 'PULL_UP (3.3V)'}
+                  {isButtonPressed ? 'GND (0V / Active Low)' : 'INPUT_PULLUP (3.3V)'}
                 </span>
               </div>
 
@@ -328,19 +330,19 @@ export const WokwiInteractiveBoard: React.FC<WokwiInteractiveBoardProps> = ({ le
                   <svg viewBox="0 0 35 45" className="w-10 h-12" style={{ overflow: 'visible' }}>
                     <Led x={3} y={5} scale={0.9} color="green" lit={!isButtonPressed} brightness={1.2} />
                   </svg>
-                  <span className="text-[10px] font-bold text-[#2A9D8F]">Normal (GP15)</span>
+                  <span className="text-[10px] font-bold text-[#2A9D8F]">Normal (D15)</span>
                 </div>
                 <div className="flex flex-col items-center gap-1">
                   <svg viewBox="0 0 35 45" className="w-10 h-12" style={{ overflow: 'visible' }}>
                     <Led x={3} y={5} scale={0.9} color="orange" lit={isButtonPressed} brightness={1.2} />
                   </svg>
-                  <span className="text-[10px] font-bold text-[#B88719]">Alert (GP16)</span>
+                  <span className="text-[10px] font-bold text-[#B88719]">Alert (D4)</span>
                 </div>
               </div>
 
             </div>
             <p className="text-xs text-[#576875] text-center max-w-md">
-              Press and hold the virtual button to simulate active-low logic pulling GP14 to Ground.
+              Press and hold the virtual button to simulate active-low logic pulling GPIO 14 to Ground.
             </p>
           </div>
         )}
@@ -366,12 +368,12 @@ export const WokwiInteractiveBoard: React.FC<WokwiInteractiveBoardProps> = ({ le
               <div className="flex items-center gap-2.5 text-xs font-mono text-[#24313A]">
                 <span className="px-2.5 py-1 rounded-md bg-[#FFFDF7] border border-[#EBE6DC]">VCC ➔ 3V3</span>
                 <span className="px-2.5 py-1 rounded-md bg-[#FFFDF7] border border-[#EBE6DC]">GND ➔ Rail</span>
-                <span className="px-2.5 py-1 rounded-md bg-[#E6F4F2] border border-[#B2DFDB] text-[#2A9D8F] font-bold">SDA ➔ GP4</span>
-                <span className="px-2.5 py-1 rounded-md bg-[#E6F4F2] border border-[#B2DFDB] text-[#2A9D8F] font-bold">SCL ➔ GP5</span>
+                <span className="px-2.5 py-1 rounded-md bg-[#E6F4F2] border border-[#B2DFDB] text-[#2A9D8F] font-bold">SDA ➔ D21</span>
+                <span className="px-2.5 py-1 rounded-md bg-[#E6F4F2] border border-[#B2DFDB] text-[#2A9D8F] font-bold">SCL ➔ D22</span>
               </div>
             </div>
             <p className="text-xs text-[#576875] text-center max-w-md">
-              The SSD1306 controller receives drawing commands over I2C at address 0x3C.
+              The SSD1306 controller receives drawing commands from the ESP32 over I2C (SDA=21, SCL=22) at address 0x3C.
             </p>
           </div>
         )}
@@ -403,13 +405,13 @@ export const WokwiInteractiveBoard: React.FC<WokwiInteractiveBoardProps> = ({ le
                       <Led x={3} y={5} scale={0.9} color="red" lit={ledState.red} brightness={1.4} />
                       <PartHover meta={ledMeta} x={3} y={5} scale={0.9} />
                     </svg>
-                    <span className="text-[10px] text-[#D95D43] font-bold mt-1">Alarm LED (GP17)</span>
+                    <span className="text-[10px] text-[#D95D43] font-bold mt-1">Alarm LED (D18)</span>
                   </div>
                   <div className="flex flex-col items-center">
                     <div className="w-9 h-9 rounded-full bg-[#FFFDF7] border border-[#EBE6DC] flex items-center justify-center">
                       <Zap className="w-4 h-4 text-[#F4C95D]" />
                     </div>
-                    <span className="text-[10px] text-[#B88719] font-bold mt-1">Buzzer (GP18)</span>
+                    <span className="text-[10px] text-[#B88719] font-bold mt-1">Buzzer (D19)</span>
                   </div>
                 </div>
 
@@ -431,25 +433,25 @@ export const WokwiInteractiveBoard: React.FC<WokwiInteractiveBoardProps> = ({ le
 
             </div>
             <p className="text-xs text-[#576875] text-center max-w-md">
-              When broadcast telemetry exceeds safe thresholds, the Pico automatically triggers the buzzer and LED.
+              When broadcast telemetry exceeds safe thresholds, the ESP32 automatically triggers the buzzer and LED.
             </p>
           </div>
         )}
 
       </CircuitPanZoom>
 
-      {/* Simulated Thonny MicroPython REPL Terminal */}
+      {/* Simulated Arduino Serial Monitor */}
       <div className="bg-[#F8F9FA] border border-[#EBE6DC] rounded-2xl p-4 font-mono shadow-inner space-y-2">
         <div className="flex items-center justify-between pb-2 border-b border-[#EBE6DC] text-xs text-[#576875]">
           <div className="flex items-center gap-2">
             <Terminal className="w-3.5 h-3.5 text-[#2A9D8F]" />
-            <span className="font-bold text-[#24313A]">Thonny Shell / REPL Output</span>
+            <span className="font-bold text-[#24313A]">Arduino Serial Monitor (115200 Baud)</span>
           </div>
           <button
-            onClick={() => setReplLogs(['MicroPython v1.22.0 on RP2040', '>>> '])}
+            onClick={() => setReplLogs(['[Serial] 115200 baud connected.', '>>> '])}
             className="text-[11px] text-[#899AA8] hover:text-[#24313A] transition-colors cursor-pointer"
           >
-            Clear Terminal
+            Clear Monitor
           </button>
         </div>
 

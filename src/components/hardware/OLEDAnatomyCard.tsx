@@ -77,7 +77,7 @@ export const OLEDAnatomyCard: React.FC = () => {
           </div>
           <h4 className="text-sm font-bold text-[#24313A]">3. Framebuffer & I2C</h4>
           <p className="text-xs text-[#576875] leading-relaxed">
-            Instead of running 8,192 individual wires, the Pico draws in a 1,024-byte RAM sketchpad called the <strong>Framebuffer</strong>. Calling <code>oled.show()</code> blasts that entire memory map over just 2 wires (SDA and SCL) to illuminate the screen!
+            Instead of running 8,192 individual wires, the ESP32 draws in a 1,024-byte RAM sketchpad called the <strong>Framebuffer</strong>. Calling <code>display.display()</code> blasts that entire memory map over just 2 wires (SDA on GPIO 21 and SCL on GPIO 22) to illuminate the screen!
           </p>
         </div>
 
@@ -159,7 +159,7 @@ export const OLEDAnatomyCard: React.FC = () => {
             <span className="text-[11px] text-[#899AA8]">Coordinates: (0..7, 0..7)</span>
           </div>
           <p className="text-xs text-[#576875] leading-relaxed">
-            In MicroPython, <code>oled.pixel(x, y, 1)</code> lights an individual dot. <code>oled.text('Hi', x, y)</code> maps letters using an internal 8×8 font matrix onto your glass display!
+            In C with Adafruit GFX, <code>display.drawPixel(x, y, SSD1306_WHITE)</code> lights an individual dot. <code>display.println("Hi")</code> maps characters using an internal font matrix onto your glass display!
           </p>
         </div>
 

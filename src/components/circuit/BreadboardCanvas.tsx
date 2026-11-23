@@ -15,7 +15,7 @@ import {
 import { CircuitPanZoom } from './CircuitPanZoom.js';
 import { 
   Breadboard, 
-  PicoW, 
+  ESP32, 
   Led, 
   Resistor, 
   PushButton, 
@@ -26,7 +26,7 @@ import {
   getRailHole, 
   placeByPin, 
   pinPosition,
-  picoWMeta, 
+  esp32Meta, 
   ledMeta, 
   resistorMeta, 
   pushButtonMeta, 
@@ -63,8 +63,8 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
   }, [levelNumber]);
 
   // Viewport & placement geometry
-  // PICO: placed with ample top/bottom margin so the USB port, top pins, and whole board are 100% visible
-  const PICO = { x: 20, y: 45 };
+  // ESP32: placed with clean margin so the USB port, Wi-Fi shield, and all 30 pins are 100% visible
+  const ESP = { x: 12, y: 40 };
   const BB = { x: 135, y: 40 };
   const at = (h: { x: number; y: number }) => ({ x: BB.x + h.x, y: BB.y + h.y });
 
@@ -81,13 +81,13 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
       if (currentStepIndex === 0) return ['c30', 'e30', 'c37', 'e37'];
       if (currentStepIndex === 1) return ['c30', 'e30', 'c37', 'e37', 'a30'];
       if (currentStepIndex === 2) return ['c30', 'e30', 'c37', 'e37', 'a30', 't-6'];
-      return ['c30', 'e30', 'c37', 'e37', 'a30', 't-6', 'a15', 'a24'];
+      return ['c30', 'e30', 'c37', 'e37', 'a30', 't-6', 'j15', 'j24'];
     }
     if (levelNumber === 4) {
-      return ['f38', 'f39', 'f40', 'f41', 'b-7', 'b+7'];
+      return ['j38', 'j39', 'j40', 'j41', 'b-7', 'b+7'];
     }
     if (levelNumber === 5) {
-      return ['f38', 'f39', 'f40', 'f41', 'f24'];
+      return ['j38', 'j39', 'j40', 'j41', 'j24', 'j15'];
     }
     return [];
   };
@@ -196,7 +196,7 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
         </div>
       )}
 
-      {/* Primary Visual Circuit Stage (Focused on Pico + Active Circuit Area with Pan & Zoom) */}
+      {/* Primary Visual Circuit Stage (Focused on ESP32 + Active Circuit Area with Pan & Zoom) */}
       <CircuitPanZoom
         key={`circuit-canvas-${levelNumber}`}
         heightClass="min-h-[380px] h-[380px]"
@@ -218,40 +218,45 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
             <filter id="wireShadow" x="-10%" y="-10%" width="130%" height="130%">
               <feDropShadow dx="0.5" dy="2" stdDeviation="1.5" floodColor="#24313A" floodOpacity="0.18" />
             </filter>
-            <filter id="picoGlow" x="-20%" y="-20%" width="140%" height="140%">
+            <filter id="espGlow" x="-20%" y="-20%" width="140%" height="140%">
               <feGaussianBlur stdDeviation="3" result="blur" />
               <feComposite in="SourceGraphic" in2="blur" operator="over" />
             </filter>
           </defs>
 
-          {/* === STAGE 0: PICO WH ARCHITECTURE INSPECTION === */}
+          {/* === STAGE 0: ESP32 DEVKIT V1 ARCHITECTURE INSPECTION === */}
           {levelNumber === 0 && (
             <g>
-              {/* Raspberry Pi Pico WH at comfortable inspection scale */}
-              <PicoW x={70} y={45} scale={1.05} />
-              <PartHover meta={picoWMeta} x={70} y={45} scale={1.05} />
+              {/* ESP32 DevKit V1 at comfortable inspection scale */}
+              <ESP32 x={65} y={40} scale={1.05} ledPower={true} led1={false} />
+              <PartHover meta={esp32Meta} x={65} y={40} scale={1.05} />
 
               {/* Callout badges pointing to authentic features */}
               <g fontFamily="sans-serif" fontSize="7" fontWeight="bold">
                 {/* Micro-USB Port */}
-                <line x1="112" y1="40" x2="160" y2="20" stroke="#2A9D8F" strokeWidth="1" strokeDasharray="2 2" />
-                <rect x="160" y="10" width="115" height="18" rx="4" fill="#FFFFFF" stroke="#2A9D8F" strokeWidth="1" filter="url(#wireShadow)" />
-                <text x="168" y="22" fill="#21867A">1. Micro-USB Port (Power & Code)</text>
+                <line x1="121" y1="36" x2="175" y2="20" stroke="#2A9D8F" strokeWidth="1" strokeDasharray="2 2" />
+                <rect x="175" y="10" width="125" height="18" rx="4" fill="#FFFFFF" stroke="#2A9D8F" strokeWidth="1" filter="url(#wireShadow)" />
+                <text x="183" y="22" fill="#21867A">1. Micro-USB Port (Power & C Upload)</text>
 
-                {/* CYW43439 Wi-Fi */}
-                <line x1="150" y1="95" x2="200" y2="95" stroke="#2A9D8F" strokeWidth="1" strokeDasharray="2 2" />
-                <rect x="200" y="86" width="125" height="18" rx="4" fill="#FFFFFF" stroke="#2A9D8F" strokeWidth="1" filter="url(#wireShadow)" />
-                <text x="208" y="98" fill="#21867A">2. CYW43439 2.4GHz Wi-Fi Shield</text>
+                {/* ESP-WROOM-32 Wi-Fi Shield */}
+                <line x1="121" y1="85" x2="195" y2="85" stroke="#2A9D8F" strokeWidth="1" strokeDasharray="2 2" />
+                <rect x="195" y="76" width="135" height="18" rx="4" fill="#FFFFFF" stroke="#2A9D8F" strokeWidth="1" filter="url(#wireShadow)" />
+                <text x="203" y="88" fill="#21867A">2. ESP-WROOM-32 Shield (Wi-Fi & BLE)</text>
 
-                {/* RP2040 Chip */}
-                <line x1="150" y1="165" x2="200" y2="165" stroke="#2A9D8F" strokeWidth="1" strokeDasharray="2 2" />
-                <rect x="200" y="156" width="110" height="18" rx="4" fill="#FFFFFF" stroke="#2A9D8F" strokeWidth="1" filter="url(#wireShadow)" />
-                <text x="208" y="168" fill="#21867A">3. RP2040 Dual ARM Core</text>
+                {/* Xtensa 32-bit Dual-Core LX6 */}
+                <line x1="121" y1="130" x2="195" y2="135" stroke="#2A9D8F" strokeWidth="1" strokeDasharray="2 2" />
+                <rect x="195" y="126" width="130" height="18" rx="4" fill="#FFFFFF" stroke="#2A9D8F" strokeWidth="1" filter="url(#wireShadow)" />
+                <text x="203" y="138" fill="#21867A">3. Xtensa Dual-Core @ 240 MHz</text>
 
-                {/* 40 Pre-soldered GPIO Pins */}
-                <line x1="72" y1="210" x2="35" y2="245" stroke="#F4C95D" strokeWidth="1" strokeDasharray="2 2" />
-                <rect x="10" y="245" width="125" height="18" rx="4" fill="#FFFFFF" stroke="#F4C95D" strokeWidth="1" filter="url(#wireShadow)" />
-                <text x="18" y="257" fill="#B88719">4. 40 Gold-Plated Header Pins</text>
+                {/* EN & BOOT Buttons */}
+                <line x1="83" y1="195" x2="195" y2="185" stroke="#2A9D8F" strokeWidth="1" strokeDasharray="2 2" />
+                <rect x="195" y="176" width="130" height="18" rx="4" fill="#FFFFFF" stroke="#2A9D8F" strokeWidth="1" filter="url(#wireShadow)" />
+                <text x="203" y="188" fill="#21867A">4. EN (Reset) & BOOT Buttons</text>
+
+                {/* 30 Header Pins */}
+                <line x1="67" y1="200" x2="25" y2="245" stroke="#F4C95D" strokeWidth="1" strokeDasharray="2 2" />
+                <rect x="10" y="245" width="135" height="18" rx="4" fill="#FFFFFF" stroke="#F4C95D" strokeWidth="1" filter="url(#wireShadow)" />
+                <text x="18" y="257" fill="#B88719">5. 30 Header Pins (Breadboard Ready)</text>
               </g>
             </g>
           )}
@@ -259,49 +264,42 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
           {/* === STAGE 1: ONBOARD BLINK & USB CABLE === */}
           {levelNumber === 1 && (
             <g>
-              {/* Pico WH */}
-              <PicoW x={70} y={45} scale={1.05} />
+              {/* ESP32 DevKit V1 */}
+              <ESP32 x={65} y={45} scale={1.05} ledPower={true} led1={onboardBlink} />
               
               {/* USB Cable connected to top */}
               <g filter="url(#wireShadow)">
-                <rect x={70 + 29} y={15} width="24" height="28" rx="3" fill="#1E293B" stroke="#475569" strokeWidth="1" />
-                <line x1={70 + 41} y1={15} x2={70 + 41} y2={-10} stroke="#334155" strokeWidth="6" strokeLinecap="round" />
+                <rect x={65 + 41.5} y={15} width="24" height="28" rx="3" fill="#1E293B" stroke="#475569" strokeWidth="1" />
+                <line x1={65 + 53.5} y1={15} x2={65 + 53.5} y2={-10} stroke="#334155" strokeWidth="6" strokeLinecap="round" />
               </g>
 
-              {/* Pulsing Onboard LED on the PCB */}
-              <circle
-                cx={70 + 23.5}
-                cy={45 + 23}
-                r={onboardBlink ? "4.5" : "3"}
-                fill={onboardBlink ? "#2A9D8F" : "#1E293B"}
-                filter={onboardBlink ? "url(#picoGlow)" : undefined}
-                className="transition-all duration-300"
-              />
-              
-              {/* Callout box */}
+              {/* Callout box pointing to Onboard Blue LED on GPIO 2 */}
               <g fontFamily="sans-serif" fontSize="7" fontWeight="bold">
-                <line x1={70 + 24} y1={45 + 23} x2={180} y2={65} stroke="#2A9D8F" strokeWidth="1" strokeDasharray="2 2" />
-                <rect x="180" y="52" width="135" height="26" rx="6" fill="#FFFFFF" stroke="#2A9D8F" strokeWidth="1" filter="url(#wireShadow)" />
-                <text x="190" y="66" fill="#21867A">Onboard Wireless LED</text>
-                <text x="190" y="75" fill={onboardBlink ? "#2A9D8F" : "#899AA8"} fontSize="6.5">
+                <line x1={65 + 71.5 * 1.05} y1={45 + 112.5 * 1.05} x2={190} y2={85} stroke="#2A9D8F" strokeWidth="1" strokeDasharray="2 2" />
+                <rect x="190" y="70" width="150" height="34" rx="6" fill="#FFFFFF" stroke="#2A9D8F" strokeWidth="1" filter="url(#wireShadow)" />
+                <text x="200" y="83" fill="#21867A">Built-in GPIO 2 User LED</text>
+                <text x="200" y="93" fill={onboardBlink ? "#2A9D8F" : "#899AA8"} fontSize="6.5">
                   State: {onboardBlink ? 'HIGH (3.3V ON)' : 'LOW (0V OFF)'}
+                </text>
+                <text x="200" y="101" fill="#64748B" fontSize="6" fontFamily="monospace">
+                  digitalWrite(2, {onboardBlink ? 'HIGH' : 'LOW'});
                 </text>
               </g>
 
-              <PartHover meta={picoWMeta} x={70} y={45} scale={1.05} />
+              <PartHover meta={esp32Meta} x={65} y={45} scale={1.05} />
             </g>
           )}
 
           {/* === STAGES 2–5: BREADBOARD CIRCUITS === */}
           {levelNumber >= 2 && (
             <g>
-              {/* 1. Raspberry Pi Pico WH (Left side, fully visible with USB connection) */}
-              <PicoW x={PICO.x} y={PICO.y} />
+              {/* 1. ESP32 DevKit V1 (Left side, fully visible with USB connection) */}
+              <ESP32 x={ESP.x} y={ESP.y} ledPower={true} led1={levelNumber === 3 ? interactivePressed : false} />
               
               {/* Micro-USB Cable plugged into top */}
               <g className="pointer-events-none" filter="url(#wireShadow)">
-                <rect x={PICO.x + 28} y={PICO.y - 25} width="22" height="24" rx="2" fill="#334155" stroke="#1E293B" strokeWidth="0.8" />
-                <line x1={PICO.x + 39} y1={PICO.y - 25} x2={PICO.x + 39} y2={PICO.y - 40} stroke="#475569" strokeWidth="5" strokeLinecap="round" />
+                <rect x={ESP.x + 41.5} y={ESP.y - 25} width="24" height="24" rx="2" fill="#334155" stroke="#1E293B" strokeWidth="0.8" />
+                <line x1={ESP.x + 53.5} y1={ESP.y - 25} x2={ESP.x + 53.5} y2={ESP.y - 40} stroke="#475569" strokeWidth="5" strokeLinecap="round" />
               </g>
 
               {/* 2. Full Breadboard (Active columns 1-28 front and center) */}
@@ -314,12 +312,12 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
               {/* === LEVEL 2: External LED Circuit === */}
               {levelNumber === 2 && (
                 <g>
-                  {/* Step 1: Main Ground Wire (Pico GND.38 -> Breadboard Bottom Blue Rail) */}
+                  {/* Step 1: Main Ground Wire (ESP32 GND.1 -> Breadboard Bottom Blue Rail) */}
                   {renderWire(
-                    pinPosition(picoWMeta, 'GND.38', PICO),
+                    pinPosition(esp32Meta, 'GND.1', ESP),
                     at(getRailHole('bottom', '-', 2)),
                     '#1E293B',
-                    40,
+                    30,
                     'l2-gnd-main'
                   )}
 
@@ -334,14 +332,14 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
                     )
                   )}
 
-                  {/* Step 3: GP15 Wire (Pico GP15 -> Col 15 Row a) */}
+                  {/* Step 3: D15 Wire (ESP32 D15 -> Col 15 Row a) */}
                   {currentStepIndex >= 2 && (
                     renderWire(
-                      pinPosition(picoWMeta, 'GP15', PICO),
+                      pinPosition(esp32Meta, 'D15', ESP),
                       at(getHole('a', 15)),
                       '#2A9D8F',
-                      55,
-                      'l2-sig-gp15'
+                      40,
+                      'l2-sig-d15'
                     )
                   )}
 
@@ -371,9 +369,9 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
               {/* === LEVEL 3: Push Button & Dual LEDs Circuit === */}
               {levelNumber === 3 && (
                 <g>
-                  {/* Ground Wire from Pico GND to Top Rail (-) */}
+                  {/* Ground Wire from ESP32 GND.2 to Top Rail (-) */}
                   {renderWire(
-                    pinPosition(picoWMeta, 'GND.38', PICO),
+                    pinPosition(esp32Meta, 'GND.2', ESP),
                     at(getRailHole('top', '-', 6)),
                     '#1E293B',
                     -35,
@@ -390,10 +388,10 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
                     className="cursor-pointer"
                   />
 
-                  {/* GP14 Signal Wire (Pico GP14 -> Col 30 Row a) */}
+                  {/* D14 Signal Wire (ESP32 D14 -> Col 30 Row a) */}
                   {currentStepIndex >= 1 && (
                     renderWire(
-                      pinPosition(picoWMeta, 'GP14', PICO),
+                      pinPosition(esp32Meta, 'D14', ESP),
                       at(getHole('a', 30)),
                       '#EAB308',
                       50,
@@ -412,7 +410,7 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
                     )
                   )}
 
-                  {/* Dual LEDs on Breadboard (Step 4) */}
+                  {/* Dual LEDs on Breadboard (Step 4: Green on D15, Orange Alert on D4) */}
                   {currentStepIndex >= 3 && (
                     <g>
                       <Led {...l3GreenLed} color="green" lit={!interactivePressed} brightness={1.2} />
@@ -420,8 +418,8 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
                       <Led {...l3OrangeLed} color="orange" lit={interactivePressed} brightness={1.2} />
                       <Resistor {...l3ResOrange} ohms={220} />
 
-                      {renderWire(pinPosition(picoWMeta, 'GP15', PICO), at(getHole('j', 15)), '#2A9D8F', 55, 'l3-w-green')}
-                      {renderWire(pinPosition(picoWMeta, 'GP16', PICO), at(getHole('j', 24)), '#F4C95D', 55, 'l3-w-orange')}
+                      {renderWire(pinPosition(esp32Meta, 'D15', ESP), at(getHole('j', 15)), '#2A9D8F', 45, 'l3-w-green')}
+                      {renderWire(pinPosition(esp32Meta, 'D4', ESP), at(getHole('j', 24)), '#F4C95D', 45, 'l3-w-orange')}
                     </g>
                   )}
 
@@ -439,16 +437,20 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
                     <text x="64" y="58" fill="#94A3B8" fontFamily="monospace" fontSize="7" textAnchor="middle">I2C: 0x3C ONLINE</text>
                   </Oled>
 
-                  {/* Power Rails Wires */}
+                  {/* Power Rails Wires to OLED */}
                   {renderWire(at(getHole('j', 38)), at(getRailHole('bottom', '-', 7)), '#1E293B', 20, 'l4-gnd')}
                   {renderWire(at(getHole('j', 39)), at(getRailHole('bottom', '+', 7)), '#EF4444', 25, 'l4-vcc')}
 
-                  {/* I2C Signal Wires */}
+                  {/* ESP32 Main Power to Rails */}
+                  {renderWire(pinPosition(esp32Meta, '3V3', ESP), at(getRailHole('bottom', '+', 2)), '#EF4444', 25, 'l4-esp-3v3')}
+                  {renderWire(pinPosition(esp32Meta, 'GND.1', ESP), at(getRailHole('bottom', '-', 2)), '#1E293B', 30, 'l4-esp-gnd')}
+
+                  {/* I2C Signal Wires (ESP32 D21 SDA, D22 SCL) */}
                   {currentStepIndex >= 1 && (
-                    renderWire(pinPosition(picoWMeta, 'GP4', PICO), at(getHole('j', 41)), '#3B82F6', 50, 'l4-sda')
+                    renderWire(pinPosition(esp32Meta, 'D21', ESP), at(getHole('j', 41)), '#3B82F6', 45, 'l4-sda')
                   )}
                   {currentStepIndex >= 2 && (
-                    renderWire(pinPosition(picoWMeta, 'GP5', PICO), at(getHole('j', 40)), '#EAB308', 45, 'l4-scl')
+                    renderWire(pinPosition(esp32Meta, 'D22', ESP), at(getHole('j', 40)), '#EAB308', 40, 'l4-scl')
                   )}
 
                   <PartHover meta={oledMeta} {...l4Oled} />
@@ -466,18 +468,26 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
                   </Oled>
                   {renderWire(at(getHole('j', 38)), at(getRailHole('bottom', '-', 7)), '#1E293B', 20, 'l5-gnd')}
                   {renderWire(at(getHole('j', 39)), at(getRailHole('bottom', '+', 7)), '#EF4444', 25, 'l5-vcc')}
-                  {renderWire(pinPosition(picoWMeta, 'GP4', PICO), at(getHole('j', 41)), '#3B82F6', 50, 'l5-sda')}
-                  {renderWire(pinPosition(picoWMeta, 'GP5', PICO), at(getHole('j', 40)), '#EAB308', 45, 'l5-scl')}
+                  {renderWire(pinPosition(esp32Meta, '3V3', ESP), at(getRailHole('bottom', '+', 2)), '#EF4444', 25, 'l5-esp-3v3')}
+                  {renderWire(pinPosition(esp32Meta, 'GND.1', ESP), at(getRailHole('bottom', '-', 2)), '#1E293B', 30, 'l5-esp-gnd')}
 
+                  {/* I2C Lines */}
+                  {renderWire(pinPosition(esp32Meta, 'D21', ESP), at(getHole('j', 41)), '#3B82F6', 45, 'l5-sda')}
+                  {renderWire(pinPosition(esp32Meta, 'D22', ESP), at(getHole('j', 40)), '#EAB308', 40, 'l5-scl')}
+
+                  {/* Red Alert LED on D18 */}
                   <Led {...l3OrangeLed} color="red" lit={true} brightness={1.4} />
-                  {renderWire(pinPosition(picoWMeta, 'GP17', PICO), at(getHole('j', 24)), '#EF4444', 55, 'l5-led')}
+                  {renderWire(pinPosition(esp32Meta, 'D18', ESP), at(getHole('j', 24)), '#EF4444', 45, 'l5-led')}
+
+                  {/* Buzzer Line on D19 */}
+                  {renderWire(pinPosition(esp32Meta, 'D19', ESP), at(getHole('j', 15)), '#F59E0B', 50, 'l5-buzzer')}
 
                   <PartHover meta={oledMeta} {...l4Oled} />
                 </g>
               )}
 
               {/* Hover layers for live feedback */}
-              <PartHover meta={picoWMeta} x={PICO.x} y={PICO.y} />
+              <PartHover meta={esp32Meta} x={ESP.x} y={ESP.y} />
               <BreadboardHover
                 x={BB.x}
                 y={BB.y}

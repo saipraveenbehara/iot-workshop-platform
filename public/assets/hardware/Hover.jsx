@@ -12,6 +12,7 @@ export const PART_SPECS = {
   dht22: ['Temp −40…80 °C ±0.5', 'Humidity 0–100 % ±2', 'Single-wire data on SDA'],
   potentiometer: ['Rotary, analog out on SIG', '270° travel', '3.3–5 V'],
   'pico-w': ['RP2040, dual Cortex-M0+', '2 MB flash, 264 KB RAM', 'Wi-Fi (CYW43439), 3.3 V logic', '26 GPIO, 3 ADC'],
+  esp32: ['Xtensa dual-core 32-bit LX6 @ 240 MHz', '520 KB SRAM, 4 MB Flash', 'Wi-Fi 802.11 b/g/n & BLE 4.2', '30 Pins, 3.3V Logic (GPIO 2 Onboard Blue LED)'],
 };
 
 function Tooltip({ x, y, lines, W }) {

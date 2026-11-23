@@ -11,14 +11,14 @@ import {
   Compass
 } from 'lucide-react';
 import { CircuitPanZoom } from '../circuit/CircuitPanZoom.js';
-import { PicoW, picoWMeta, PartHover } from '../../hardware/index.js';
+import { ESP32, esp32Meta, PartHover } from '../../hardware/index.js';
 
 export const ComputerVsMicrocontrollerCard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'visual' | 'timingTest'>('visual');
   const [testState, setTestState] = useState<'idle' | 'testing' | 'done'>('idle');
   const [simulatedResults, setSimulatedResults] = useState<{
     laptopLatencyMs: number;
-    picoLatencyNs: number;
+    esp32LatencyNs: number;
   } | null>(null);
 
   const runLatencyTest = () => {
@@ -26,7 +26,7 @@ export const ComputerVsMicrocontrollerCard: React.FC = () => {
     setTimeout(() => {
       setSimulatedResults({
         laptopLatencyMs: 38.4,
-        picoLatencyNs: 7.5,
+        esp32LatencyNs: 4.1,
       });
       setTestState('done');
     }, 1000);
@@ -45,7 +45,7 @@ export const ComputerVsMicrocontrollerCard: React.FC = () => {
             </span>
           </div>
           <h3 className="text-xl lg:text-2xl font-black text-[#24313A] mt-1">
-            General Computer (Laptop) vs Dedicated Microcontroller (Pico WH)
+            General Computer (Laptop) vs Dedicated Microcontroller (ESP32 DevKit V1)
           </h3>
         </div>
 
@@ -190,7 +190,7 @@ export const ComputerVsMicrocontrollerCard: React.FC = () => {
 
           </div>
 
-          {/* === RIGHT CARD: THE MICROCONTROLLER (PICO WH) === */}
+          {/* === RIGHT CARD: THE MICROCONTROLLER (ESP32) === */}
           <div className="p-6 rounded-3xl bg-[#E6F4F2]/50 border border-[#B2DFDB] flex flex-col justify-between space-y-6 shadow-sm">
             
             {/* Top Label */}
@@ -198,10 +198,10 @@ export const ComputerVsMicrocontrollerCard: React.FC = () => {
               <span className="px-3 py-1 rounded-full bg-[#2A9D8F] text-white text-xs font-bold uppercase tracking-wider font-mono">
                 The Dedicated Maker Brain
               </span>
-              <span className="text-xs text-[#21867A] font-mono font-bold">RP2040 Dual ARM @ 133MHz</span>
+              <span className="text-xs text-[#21867A] font-mono font-bold">Xtensa Dual-Core @ 240MHz</span>
             </div>
 
-            {/* Authentic Raspberry Pi Pico WH Graphic with Pan & Zoom Inspector */}
+            {/* Authentic ESP32 DevKit V1 Graphic with Pan & Zoom Inspector */}
             <CircuitPanZoom
               heightClass="min-h-[250px] h-[250px]"
               initialScale={1.0}
@@ -213,35 +213,35 @@ export const ComputerVsMicrocontrollerCard: React.FC = () => {
                 </div>
               }
             >
-              <svg viewBox="0 0 120 220" className="w-[120px] h-[220px] select-none" style={{ overflow: 'visible' }}>
-                <PicoW x={20} y={10} scale={1} />
-                <PartHover meta={picoWMeta} x={20} y={10} scale={1} />
+              <svg viewBox="0 0 107 201" className="w-[125px] h-[225px] select-none" style={{ overflow: 'visible' }}>
+                <ESP32 x={0} y={0} scale={1} ledPower={true} led1={true} />
+                <PartHover meta={esp32Meta} x={0} y={0} scale={1} />
               </svg>
             </CircuitPanZoom>
 
             {/* Specifications & Role */}
             <div className="space-y-3">
-              <h4 className="text-base font-black text-[#24313A]">Raspberry Pi Pico WH Microcontroller</h4>
+              <h4 className="text-base font-black text-[#24313A]">ESP32 DevKit V1 Microcontroller</h4>
               <p className="text-xs text-[#576875] leading-relaxed">
-                Boots instantly in 0.001 seconds. It runs code directly on silicon with zero operating system overhead, measuring and toggling electrical signals in nanoseconds.
+                Boots instantly in 0.001 seconds. It executes compiled C code directly on bare silicon with zero operating system overhead, measuring and toggling electrical signals in nanoseconds.
               </p>
               
               <div className="grid grid-cols-2 gap-2 pt-1 font-mono text-[11px]">
                 <div className="p-2.5 rounded-xl bg-white border border-[#B2DFDB]">
                   <span className="text-[#899AA8] block text-[10px]">Operating System</span>
-                  <span className="text-[#21867A] font-bold">Bare-Metal Firmware</span>
+                  <span className="text-[#21867A] font-bold">Bare-Metal C Firmware</span>
                 </div>
                 <div className="p-2.5 rounded-xl bg-white border border-[#B2DFDB]">
-                  <span className="text-[#899AA8] block text-[10px]">Power Consumption</span>
-                  <span className="text-[#21867A] font-bold">0.1 Watts (Tiny Battery)</span>
+                  <span className="text-[#899AA8] block text-[10px]">Core Clock</span>
+                  <span className="text-[#21867A] font-bold">240 MHz Dual-Core</span>
                 </div>
                 <div className="p-2.5 rounded-xl bg-white border border-[#B2DFDB]">
                   <span className="text-[#899AA8] block text-[10px]">Direct Voltage Pins</span>
-                  <span className="text-[#21867A] font-bold">26 GPIOs (0V / 3.3V)</span>
+                  <span className="text-[#21867A] font-bold">30 Pins (3.3V Logic)</span>
                 </div>
                 <div className="p-2.5 rounded-xl bg-white border border-[#B2DFDB]">
                   <span className="text-[#899AA8] block text-[10px]">Switching Latency</span>
-                  <span className="text-[#21867A] font-bold">7.5 Nanoseconds</span>
+                  <span className="text-[#21867A] font-bold">4.1 Nanoseconds</span>
                 </div>
               </div>
             </div>
@@ -294,12 +294,12 @@ export const ComputerVsMicrocontrollerCard: React.FC = () => {
               </p>
             </div>
 
-            {/* Pico Pulse */}
+            {/* ESP32 Pulse */}
             <div className="p-5 rounded-2xl bg-[#E6F4F2] border border-[#B2DFDB] space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-[#21867A]">Pico WH Direct Silicon Pin</span>
+                <span className="text-xs font-bold text-[#21867A]">ESP32 Direct Silicon Pin</span>
                 <span className="text-xs font-mono text-[#21867A] font-black">
-                  {simulatedResults ? `${simulatedResults.picoLatencyNs} nanoseconds` : 'Waiting...'}
+                  {simulatedResults ? `${simulatedResults.esp32LatencyNs} nanoseconds` : 'Waiting...'}
                 </span>
               </div>
               <div className="w-full bg-white h-3 rounded-full overflow-hidden p-0.5 border border-[#B2DFDB]">
@@ -309,7 +309,7 @@ export const ComputerVsMicrocontrollerCard: React.FC = () => {
                 />
               </div>
               <p className="text-[11px] text-[#21867A] leading-relaxed font-medium">
-                Toggles directly on the 133MHz processor clock cycle with zero waiting.
+                Toggles directly on the 240MHz processor clock cycle with zero waiting.
               </p>
             </div>
 
@@ -321,7 +321,7 @@ export const ComputerVsMicrocontrollerCard: React.FC = () => {
       <div className="p-4 rounded-2xl bg-[#FEF9EC] border border-[#FCEFCB] flex items-start gap-3 text-xs text-[#24313A]">
         <Sparkles className="w-4 h-4 text-[#DBAF40] shrink-0 mt-0.5" />
         <p className="leading-relaxed font-medium">
-          <strong>The Maker Partnership:</strong> You use your computer's screen and keyboard to write and read code comfortably in Thonny. Then you upload that code to the Raspberry Pi Pico WH, which brings the physical circuits on your breadboard to life!
+          <strong>The Maker Partnership:</strong> You use your computer's screen and keyboard to write and read code comfortably in the Arduino IDE or Wokwi Web. Then you upload that compiled C code to the ESP32 DevKit V1, which brings the physical circuits on your breadboard to life!
         </p>
       </div>
 

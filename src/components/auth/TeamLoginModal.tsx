@@ -92,7 +92,7 @@ export const TeamLoginModal: React.FC = () => {
               <ShieldCheck className="w-4 h-4 text-[#2A9D8F]" />
               10 Kits + 2 Spares Verified
             </span>
-            <span className="font-mono text-[11px] text-[#899AA8]">MicroPython • Pico WH</span>
+            <span className="font-mono text-[11px] text-[#899AA8]">C / C++ • ESP32 DevKit V1</span>
           </div>
         </div>
       </div>

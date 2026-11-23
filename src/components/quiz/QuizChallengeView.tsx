@@ -81,6 +81,33 @@ export const QuizChallengeView: React.FC<QuizChallengeViewProps> = ({
     if (currentQ.id !== 'q0-1') return null;
     if (idx === 0) {
       return (
+        <div className="w-20 h-14 rounded-xl bg-[#E6F4F2] border-2 border-[#2A9D8F] p-1.5 shrink-0 flex flex-col justify-between shadow-xs">
+          <div className="w-3.5 h-2 bg-[#94A3B8] mx-auto rounded-[1px]" title="Micro-USB" />
+          <div className="w-9 h-6 bg-[#CBD5E1] border border-[#94A3B8] rounded-[2px] mx-auto flex items-center justify-center">
+            <span className="text-[5.5px] text-[#1E293B] font-bold">ESP-WROOM-32</span>
+          </div>
+          <span className="text-[7.5px] text-[#21867A] font-mono font-bold text-center">ESP32 DevKit (Black)</span>
+        </div>
+      );
+    }
+    if (idx === 1) {
+      return (
+        <div className="w-20 h-14 rounded-xl bg-[#F1F5F9] border border-[#CBD5E1] p-1.5 shrink-0 flex flex-col justify-between shadow-xs">
+          <div className="w-4.5 h-2 bg-[#94A3B8] mx-auto rounded-[1px]" title="Micro-USB" />
+          <div className="flex justify-between items-center px-0.5">
+            <div className="w-5 h-4 bg-white border border-[#CBD5E1] rounded-[1px] flex items-center justify-center">
+              <span className="text-[5px] text-[#64748B] font-bold">CYW43</span>
+            </div>
+            <div className="w-4 h-4 bg-[#1E293B] rounded-[1px] flex items-center justify-center">
+              <span className="text-[4.5px] text-[#94A3B8] font-mono">RP2040</span>
+            </div>
+          </div>
+          <span className="text-[7.5px] text-[#64748B] font-mono font-bold text-center">Pico WH (Green)</span>
+        </div>
+      );
+    }
+    if (idx === 2) {
+      return (
         <div className="w-20 h-14 rounded-xl bg-[#E0F2FE] border border-[#BAE6FD] p-1.5 shrink-0 flex flex-col justify-between shadow-xs">
           <div className="flex justify-between items-center">
             <div className="w-4 h-3.5 bg-[#94A3B8] rounded-[1px]" title="USB-B Port" />
@@ -90,33 +117,6 @@ export const QuizChallengeView: React.FC<QuizChallengeViewProps> = ({
             <span className="text-[5px] text-[#E2E8F0] font-mono">ATmega328P</span>
           </div>
           <span className="text-[7.5px] text-[#0369A1] font-mono font-bold text-center">UNO R3 (Blue)</span>
-        </div>
-      );
-    }
-    if (idx === 1) {
-      return (
-        <div className="w-20 h-14 rounded-xl bg-[#F1F5F9] border border-[#CBD5E1] p-1.5 shrink-0 flex flex-col justify-between shadow-xs">
-          <div className="w-3.5 h-2 bg-[#94A3B8] mx-auto rounded-[1px]" />
-          <div className="w-9 h-6 bg-[#E2E8F0] border border-[#CBD5E1] rounded-[2px] mx-auto flex items-center justify-center">
-            <span className="text-[6px] text-[#475569] font-bold">ESP-WROOM</span>
-          </div>
-          <span className="text-[7.5px] text-[#64748B] font-mono font-bold text-center">ESP32 (Black)</span>
-        </div>
-      );
-    }
-    if (idx === 2) {
-      return (
-        <div className="w-20 h-14 rounded-xl bg-[#E6F4F2] border-2 border-[#2A9D8F] p-1.5 shrink-0 flex flex-col justify-between shadow-xs">
-          <div className="w-4.5 h-2 bg-[#94A3B8] mx-auto rounded-[1px]" title="Micro-USB" />
-          <div className="flex justify-between items-center px-0.5">
-            <div className="w-5 h-4 bg-white border border-[#B2DFDB] rounded-[1px] flex items-center justify-center">
-              <span className="text-[5px] text-[#24313A] font-bold">CYW43</span>
-            </div>
-            <div className="w-4 h-4 bg-[#1E293B] rounded-[1px] flex items-center justify-center">
-              <span className="text-[4.5px] text-[#2A9D8F] font-mono">RP2040</span>
-            </div>
-          </div>
-          <span className="text-[7.5px] text-[#21867A] font-mono font-bold text-center">Pico WH (Green)</span>
         </div>
       );
     }

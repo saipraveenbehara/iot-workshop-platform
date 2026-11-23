@@ -69,6 +69,7 @@ declare module '../hardware/index.js' {
   export const dht22Meta: PartMeta;
   export const potModuleMeta: PartMeta;
   export const picoWMeta: PartMeta;
+  export const esp32Meta: PartMeta;
 
   export const Breadboard: React.FC<{
     x?: number | string;
@@ -133,6 +134,24 @@ declare module '../hardware/index.js' {
     x?: number | string;
     y?: number | string;
     scale?: number;
+    [key: string]: any;
+  }>;
+
+  export const ESP32: React.FC<{
+    x?: number | string;
+    y?: number | string;
+    scale?: number;
+    ledPower?: boolean;
+    led1?: boolean;
+    [key: string]: any;
+  }>;
+
+  export const Esp32: React.FC<{
+    x?: number | string;
+    y?: number | string;
+    scale?: number;
+    ledPower?: boolean;
+    led1?: boolean;
     [key: string]: any;
   }>;
 

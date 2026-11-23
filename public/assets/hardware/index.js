@@ -6,12 +6,13 @@ import Oled, { oledMeta } from './Oled.jsx';
 import Dht22, { dht22Meta } from './Dht22.jsx';
 import PotModule, { potModuleMeta } from './PotModule.jsx';
 import PicoW, { picoWMeta } from './PicoW.jsx';
+import ESP32, { Esp32, esp32Meta } from './ESP32.jsx';
 
 export * from './utils.js';
 export { PartHover, BreadboardHover, PART_SPECS } from './Hover.jsx';
 export * from './breadboardGeometry.js';
-export { Breadboard, Led, Resistor, PushButton, Oled, Dht22, PotModule, PicoW, resistorBands };
-export { breadboardMeta, ledMeta, resistorMeta, pushButtonMeta, oledMeta, dht22Meta, potModuleMeta, picoWMeta };
+export { Breadboard, Led, Resistor, PushButton, Oled, Dht22, PotModule, PicoW, ESP32, Esp32, resistorBands };
+export { breadboardMeta, ledMeta, resistorMeta, pushButtonMeta, oledMeta, dht22Meta, potModuleMeta, picoWMeta, esp32Meta };
 
 /** Registry: look a part up by id, e.g. PARTS['led'].Component / .meta.pins */
 export const PARTS = {
@@ -23,4 +24,5 @@ export const PARTS = {
   dht22: { Component: Dht22, meta: dht22Meta },
   potentiometer: { Component: PotModule, meta: potModuleMeta },
   'pico-w': { Component: PicoW, meta: picoWMeta },
+  esp32: { Component: ESP32, meta: esp32Meta },
 };

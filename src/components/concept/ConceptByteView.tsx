@@ -74,9 +74,9 @@ export const ConceptByteView: React.FC<ConceptByteViewProps> = ({
 
           <div className="flex flex-col sm:flex-row items-center gap-6 bg-[#FFFDF7] border border-[#EBE6DC] p-6 rounded-2xl w-full justify-around shadow-sm">
             <div className="flex flex-col items-center">
-              <span className="text-[11px] text-[#576875] font-mono uppercase font-bold">Code Command</span>
+              <span className="text-[11px] text-[#576875] font-mono uppercase font-bold">C Command</span>
               <div className="mt-2 px-3.5 py-2 rounded-xl bg-white text-[#21867A] font-mono text-xs font-bold border border-[#B2DFDB] shadow-sm">
-                led.value({digitalSwitchState})
+                digitalWrite(2, {digitalSwitchState === 1 ? 'HIGH' : 'LOW'})
               </div>
             </div>
 
@@ -170,7 +170,7 @@ export const ConceptByteView: React.FC<ConceptByteViewProps> = ({
               </h5>
             </div>
             <p className="text-xs text-[#576875] leading-relaxed font-medium">
-              Always disconnect the USB cable before plugging or unplugging wires on the breadboard. This keeps the Pico's voltage regulator safe from accidental short circuits.
+              Always disconnect the USB cable before plugging or unplugging wires on the breadboard. This keeps the ESP32's voltage regulator safe from accidental short circuits.
             </p>
           </div>
 

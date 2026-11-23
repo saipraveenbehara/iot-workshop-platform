@@ -45,7 +45,7 @@ export interface CircuitStep {
 export interface CodeChunk {
   blockId: string;
   title: string;
-  language: "python";
+  language: "c" | "cpp" | "python";
   code: string;
   explanation: string;
   isConfigurable?: boolean;
