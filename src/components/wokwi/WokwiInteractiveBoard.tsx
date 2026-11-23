@@ -12,6 +12,7 @@ import {
   CheckCircle2,
   Radio
 } from 'lucide-react';
+import { CircuitPanZoom } from '../circuit/CircuitPanZoom.js';
 import { 
   PicoW, 
   picoWMeta, 
@@ -138,18 +139,12 @@ export const WokwiInteractiveBoard: React.FC<WokwiInteractiveBoardProps> = ({ le
         </div>
       </div>
 
-      {/* Interactive Hardware Stage */}
-      <div className="relative min-h-[320px] bg-[#F8F9FA] border border-[#EBE6DC] rounded-2xl p-6 flex flex-col items-center justify-center overflow-hidden">
-        
-        {/* Background Grid Pattern */}
-        <div 
-          className="absolute inset-0 opacity-40 pointer-events-none"
-          style={{
-            backgroundImage: 'radial-gradient(circle at 1px 1px, #CBD5E1 1px, transparent 0)',
-            backgroundSize: '24px 24px',
-          }}
-        />
-
+      {/* Interactive Hardware Stage with Pan & Zoom */}
+      <CircuitPanZoom
+        key={`wokwi-stage-${levelNumber}`}
+        heightClass="min-h-[350px] h-[350px]"
+        initialScale={1.0}
+      >
         {/* Level 0: Pico WH Architecture Inspector */}
         {levelNumber === 0 && (
           <div className="flex flex-col items-center text-center space-y-4 max-w-md z-10 animate-fade-in">
@@ -441,7 +436,7 @@ export const WokwiInteractiveBoard: React.FC<WokwiInteractiveBoardProps> = ({ le
           </div>
         )}
 
-      </div>
+      </CircuitPanZoom>
 
       {/* Simulated Thonny MicroPython REPL Terminal */}
       <div className="bg-[#F8F9FA] border border-[#EBE6DC] rounded-2xl p-4 font-mono shadow-inner space-y-2">

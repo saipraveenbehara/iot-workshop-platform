@@ -10,6 +10,7 @@ import {
   Activity,
   Compass
 } from 'lucide-react';
+import { CircuitPanZoom } from '../circuit/CircuitPanZoom.js';
 import { PicoW, picoWMeta, PartHover } from '../../hardware/index.js';
 
 export const ComputerVsMicrocontrollerCard: React.FC = () => {
@@ -200,16 +201,23 @@ export const ComputerVsMicrocontrollerCard: React.FC = () => {
               <span className="text-xs text-[#21867A] font-mono font-bold">RP2040 Dual ARM @ 133MHz</span>
             </div>
 
-            {/* Authentic Raspberry Pi Pico WH Graphic with PartHover */}
-            <div className="w-full flex flex-col items-center justify-center py-2">
-              <span className="text-[11px] font-mono font-bold text-[#21867A] mb-1 uppercase tracking-wider">
-                Hover over pins or board for specs
-              </span>
-              <svg viewBox="0 0 120 220" className="w-full max-w-[200px] select-none" style={{ overflow: 'visible' }}>
+            {/* Authentic Raspberry Pi Pico WH Graphic with Pan & Zoom Inspector */}
+            <CircuitPanZoom
+              heightClass="min-h-[250px] h-[250px]"
+              initialScale={1.0}
+              overlayChildren={
+                <div className="absolute top-3 left-3 z-20 pointer-events-none">
+                  <span className="text-[10px] font-mono font-bold text-[#21867A] bg-white/90 backdrop-blur-xs px-2 py-0.5 rounded border border-[#B2DFDB] uppercase tracking-wider">
+                    Hover pins for specs
+                  </span>
+                </div>
+              }
+            >
+              <svg viewBox="0 0 120 220" className="w-[120px] h-[220px] select-none" style={{ overflow: 'visible' }}>
                 <PicoW x={20} y={10} scale={1} />
                 <PartHover meta={picoWMeta} x={20} y={10} scale={1} />
               </svg>
-            </div>
+            </CircuitPanZoom>
 
             {/* Specifications & Role */}
             <div className="space-y-3">

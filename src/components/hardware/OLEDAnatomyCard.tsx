@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Sparkles, Grid, Layers, Compass } from 'lucide-react';
+import { CircuitPanZoom } from '../circuit/CircuitPanZoom.js';
 import { Oled, oledMeta, PartHover } from '../../hardware/index.js';
 
 export const OLEDAnatomyCard: React.FC = () => {
@@ -85,28 +86,36 @@ export const OLEDAnatomyCard: React.FC = () => {
       {/* Interactive Visual Section: Authentic OLED Module + Pixel Sandbox */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center pt-2">
         
-        {/* Authentic SSD1306 Module with Live Display & Hover Inspector */}
-        <div className="bg-[#FFFDF7] border border-[#EBE6DC] rounded-2xl p-6 flex flex-col items-center justify-center min-h-[300px] shadow-inner">
-          <span className="text-[11px] font-mono font-bold text-[#899AA8] mb-2 uppercase tracking-wider">
-            Hover pins (GND, VCC, SCL, SDA) for specs
-          </span>
+        {/* Authentic SSD1306 Module with Pan & Zoom & Live Display */}
+        <div className="flex flex-col space-y-2">
+          <CircuitPanZoom
+            heightClass="min-h-[300px] h-[300px]"
+            initialScale={1.0}
+            overlayChildren={
+              <div className="absolute top-3 left-3 z-20 pointer-events-none">
+                <span className="text-[10px] font-mono font-bold text-[#899AA8] bg-white/90 backdrop-blur-xs px-2 py-0.5 rounded border border-[#EBE6DC] uppercase tracking-wider">
+                  Hover pins (GND, VCC, SCL, SDA) for specs
+                </span>
+              </div>
+            }
+          >
+            <svg viewBox="0 0 200 160" className="w-[220px] h-[170px] select-none" style={{ overflow: 'visible' }}>
+              <Oled x={25} y={15} scale={1.4}>
+                <text x="64" y="16" fill="#38BDF8" fontFamily="monospace" fontSize="10" textAnchor="middle">NXPLORERS IoT</text>
+                <text x="64" y="32" fill="#FFFFFF" fontFamily="monospace" fontSize="11" fontWeight="bold" textAnchor="middle">CyberKnights</text>
+                <text x="64" y="46" fill="#4ADE80" fontFamily="monospace" fontSize="8" textAnchor="middle">T: 27°C | Soil: 42%</text>
+                <text x="64" y="58" fill="#94A3B8" fontFamily="monospace" fontSize="7" textAnchor="middle">I2C: 0x3C ONLINE</text>
+              </Oled>
 
-          <svg viewBox="0 0 200 160" className="w-full max-w-[280px] select-none" style={{ overflow: 'visible' }}>
-            <Oled x={25} y={15} scale={1.4}>
-              <text x="64" y="16" fill="#38BDF8" fontFamily="monospace" fontSize="10" textAnchor="middle">NXPLORERS IoT</text>
-              <text x="64" y="32" fill="#FFFFFF" fontFamily="monospace" fontSize="11" fontWeight="bold" textAnchor="middle">CyberKnights</text>
-              <text x="64" y="46" fill="#4ADE80" fontFamily="monospace" fontSize="8" textAnchor="middle">T: 27°C | Soil: 42%</text>
-              <text x="64" y="58" fill="#94A3B8" fontFamily="monospace" fontSize="7" textAnchor="middle">I2C: 0x3C ONLINE</text>
-            </Oled>
-
-            <PartHover
-              meta={oledMeta}
-              x={25}
-              y={15}
-              scale={1.4}
-            />
-          </svg>
-          <span className="text-xs text-[#576875] font-mono mt-2 font-bold">Physical 0.96" SSD1306 I2C OLED Breakout</span>
+              <PartHover
+                meta={oledMeta}
+                x={25}
+                y={15}
+                scale={1.4}
+              />
+            </svg>
+          </CircuitPanZoom>
+          <span className="text-xs text-[#576875] font-mono text-center font-bold">Physical 0.96" SSD1306 I2C OLED Breakout</span>
         </div>
 
         {/* Interactive Pixel Sandbox: Click pixels to draw! */}

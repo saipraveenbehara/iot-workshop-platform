@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { HelpCircle, CheckCircle2, Radio, Compass, Sparkles } from 'lucide-react';
+import { CircuitPanZoom } from '../circuit/CircuitPanZoom.js';
 import { PushButton, pushButtonMeta, PartHover } from '../../hardware/index.js';
 
 export const PushButtonAnatomyCard: React.FC = () => {
@@ -41,49 +42,57 @@ export const PushButtonAnatomyCard: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
         
-        {/* Left Side: Authentic Wokwi Push Button with Interactive Click & Hover */}
-        <div className="bg-[#FFFDF7] border border-[#EBE6DC] rounded-2xl p-6 flex flex-col items-center justify-center min-h-[300px] shadow-inner">
-          <span className="text-[11px] font-mono font-bold text-[#899AA8] mb-2 uppercase tracking-wider">
-            Click plunger to press • Hover pins for specs
-          </span>
-
-          <svg 
-            viewBox="0 0 200 150" 
-            className="w-full max-w-[240px] select-none cursor-pointer"
-            style={{ overflow: 'visible' }}
-            onMouseDown={() => setIsPressed(true)}
-            onMouseUp={() => setIsPressed(false)}
-            onTouchStart={() => setIsPressed(true)}
-            onTouchEnd={() => setIsPressed(false)}
+        {/* Left Side: Authentic Wokwi Push Button with Pan & Zoom & Interactive Click */}
+        <div className="flex flex-col space-y-3">
+          <CircuitPanZoom
+            heightClass="min-h-[300px] h-[300px]"
+            initialScale={1.0}
+            overlayChildren={
+              <div className="absolute top-3 left-3 z-20 pointer-events-none">
+                <span className="text-[10px] font-mono font-bold text-[#899AA8] bg-white/90 backdrop-blur-xs px-2 py-0.5 rounded border border-[#EBE6DC] uppercase tracking-wider">
+                  Click plunger to press • Hover pins for specs
+                </span>
+              </div>
+            }
           >
-            {/* Authentic PushButton */}
-            <PushButton
-              x={30}
-              y={25}
-              scale={2.1}
-              color={btnColor}
-              pressed={isPressed}
-            />
+            <svg 
+              viewBox="0 0 200 150" 
+              className="w-[200px] h-[150px] select-none cursor-pointer"
+              style={{ overflow: 'visible' }}
+              onMouseDown={() => setIsPressed(true)}
+              onMouseUp={() => setIsPressed(false)}
+              onTouchStart={() => setIsPressed(true)}
+              onTouchEnd={() => setIsPressed(false)}
+            >
+              {/* Authentic PushButton */}
+              <PushButton
+                x={30}
+                y={25}
+                scale={2.1}
+                color={btnColor}
+                pressed={isPressed}
+              />
 
-            {/* Pin Callouts */}
-            <g fontFamily="sans-serif" fontSize="6" fontWeight="bold">
-              <text x="24" y="55" textAnchor="end" fill="#2A9D8F">1.l (GP14)</text>
-              <text x="24" y="94" textAnchor="end" fill="#899AA8">2.l (Linked)</text>
-              <text x="175" y="55" textAnchor="start" fill="#F28C75">1.r (GND)</text>
-              <text x="175" y="94" textAnchor="start" fill="#899AA8">2.r (Linked)</text>
-            </g>
+              {/* Pin Callouts */}
+              <g fontFamily="sans-serif" fontSize="6" fontWeight="bold">
+                <text x="24" y="55" textAnchor="end" fill="#2A9D8F">1.l (GP14)</text>
+                <text x="24" y="94" textAnchor="end" fill="#899AA8">2.l (Linked)</text>
+                <text x="175" y="55" textAnchor="start" fill="#F28C75">1.r (GND)</text>
+                <text x="175" y="94" textAnchor="start" fill="#899AA8">2.r (Linked)</text>
+              </g>
 
-            {/* Hover Tooltip Layer */}
-            <PartHover
-              meta={pushButtonMeta}
-              x={30}
-              y={25}
-              scale={2.1}
-            />
-          </svg>
+              {/* Hover Tooltip Layer */}
+              <PartHover
+                meta={pushButtonMeta}
+                x={30}
+                y={25}
+                scale={2.1}
+              />
+            </svg>
+          </CircuitPanZoom>
 
           {/* Interactive Status Indicator */}
-          <div className="mt-4 text-center">
+          <div className="flex justify-center">
             <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-all ${
               isPressed 
                 ? 'bg-[#FDF1EE] border border-[#F8C8BE] text-[#F28C75]' 

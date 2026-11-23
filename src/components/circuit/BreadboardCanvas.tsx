@@ -12,6 +12,7 @@ import {
   Eye,
   CheckCircle2
 } from 'lucide-react';
+import { CircuitPanZoom } from './CircuitPanZoom.js';
 import { 
   Breadboard, 
   PicoW, 
@@ -195,25 +196,23 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
         </div>
       )}
 
-      {/* Primary Visual Circuit Stage (Focused on Pico + Active Circuit Area) */}
-      <div className="relative w-full overflow-x-auto bg-[#F8F9FA] rounded-2xl border border-[#EBE6DC] p-4 flex justify-center shadow-inner scrollbar-thin">
-        
-        {/* Hovered Hole Info Badge */}
-        {hoveredHoleInfo && (
-          <div className="absolute top-4 left-4 z-20 px-3 py-1 rounded-lg bg-white border border-[#B2DFDB] text-[#21867A] text-xs font-mono shadow-sm animate-fade-in pointer-events-none font-bold">
-            Hole {hoveredHoleInfo.id} • {hoveredHoleInfo.net}
-          </div>
-        )}
-
-        {/* 
-          SVG Canvas: Focused Viewport (520x290)
-          Ensures Raspberry Pi Pico WH, wires, and active circuit components are 100% visible right in the first go.
-          Remaining empty columns of the 63-column breadboard extend into the scrollable background!
-        */}
+      {/* Primary Visual Circuit Stage (Focused on Pico + Active Circuit Area with Pan & Zoom) */}
+      <CircuitPanZoom
+        key={`circuit-canvas-${levelNumber}`}
+        heightClass="min-h-[380px] h-[380px]"
+        initialScale={1.0}
+        overlayChildren={
+          hoveredHoleInfo ? (
+            <div className="absolute top-3 left-3 z-20 px-3 py-1 rounded-lg bg-white/95 backdrop-blur-xs border border-[#B2DFDB] text-[#21867A] text-xs font-mono shadow-sm animate-fade-in pointer-events-none font-bold">
+              Hole {hoveredHoleInfo.id} • {hoveredHoleInfo.net}
+            </div>
+          ) : undefined
+        }
+      >
         <svg
           viewBox="0 0 540 290"
-          className="w-full max-w-[540px] select-none"
-          style={{ minWidth: '480px', overflow: 'visible' }}
+          className="w-[540px] h-[290px] shrink-0 select-none"
+          style={{ overflow: 'visible' }}
         >
           <defs>
             <filter id="wireShadow" x="-10%" y="-10%" width="130%" height="130%">
@@ -487,15 +486,15 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
             </g>
           )}
         </svg>
-      </div>
+      </CircuitPanZoom>
 
       {/* Blueprint Footer */}
-      <div className="flex items-center justify-between text-xs text-[#576875] pt-1 border-t border-[#EBE6DC]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-[#576875] pt-1 border-t border-[#EBE6DC]">
         <span className="flex items-center gap-1.5 font-medium">
-          <Info className="w-4 h-4 text-[#2A9D8F]" />
-          <span>Interactive Blueprint: Hover over any breadboard hole, Pico pin, or component to view pin specs and nets.</span>
+          <Info className="w-4 h-4 text-[#2A9D8F] shrink-0" />
+          <span>Interactive Circuit Blueprint: Drag to pan, scroll to zoom in on pins & holes, or hover over components for specs.</span>
         </span>
-        <span className="font-mono text-[#899AA8] text-[11px] font-bold">Wokwi Vector Standard</span>
+        <span className="font-mono text-[#899AA8] text-[11px] font-bold shrink-0">Wokwi Vector Standard</span>
       </div>
     </div>
   );

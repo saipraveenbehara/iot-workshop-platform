@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Zap, ShieldCheck, CheckCircle2, AlertTriangle, Compass, Sparkles } from 'lucide-react';
+import { CircuitPanZoom } from '../circuit/CircuitPanZoom.js';
 import { Led, ledMeta, Resistor, resistorMeta, PartHover } from '../../hardware/index.js';
 
 export const LEDAnatomyCard: React.FC = () => {
@@ -66,54 +67,62 @@ export const LEDAnatomyCard: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
         
-        {/* Left Side: Authentic Wokwi LED with Hover Inspector */}
-        <div className="relative bg-[#FFFDF7] border border-[#EBE6DC] rounded-2xl p-6 flex flex-col items-center justify-center min-h-[300px] shadow-inner">
-          <span className="text-[11px] font-mono font-bold text-[#899AA8] mb-2 uppercase tracking-wider">
-            Hover over pins or body for specs
-          </span>
+        {/* Left Side: Authentic Wokwi LED with Pan & Zoom Inspector */}
+        <div className="flex flex-col space-y-3">
+          <CircuitPanZoom
+            heightClass="min-h-[300px] h-[300px]"
+            initialScale={1.0}
+            overlayChildren={
+              <div className="absolute top-3 left-3 z-20 pointer-events-none">
+                <span className="text-[10px] font-mono font-bold text-[#899AA8] bg-white/90 backdrop-blur-xs px-2 py-0.5 rounded border border-[#EBE6DC] uppercase tracking-wider">
+                  Hover pins or body for specs
+                </span>
+              </div>
+            }
+          >
+            <svg viewBox="0 0 160 160" className="w-[180px] h-[180px] select-none" style={{ overflow: 'visible' }}>
+              {/* Authentic Scaled LED Component */}
+              <Led
+                x={40}
+                y={25}
+                scale={2.8}
+                color={selectedColor}
+                lit={isForwardBias}
+                brightness={1.2}
+              />
 
-          <svg viewBox="0 0 160 160" className="w-full max-w-[220px] select-none" style={{ overflow: 'visible' }}>
-            {/* Authentic Scaled LED Component */}
-            <Led
-              x={40}
-              y={25}
-              scale={2.8}
-              color={selectedColor}
-              lit={isForwardBias}
-              brightness={1.2}
-            />
+              {/* Pin callout text lines */}
+              <g fontFamily="sans-serif" fontSize="6.5" fontWeight="bold">
+                {/* Cathode Label */}
+                <text x="67" y="135" textAnchor="middle" fill="#F28C75">
+                  CATHODE (-)
+                </text>
+                <text x="67" y="144" textAnchor="middle" fill="#899AA8" fontSize="5.5">
+                  Shorter Leg • GND
+                </text>
 
-            {/* Pin callout text lines */}
-            <g fontFamily="sans-serif" fontSize="6.5" fontWeight="bold">
-              {/* Cathode Label */}
-              <text x="67" y="135" textAnchor="middle" fill="#F28C75">
-                CATHODE (-)
-              </text>
-              <text x="67" y="144" textAnchor="middle" fill="#899AA8" fontSize="5.5">
-                Shorter Leg • GND
-              </text>
+                {/* Anode Label */}
+                <text x="94" y="135" textAnchor="middle" fill="#2A9D8F">
+                  ANODE (+)
+                </text>
+                <text x="94" y="144" textAnchor="middle" fill="#899AA8" fontSize="5.5">
+                  Longer Leg • 3.3V
+                </text>
+              </g>
 
-              {/* Anode Label */}
-              <text x="94" y="135" textAnchor="middle" fill="#2A9D8F">
-                ANODE (+)
-              </text>
-              <text x="94" y="144" textAnchor="middle" fill="#899AA8" fontSize="5.5">
-                Longer Leg • 3.3V
-              </text>
-            </g>
-
-            {/* Interactive Part Hover Layer */}
-            <PartHover
-              meta={ledMeta}
-              x={40}
-              y={25}
-              scale={2.8}
-              showLabels={false}
-            />
-          </svg>
+              {/* Interactive Part Hover Layer */}
+              <PartHover
+                meta={ledMeta}
+                x={40}
+                y={25}
+                scale={2.8}
+                showLabels={false}
+              />
+            </svg>
+          </CircuitPanZoom>
 
           {/* Real-time Status Badge */}
-          <div className="mt-4">
+          <div className="flex justify-center">
             {isForwardBias ? (
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E6F4F2] border border-[#B2DFDB] text-[#21867A] text-xs font-bold">
                 <CheckCircle2 className="w-3.5 h-3.5 text-[#2A9D8F]" />
