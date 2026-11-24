@@ -15,6 +15,7 @@ import { LEDAnatomyCard } from '../hardware/LEDAnatomyCard.js';
 import { PushButtonAnatomyCard } from '../hardware/PushButtonAnatomyCard.js';
 import { OLEDAnatomyCard } from '../hardware/OLEDAnatomyCard.js';
 import { APIExplainerCard } from '../hardware/APIExplainerCard.js';
+import { CFunctionsExplainerCard } from '../hardware/CFunctionsExplainerCard.js';
 import { ComputerVsMicrocontrollerCard } from '../hardware/ComputerVsMicrocontrollerCard.js';
 
 interface ConceptByteViewProps {
@@ -122,8 +123,13 @@ export const ConceptByteView: React.FC<ConceptByteViewProps> = ({
       {/* Level 4: OLED Anatomy & Pixel Sandbox */}
       {levelNumber === 4 && <OLEDAnatomyCard />}
 
-      {/* Level 5: API Explainer */}
-      {levelNumber === 5 && <APIExplainerCard />}
+      {/* Level 5: One-Pager on C Functions & The API Restaurant Explainer */}
+      {levelNumber === 5 && (
+        <div className="space-y-8">
+          <CFunctionsExplainerCard />
+          <APIExplainerCard />
+        </div>
+      )}
 
       {/* Story & Core Takeaways (Editorial 2-Column Spread) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">

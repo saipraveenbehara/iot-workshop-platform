@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useTeamStore } from './store/useTeamStore.js';
 import { useSocketStore } from './store/useSocketStore.js';
+import { useRosterStore } from './store/useRosterStore.js';
 import { Header } from './components/layout/Header.js';
 import { ToastAlert } from './components/layout/ToastAlert.js';
 import { TeamLoginModal } from './components/auth/TeamLoginModal.js';
@@ -39,8 +40,10 @@ export const App: React.FC = () => {
   } = useTeamStore();
 
   const { initSocket, submitLevelComplete } = useSocketStore();
+  const { isConfigured } = useRosterStore();
 
-  const [isAdminView, setIsAdminView] = useState(false);
+  // If no team accounts created yet, start in Instructor Setup mode
+  const [isAdminView, setIsAdminView] = useState(!isConfigured);
   const [stagePhase, setStagePhase] = useState<StagePhase>('concept');
   const [visitedBuildPhases, setVisitedBuildPhases] = useState<number[]>([]);
 
@@ -92,12 +95,14 @@ export const App: React.FC = () => {
       />
 
       {/* Login Modal */}
-      {!isLoggedIn && <TeamLoginModal />}
+      {!isLoggedIn && !isAdminView && (
+        <TeamLoginModal onOpenInstructor={() => setIsAdminView(true)} />
+      )}
 
       {/* Facilitator / Admin View */}
       {isAdminView ? (
         <main className="flex-1">
-          <FacilitatorView />
+          <FacilitatorView onLaunchWorkshop={() => setIsAdminView(false)} />
         </main>
       ) : (
         /* Student Level Runner */

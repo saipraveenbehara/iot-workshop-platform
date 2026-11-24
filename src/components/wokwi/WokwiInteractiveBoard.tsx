@@ -356,10 +356,10 @@ export const WokwiInteractiveBoard: React.FC<WokwiInteractiveBoardProps> = ({ le
             <div className="flex flex-col items-center gap-4 bg-white border border-[#EBE6DC] p-6 rounded-2xl shadow-sm">
               <svg viewBox="0 0 160 120" className="w-68 h-44" style={{ overflow: 'visible' }}>
                 <Oled x={28} y={15} scale={1}>
-                  <text x="64" y="16" fill="#38BDF8" fontFamily="monospace" fontSize="10" textAnchor="middle">NXPLORERS IoT</text>
-                  <text x="64" y="32" fill="#FFFFFF" fontFamily="monospace" fontSize="11" fontWeight="bold" textAnchor="middle">CyberKnights</text>
-                  <text x="64" y="46" fill="#4ADE80" fontFamily="monospace" fontSize="8" textAnchor="middle">Age: 13 | Subbiah</text>
-                  <text x="64" y="58" fill="#94A3B8" fontFamily="monospace" fontSize="7" textAnchor="middle">I2C: 0x3C ONLINE</text>
+                  <text x="64" y="14" fill="#38BDF8" fontFamily="sans-serif" fontSize="8" textAnchor="middle">ThingSpeak readings</text>
+                  <text x="64" y="32" fill="#FFFFFF" fontFamily="monospace" fontSize="13" fontWeight="bold" textAnchor="middle">Temp: 30.8 C</text>
+                  <text x="64" y="48" fill="#4ADE80" fontFamily="monospace" fontSize="13" fontWeight="bold" textAnchor="middle">Humi: 72.0%</text>
+                  <text x="64" y="60" fill="#94A3B8" fontFamily="monospace" fontSize="6.5" textAnchor="middle">I2C: 0x3C ONLINE</text>
                 </Oled>
                 <PartHover meta={oledMeta} x={28} y={15} scale={1} />
               </svg>
@@ -387,10 +387,10 @@ export const WokwiInteractiveBoard: React.FC<WokwiInteractiveBoardProps> = ({ le
               <div className="bg-white border border-[#EBE6DC] rounded-xl p-4 flex flex-col items-center justify-center shadow-sm">
                 <svg viewBox="0 0 150 115" className="w-full max-w-[200px]" style={{ overflow: 'visible' }}>
                   <Oled x={22} y={15} scale={1}>
-                    <text x="64" y="14" fill="#F4C95D" fontFamily="monospace" fontSize="9" textAnchor="middle">LIVE CLOUD FEED</text>
-                    <text x="64" y="28" fill="#FFFFFF" fontFamily="monospace" fontSize="10" fontWeight="bold" textAnchor="middle">TEMP: 26.8°C</text>
-                    <text x="64" y="42" fill="#38BDF8" fontFamily="monospace" fontSize="10" textAnchor="middle">HUMID: 55.4%</text>
-                    <text x="64" y="56" fill="#4ADE80" fontFamily="monospace" fontSize="9" textAnchor="middle">SOIL: 42.1% OK</text>
+                    <text x="64" y="14" fill="#38BDF8" fontFamily="sans-serif" fontSize="8" textAnchor="middle">ThingSpeak readings</text>
+                    <text x="64" y="32" fill="#FFFFFF" fontFamily="monospace" fontSize="13" fontWeight="bold" textAnchor="middle">Temp: 30.8 C</text>
+                    <text x="64" y="48" fill="#4ADE80" fontFamily="monospace" fontSize="13" fontWeight="bold" textAnchor="middle">Humi: 72.0%</text>
+                    <text x="64" y="60" fill="#94A3B8" fontFamily="monospace" fontSize="6.5" textAnchor="middle">Channel: 3594258 | OK</text>
                   </Oled>
                   <PartHover meta={oledMeta} x={22} y={15} scale={1} />
                 </svg>

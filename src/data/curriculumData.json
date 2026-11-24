@@ -204,48 +204,48 @@
       {
         "stepNumber": 1,
         "title": "Connect ESP32 Ground to Blue Rail (-)",
-        "instruction": "Plug a black jumper wire from ESP32 GND (Pin 14 or Pin 17) into the long Blue Ground Rail (-) on the breadboard. This establishes your 0V reference line.",
+        "instruction": "Plug a black jumper wire from ESP32 GND (Pin 17 / GND.1, next to 3V3) into the long Blue Ground Rail (-) at the bottom of the breadboard (Hole 2). This establishes your 0V ground baseline.",
         "component": "Black Jumper Wire",
-        "fromPin": "ESP32 GND",
-        "toBreadboardHole": "Blue Rail (-)",
+        "fromPin": "ESP32 GND.1",
+        "toBreadboardHole": "Bottom Blue Rail (-)",
         "color": "#1E293B"
       },
       {
         "stepNumber": 2,
-        "title": "Extend Ground into Circuit Area (Row 18)",
-        "instruction": "Plug a black jumper wire from the Blue Ground Rail (-) into Breadboard Row 18, Column F on the right side of the board. This delivers Ground directly to your LED's cathode row.",
-        "component": "Ground Extension Wire",
-        "fromPin": "Blue Rail (-)",
-        "toBreadboardHole": "Row 18, Col F",
-        "color": "#0F172A"
+        "title": "Connect GPIO 15 (D15) to Breadboard Row A",
+        "instruction": "Plug a green jumper wire from ESP32 Pin D15 (GPIO 15) into Breadboard Column 15, Row A. This brings the 3.3V electrical control signal from your C code directly to this column.",
+        "component": "Green Jumper Wire",
+        "fromPin": "ESP32 D15",
+        "toBreadboardHole": "Col 15, Row A",
+        "color": "#2A9D8F"
       },
       {
         "stepNumber": 3,
-        "title": "Connect ESP32 GPIO 15 (D15) to Row 15",
-        "instruction": "Plug a green jumper wire from ESP32 D15 (GPIO 15) into Breadboard Row 15, Column B on the left side of the board. This brings the 3.3V control signal to this row.",
-        "component": "Green Jumper Wire",
-        "fromPin": "ESP32 D15 (GPIO 15)",
-        "toBreadboardHole": "Row 15, Col B",
-        "color": "#10B981"
-      },
-      {
-        "stepNumber": 4,
-        "title": "Bridge 220\u03a9 Resistor Across the Trench",
-        "instruction": "Insert one leg of the 220 ohm resistor (Red-Red-Brown-Gold) into Row 15, Column E, and bridge it across the central trough into Row 15, Column F on the other side of the board.",
-        "component": "220 Ohm Resistor",
-        "fromPin": "Row 15, Col E",
-        "toBreadboardHole": "Row 15, Col F",
+        "title": "Insert 220\u03a9 Resistor (Col 15 to Col 21)",
+        "instruction": "Insert one leg of the 220 ohm resistor (Red-Red-Brown-Gold) into Column 15, Row C (same column as your signal wire!). Bridge the second leg into Column 21, Row C. The resistor limits electrical current so the LED won't burn out.",
+        "component": "220\u03a9 Resistor",
+        "fromPin": "Col 15, Row C",
+        "toBreadboardHole": "Col 21, Row C",
         "color": "#D97706"
       },
       {
-        "stepNumber": 5,
+        "stepNumber": 4,
         "title": "Insert 5mm Green LED (Anode & Cathode)",
-        "instruction": "Insert the longer leg (Anode +) into Row 15, Column H (connected to the resistor). Insert the shorter leg with the flat rim notch (Cathode -) into Row 18, Column H (connected to Ground).",
+        "instruction": "Insert the longer metal leg (Anode +) into Column 21, Row D (connected to the resistor). Insert the shorter leg with the flat notch on the rim (Cathode -) into Column 20, Row D.",
+        "polarityNote": "Remember: The longer leg is Anode (+). The flat rim edge is Cathode (-). Current only flows in one direction!",
         "component": "5mm Green LED",
-        "fromPin": "Row 15, Col H (+)",
-        "toBreadboardHole": "Row 18, Col H (-)",
-        "color": "#10B981",
-        "polarityNote": "Anode (+) in Row 15 Col H (from Resistor); Cathode (-) with flat rim in Row 18 Col H (to Ground)"
+        "fromPin": "Col 21, Row D (Anode)",
+        "toBreadboardHole": "Col 20, Row D (Cathode)",
+        "color": "#10B981"
+      },
+      {
+        "stepNumber": 5,
+        "title": "Complete the Circuit to Ground Rail (-)",
+        "instruction": "Plug a black jumper wire from Column 20, Row E (connected to the LED's cathode) directly into the Bottom Blue Ground Rail (-) at Hole 4. Electricity can now flow: ESP32 D15 -> Resistor -> LED -> Ground!",
+        "component": "Black Jumper Wire",
+        "fromPin": "Col 20, Row E",
+        "toBreadboardHole": "Bottom Blue Rail (-)",
+        "color": "#1E293B"
       }
     ],
     "codeChunks": [
@@ -319,38 +319,38 @@
     "circuitSteps": [
       {
         "stepNumber": 1,
-        "title": "Mount 4-Pin Button Across Trench",
-        "instruction": "Straddle the 4-pin tactile push button across the center divider trench at Row 10. The legs on the left plug into Column E; the legs on the right plug into Column F.",
+        "title": "Mount 4-Pin Button Across the Trench",
+        "instruction": "Straddle the 4-pin tactile push button across the center divider trench at Column 25. The top pins plug into Row E; the bottom pins plug into Row F. The trench keeps the button contacts separated until you press the cap!",
         "component": "4-Pin Tactile Button",
-        "fromPin": "Col E, Row 10",
-        "toBreadboardHole": "Col F, Row 10",
+        "fromPin": "Col 25, Row E",
+        "toBreadboardHole": "Col 25, Row F",
         "color": "#6B7280"
       },
       {
         "stepNumber": 2,
-        "title": "Wire ESP32 GPIO 14 (D14) to Button",
-        "instruction": "Plug a yellow jumper wire from ESP32 D14 (GPIO 14) into Breadboard Row 10, Column D (same row as the left leg of the button).",
+        "title": "Wire ESP32 GPIO 14 (D14) to Button Top Pin",
+        "instruction": "Plug a yellow jumper wire from ESP32 Pin D14 (GPIO 14) into Column 25, Row A on the top side of the breadboard (connected to the button's top pins).",
         "component": "Yellow Jumper Wire",
         "fromPin": "ESP32 D14",
-        "toBreadboardHole": "Row 10, Col D",
+        "toBreadboardHole": "Col 25, Row A",
         "color": "#EAB308"
       },
       {
         "stepNumber": 3,
-        "title": "Wire Button to Ground Rail",
-        "instruction": "Plug a black jumper wire from Breadboard Row 10, Column G (right leg of the button) to the Blue Ground Rail (-).",
+        "title": "Wire Button Bottom Pin to Ground Rail",
+        "instruction": "Plug a black jumper wire from Column 25, Row J on the bottom side into the Blue Ground Rail (-). When the button is pressed, it shorts Row E to Row F, pulling GPIO 14 to Ground (0V)!",
         "component": "Black Jumper Wire",
-        "fromPin": "Row 10, Col G",
-        "toBreadboardHole": "Blue Rail (-)",
-        "color": "#1F2937"
+        "fromPin": "Col 25, Row J",
+        "toBreadboardHole": "Blue Ground Rail (-)",
+        "color": "#1E293B"
       },
       {
         "stepNumber": 4,
         "title": "Add Orange Alert LED on GPIO 4 (D4)",
-        "instruction": "Insert an Orange LED in Row 20 (long leg in Col C, short leg in GND rail through a 220 ohm resistor). Connect ESP32 D4 (GPIO 4) to Row 20, Col E.",
+        "instruction": "Bridge a 220 ohm resistor from Column 30, Row C to Column 36, Row C. Insert an Orange LED with Anode (+) in Col 36, Row D and Cathode (-) in Col 35, Row D. Wire Col 35, Row E to the Blue Ground Rail (-), and plug ESP32 D4 (GPIO 4) into Column 30, Row A.",
         "component": "Orange LED & Resistor",
         "fromPin": "ESP32 D4",
-        "toBreadboardHole": "Row 20, Col E",
+        "toBreadboardHole": "Col 30, Row A",
         "color": "#F97316"
       }
     ],
@@ -379,22 +379,22 @@
   {
     "levelNumber": 4,
     "id": "level-4",
-    "title": "Level 4: Drawing on Glass in C",
-    "subtitle": "Pixels, The I2C Two-Wire Highway & The Framebuffer",
+    "title": "Level 4: Drawing on Glass with C Libraries",
+    "subtitle": "What is a Library? The Three Display Drivers & Framebuffer Architecture",
     "estimatedMinutes": 25,
     "conceptByte": {
       "id": "byte-7",
-      "title": "What is an OLED & How Pixels Work",
-      "metaphor": "The 8,192 Microscopic Fireflies & The Hidden Sketchpad",
+      "title": "What is a C Library? The Three Drivers of Display",
+      "metaphor": "The Master Carpenter's Toolbox vs Smelting Your Own Nails",
       "readTimeSeconds": 90,
       "svgType": "i2c_bus_grid",
       "keyTakeaways": [
-        "What is an OLED? OLED stands for Organic Light Emitting Diode. Unlike LCDs that have a big white backlight glowing behind liquid crystal blinds, an OLED display has 8,192 microscopic organic dots that each create their own light! When a pixel is OFF, it emits zero light, giving true pitch black.",
-        "What is a Pixel? Pixel = Picture Element. Our 0.96 inch screen has 128 pixels across (X axis: 0 to 127) and 64 pixels down (Y axis: 0 to 63). That is 128 x 64 = 8,192 individual light dots.",
-        "The I2C Two-Wire Highway: Controlling 8,192 pixels individually would need thousands of wires. Instead, the I2C protocol uses just 2 wires on ESP32: SDA on GPIO 21 (Serial Data) and SCL on GPIO 22 (Serial Clock, ticking 400,000 times a second).",
-        "The Framebuffer Rule in C: The ESP32 prepares the graphic in a 1,024-byte RAM sketchpad called the Framebuffer. Calling display.println() writes text to memory, but nothing appears on screen yet! You MUST call display.display() to blast that memory map down the I2C wires and light up the glass."
+        "What is a Library? In C and Arduino development, a Library is a collection of pre-written, tested code created by specialist engineers. Instead of writing 1,000 lines of complex timing loops to toggle raw transistor lines, you import the library and call clean functions in one second.",
+        "Why do we use #include? Typing #include <Adafruit_SSD1306.h> tells the C compiler to pull in that entire tested blueprint before building your program.",
+        "The 3 Drivers Powering Your Screen: 1. <Wire.h> is the built-in I2C bus driver that controls the Clock (SCL) and Data (SDA) lines. 2. <Adafruit_GFX.h> is the master graphics engine that calculates pixel math, draws shapes, text sizes, and fonts. 3. <Adafruit_SSD1306.h> is the specific hardware driver that speaks the electrical dialect of the 128x64 glass panel.",
+        "The Framebuffer Rule: The ESP32 prepares the graphic in a 1,024-byte RAM sketchpad called the Framebuffer. Calling display.println() writes to memory; calling display.display() pushes that memory over I2C to illuminate the physical pixels!"
       ],
-      "analogyStory": "Imagine an artist painting behind a thick velvet curtain. Every time you call display.print(), the artist paints words on the canvas in the dark. If you forget to call display.display(), the curtain stays shut and the glass stays black! Calling display.display() pulls open the curtain in one millisecond, revealing your team name in bright glowing pixels."
+      "analogyStory": "Imagine building a bicycle. You don't walk into a forest, chop down an oak tree, smelt steel from iron ore, and boil rubber sap to build your own tires! You go to a bicycle workshop and use pre-made wheels, pedals, and gears, focusing your creativity on assembling the bike. In C, libraries like Wire, Adafruit GFX, and SSD1306 are your pre-made wheels and gears. They turn 300+ lines of raw binary commands into a single friendly command: display.println('Hello!')."
     },
     "quizGate": [
       {
@@ -425,57 +425,58 @@
     "circuitSteps": [
       {
         "stepNumber": 1,
-        "title": "Wire OLED Power (VCC & GND)",
-        "instruction": "Connect OLED VCC to the Breadboard Red 3.3V Rail (+). Connect OLED GND to the Blue Ground Rail (-).",
-        "component": "OLED Power Wires",
-        "fromPin": "OLED VCC / GND",
-        "toBreadboardHole": "Rails (+) & (-)",
+        "title": "Wire ESP32 Main Power to Rails",
+        "instruction": "Plug a red jumper wire from ESP32 3V3 (Pin 16) into the Bottom Red Power Rail (+) at Hole 2. Plug a black jumper wire from ESP32 GND (Pin 17) into the Bottom Blue Ground Rail (-) at Hole 2.",
+        "component": "ESP32 Power Jumpers",
+        "fromPin": "ESP32 3V3 & GND",
+        "toBreadboardHole": "Bottom Rails (+ / -)",
         "color": "#EF4444"
       },
       {
         "stepNumber": 2,
-        "title": "Wire OLED SDA to ESP32 D21 (GPIO 21)",
-        "instruction": "Connect a blue jumper wire from ESP32 D21 (GPIO 21) to the OLED SDA pin.",
-        "component": "Blue Jumper Wire",
-        "fromPin": "ESP32 D21 (SDA)",
-        "toBreadboardHole": "OLED SDA",
-        "color": "#3B82F6"
+        "title": "Power OLED from Rails at Column 10",
+        "instruction": "Plug a red jumper wire from the Bottom Red Power Rail (+) at Column 10 into Breadboard Column 39 (OLED VCC pin). Plug a black jumper wire from the Bottom Blue Rail (-) at Column 10 into Column 38 (OLED GND pin).",
+        "component": "OLED Power Jumpers",
+        "fromPin": "Rails (+ / -) at Col 10",
+        "toBreadboardHole": "Col 39 (VCC) & Col 38 (GND)",
+        "color": "#EF4444"
       },
       {
         "stepNumber": 3,
+        "title": "Wire OLED SDA to ESP32 D21 (GPIO 21)",
+        "instruction": "Plug a blue jumper wire from ESP32 Pin D21 (Hardware I2C Data - SDA) into Breadboard Column 41 (OLED SDA pin).",
+        "component": "Blue Jumper Wire",
+        "fromPin": "ESP32 D21 (SDA)",
+        "toBreadboardHole": "Col 41 (OLED SDA)",
+        "color": "#3B82F6"
+      },
+      {
+        "stepNumber": 4,
         "title": "Wire OLED SCL to ESP32 D22 (GPIO 22)",
-        "instruction": "Connect a yellow jumper wire from ESP32 D22 (GPIO 22) to the OLED SCL pin.",
+        "instruction": "Plug a yellow jumper wire from ESP32 Pin D22 (Hardware I2C Clock - SCL) into Breadboard Column 40 (OLED SCL pin).",
         "component": "Yellow Jumper Wire",
         "fromPin": "ESP32 D22 (SCL)",
-        "toBreadboardHole": "OLED SCL",
+        "toBreadboardHole": "Col 40 (OLED SCL)",
         "color": "#EAB308"
       }
     ],
     "codeChunks": [
       {
         "blockId": "c4-1",
-        "title": "Step 1: Include Libraries & Create Display Object",
+        "title": "Step 1: Include the 3 Libraries & Initialize",
         "language": "c",
-        "code": "#include <Wire.h>\n#include <Adafruit_GFX.h>\n#include <Adafruit_SSD1306.h>\n\n#define SCREEN_WIDTH 128\n#define SCREEN_HEIGHT 64\n#define OLED_RESET -1\n#define SCREEN_ADDRESS 0x3C\n\nAdafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);",
-        "explanation": "Imports the Wire (I2C) and Adafruit OLED graphics drivers, configuring the 128x64 display at address 0x3C."
+        "code": "#include <Wire.h>\n#include <Adafruit_GFX.h>\n#include <Adafruit_SSD1306.h>\n\n#define OLED_WIDTH 128\n#define OLED_HEIGHT 64\n#define OLED_RESET -1\n#define OLED_SDA 21\n#define OLED_SCL 22\n\nAdafruit_SSD1306 display(OLED_WIDTH, OLED_HEIGHT, &Wire, OLED_RESET);",
+        "explanation": "Imports Wire (I2C), Adafruit_GFX (Graphics math), and Adafruit_SSD1306 (Display hardware driver)."
       },
       {
         "blockId": "c4-2",
-        "title": "Step 2: Personalize Your Team Variables",
+        "title": "Step 2: Initialize I2C Bus & Screen in setup()",
         "language": "c",
-        "code": "// Customize these C string literals with your team's real info:\nconst char* TEAM_NAME = \"CyberKnights\";\nconst char* STUDENT_AGE = \"13\";\nconst char* SCHOOL_NAME = \"Subbiah Vidyalayam\";",
-        "explanation": "Update these character arrays so your team name and school appear on the OLED display.",
-        "isConfigurable": true
-      },
-      {
-        "blockId": "c4-3",
-        "title": "Step 3: Draw on Buffer & Blast to Glass",
-        "language": "c",
-        "code": "void setup() {\n  Serial.begin(115200);\n  Wire.begin(21, 22); // ESP32 I2C pins: SDA=21, SCL=22\n  display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS);\n\n  display.clearDisplay(); // Wipe sketchpad clean\n  display.setTextSize(1);\n  display.setTextColor(SSD1306_WHITE);\n\n  display.setCursor(12, 0);\n  display.println(\"NXPLORERS IoT\");\n  display.setCursor(0, 20);\n  display.print(\"Team: \"); display.println(TEAM_NAME);\n  display.setCursor(0, 36);\n  display.print(\"Age:  \"); display.println(STUDENT_AGE);\n  display.setCursor(0, 50);\n  display.print(\"Sch:  \"); display.println(SCHOOL_NAME);\n\n  display.display(); // Blast buffer over I2C to glass!\n}",
-        "explanation": "Clears the screen buffer, writes formatted text lines, and calls display.display() to illuminate the physical pixels."
+        "code": "void setup() {\n  Serial.begin(115200);\n  Wire.begin(OLED_SDA, OLED_SCL);\n\n  if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {\n    Serial.println(\"OLED not found. Check wiring!\");\n    while (true) delay(100);\n  }\n\n  display.clearDisplay();\n  display.setTextColor(SSD1306_WHITE);\n  display.setTextSize(1);\n  display.setCursor(0, 5);\n  display.println(\"ThingSpeak readings\");\n  display.setTextSize(2);\n  display.setCursor(0, 25);\n  display.printf(\"Temp: %.1f C\", 30.8);\n  display.setCursor(0, 48);\n  display.printf(\"Humi: %.1f%%\", 72.0);\n  display.display(); // Blast to glass!\n}",
+        "explanation": "Starts the I2C bus at 400kHz, checks connection at address 0x3C, and formats the telemetry fields."
       }
     ],
-    "fullScript": "#include <Wire.h>\n#include <Adafruit_GFX.h>\n#include <Adafruit_SSD1306.h>\n\n#define SCREEN_WIDTH 128\n#define SCREEN_HEIGHT 64\nAdafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);\n\n// --- EDIT YOUR DETAILS HERE ---\nconst char* TEAM_NAME = \"CyberKnights\";\nconst char* STUDENT_AGE = \"13\";\nconst char* SCHOOL_NAME = \"Subbiah Vidyalayam\";\n// ------------------------------\n\nvoid setup() {\n  Serial.begin(115200);\n  Wire.begin(21, 22); // SDA = GPIO 21, SCL = GPIO 22\n  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);\n\n  display.clearDisplay();\n  display.setTextSize(1);\n  display.setTextColor(SSD1306_WHITE);\n\n  display.setCursor(12, 0);\n  display.println(\"NXPLORERS IoT\");\n  display.setCursor(0, 20);\n  display.print(\"Team: \"); display.println(TEAM_NAME);\n  display.setCursor(0, 36);\n  display.print(\"Age:  \"); display.println(STUDENT_AGE);\n  display.setCursor(0, 50);\n  display.print(\"Sch:  \"); display.println(SCHOOL_NAME);\n  display.display();\n\n  Serial.println(\"Level 4: Personalized OLED display active.\");\n}\n\nvoid loop() {\n  // Idle\n}",
+    "fullScript": "#include <Wire.h>\n#include <Adafruit_GFX.h>\n#include <Adafruit_SSD1306.h>\n\n#define OLED_SDA 21\n#define OLED_SCL 22\n#define OLED_WIDTH 128\n#define OLED_HEIGHT 64\n#define OLED_RESET -1\n\nAdafruit_SSD1306 display(OLED_WIDTH, OLED_HEIGHT, &Wire, OLED_RESET);\n\nvoid setup() {\n  Serial.begin(115200);\n  Wire.begin(OLED_SDA, OLED_SCL);\n\n  if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {\n    Serial.println(\"OLED not found. Check wiring and address 0x3C.\");\n    while (true) delay(100);\n  }\n\n  display.clearDisplay();\n  display.setTextColor(SSD1306_WHITE);\n\n  display.setTextSize(1);\n  display.setCursor(0, 5);\n  display.println(\"ThingSpeak readings\");\n\n  display.setTextSize(2);\n  display.setCursor(0, 25);\n  display.printf(\"Temp: %.1f C\", 30.8);\n\n  display.setCursor(0, 48);\n  display.printf(\"Humi: %.1f%%\", 72.0);\n\n  display.display();\n}\n\nvoid loop() {\n  // Static preview ready for live cloud streaming in Level 5\n}",
     "verificationChallenge": {
       "instruction": "Update the team name and school name strings in the code. Upload to your ESP32.",
       "expectedObservableResult": "Sharp, glowing white text rendered across the OLED screen displaying your team name and school."
@@ -484,23 +485,22 @@
   {
     "levelNumber": 5,
     "id": "level-5",
-    "title": "Level 5: The Grand IoT Challenge in C",
-    "subtitle": "Connecting to the Cloud: ESP32 Wi-Fi, APIs & Closed-Loop Alarms",
+    "title": "Level 5: Live ThingSpeak Cloud Telemetry",
+    "subtitle": "What is a Function? HTTPClient, ArduinoJson & Real-Time Cloud Feeds",
     "estimatedMinutes": 45,
     "conceptByte": {
       "id": "byte-9",
-      "title": "What is an API & The 4 Layers of IoT",
-      "metaphor": "The Restaurant Waiter & The 4-Story Tower",
+      "title": "What is a Function? Modular C Code Architecture",
+      "metaphor": "The Microwave Preset Button & The Master Chef's Recipe",
       "readTimeSeconds": 90,
       "svgType": "iot_4_layers",
       "keyTakeaways": [
-        "What is an API? Imagine you are at a restaurant. You cannot walk into the kitchen, open the fridge, and start chopping vegetables yourself! Instead, you look at the menu and give your order to the Waiter. The waiter carries your order to the kitchen and brings back a neat plate of food. An API (Application Programming Interface) is the digital waiter! Your ESP32 sends a polite HTTP GET request: 'Hey API, give me the latest temperature!' The API fetches the data and hands it back in a neat JSON box.",
-        "Layer 1 (Perception): Physical sensors touching nature (temperature probes, humidity chips, soil moisture sensors in dirt).",
-        "Layer 2 (Network): ESP32 Wi-Fi radio waves transmitting data packets through the air to the internet router.",
-        "Layer 3 (Cloud Data): The central server (ThingSpeak or classroom server) recording and organizing sensor numbers 24/7.",
-        "Layer 4 (Application): Your team's OLED display and warning buzzer automatically alerting you when soil dries out or temperatures spike."
+        "What is a Function? A Function is a named, reusable bundle of instructions designed to do one specific job. Whenever your program needs that job done, you just call its name instead of retyping 30 lines of code!",
+        "Anatomy of a C Function: 1. Return Type: Tells C what type of result comes back ('void' means it does an action with no return value; 'float' returns a decimal number). 2. Name: What you call it (e.g., connectToWiFi(), fetchLatestReadings()). 3. Parameters in (): Data passed into the function (e.g., showMessage(const char* line1)). 4. Body { ... }: The instructions executed inside.",
+        "Why Functions Keep Code Clean: Without functions, your loop() would be a giant 200-line messy tangle. With functions, your loop() is just 4 crystal-clear lines: checking if 20 seconds passed and calling fetchLatestReadings()!",
+        "Debugging Superpower: If Wi-Fi fails, you look only inside connectToWiFi(). You don't have to sift through display or JSON parsing code. Each function is an independent module!"
       ],
-      "analogyStory": "When the teacher dips a soil probe into water at the front of the classroom, that measurement climbs a 4-story tower: from wet soil (Layer 1), through invisible Wi-Fi airwaves (Layer 2), into the central cloud database (Layer 3), and down to your team's OLED screen (Layer 4). Your ESP32 acts like a customer ordering fresh numbers from the API waiter every 15 seconds!"
+      "analogyStory": "Think of the 'Popcorn' button on a microwave. When you press it, you don't calculate microwave magnetron wattage, calibrate motor rotation speed, or start timers manually. The manufacturer bundled all those complicated steps into one button named 'Popcorn()'! In your student C program, showMessage(), connectToWiFi(), and fetchLatestReadings() are your custom microwave buttons. You write them once, and your loop() presses them cleanly every 20 seconds!"
     },
     "quizGate": [
       {
@@ -531,50 +531,71 @@
     "circuitSteps": [
       {
         "stepNumber": 1,
-        "title": "Wire Active Buzzer to ESP32 D19 (GPIO 19)",
-        "instruction": "Plug the Active Buzzer Signal pin into ESP32 D19 (GPIO 19). Connect Buzzer VCC to the 3.3V rail and GND to the ground rail.",
-        "component": "Active Buzzer Module",
+        "title": "Connect Active Buzzer to ESP32 D19 (GPIO 19)",
+        "instruction": "Plug the Active Buzzer module signal pin into ESP32 Pin D19 (GPIO 19). Connect Buzzer VCC to the 3.3V rail and GND to the ground rail.",
+        "component": "Active Buzzer",
         "fromPin": "ESP32 D19",
-        "toBreadboardHole": "Buzzer Signal",
-        "color": "#EF4444"
+        "toBreadboardHole": "Col 15, Row F",
+        "color": "#F59E0B"
       },
       {
         "stepNumber": 2,
-        "title": "Wire Red Alert LED to ESP32 D18 (GPIO 18)",
-        "instruction": "Connect Red LED Anode to ESP32 D18 (GPIO 18) through a 220 ohm resistor and Cathode to the Ground rail.",
+        "title": "Connect Red Alert LED to ESP32 D18 (GPIO 18)",
+        "instruction": "Plug a red jumper wire from ESP32 Pin D18 (GPIO 18) into Breadboard Column 20, Row F. Connect the Red LED Anode to Col 20 through a 220 ohm resistor, and Cathode to the ground rail.",
         "component": "Red 5mm LED",
         "fromPin": "ESP32 D18",
-        "toBreadboardHole": "Row 25",
+        "toBreadboardHole": "Col 20, Row F",
         "color": "#EF4444"
       }
     ],
     "codeChunks": [
       {
         "blockId": "c5-1",
-        "title": "Step 1: Connect ESP32 to Wi-Fi",
+        "title": "1. Libraries & Wi-Fi Configuration",
         "language": "c",
-        "code": "#include <WiFi.h>\n\nconst char* ssid = \"NXPLORERS_WIFI\";\nconst char* password = \"iotworkshop2026\";\n\nvoid connectWiFi() {\n  WiFi.begin(ssid, password);\n  while (WiFi.status() != WL_CONNECTED) {\n    delay(500);\n    Serial.print(\".\");\n  }\n  Serial.println(\"\\nWiFi Connected! IP: \" + WiFi.localIP().toString());\n}",
-        "explanation": "Activates the ESP32's built-in 2.4 GHz radio and joins the classroom wireless network."
+        "code": "#include <WiFi.h>\n#include <HTTPClient.h>\n#include <ArduinoJson.h>\n#include <Wire.h>\n#include <Adafruit_GFX.h>\n#include <Adafruit_SSD1306.h>\n\n// Replace with your local classroom Wi-Fi or hotspot\nconst char* WIFI_SSID = \"YOUR_WIFI_NAME\";\nconst char* WIFI_PASSWORD = \"YOUR_WIFI_PASSWORD\";",
+        "explanation": "Includes network and graphics drivers. Contains placeholder Wi-Fi credentials for your local network."
       },
       {
         "blockId": "c5-2",
-        "title": "Step 2: HTTP GET from API & Parse JSON",
+        "title": "2. ThingSpeak Channel & OLED Setup",
         "language": "c",
-        "code": "#include <HTTPClient.h>\n#include <ArduinoJson.h>\n\nHTTPClient http;\nhttp.begin(\"http://192.168.0.100:3001/api/feed\");\nint httpCode = http.GET();\n\nif (httpCode == 200) {\n  String payload = http.getString();\n  StaticJsonDocument<1024> doc;\n  deserializeJson(doc, payload);\n\n  float temp = doc[\"feeds\"][0][\"field1\"];\n  float soil = doc[\"feeds\"][0][\"field4\"];\n}\nhttp.end();",
-        "explanation": "Sends an HTTP GET request to the local API endpoint, deserializing the JSON payload into temperature and soil values."
+        "code": "// ThingSpeak Channel Credentials (Unlocked via Cloud Mystery Puzzle!)\nconst char* CHANNEL_ID = \"3594258\";\nconst char* READ_API_KEY = \"XKXDZN01ERL8CVHX\";\n\n#define OLED_SDA 21\n#define OLED_SCL 22\n#define OLED_WIDTH 128\n#define OLED_HEIGHT 64\n#define OLED_RESET -1\n\nAdafruit_SSD1306 display(OLED_WIDTH, OLED_HEIGHT, &Wire, OLED_RESET);\nconst unsigned long UPDATE_INTERVAL_MS = 20000;\nunsigned long lastUpdateMs = 0;",
+        "explanation": "Declares the ThingSpeak channel ID (3594258), Read API Key, and SSD1306 display object on I2C pins 21/22."
       },
       {
         "blockId": "c5-3",
-        "title": "Step 3: Closed-Loop Automated Alarm",
+        "title": "3. Helper Function: showMessage()",
         "language": "c",
-        "code": "// Autonomous Alert: Temp > 30C or Soil Moisture < 25%\nif (temp > 30.0 || soil < 25.0) {\n  digitalWrite(RED_LED, HIGH);\n  digitalWrite(BUZZER, HIGH);\n  display.println(\"ALERT: HAZARD ACTIVE!\");\n} else {\n  digitalWrite(RED_LED, LOW);\n  digitalWrite(BUZZER, LOW);\n  display.println(\"STATUS: SAFE / NORMAL\");\n}\ndisplay.display();",
-        "explanation": "Evaluates incoming telemetry. If conditions cross hazardous thresholds, triggers the alarm buzzer and red LED automatically."
+        "code": "void showMessage(const char* line1, const char* line2 = \"\") {\n  display.clearDisplay();\n  display.setTextColor(SSD1306_WHITE);\n  display.setTextSize(1);\n  display.setCursor(0, 18);\n  display.println(line1);\n  display.println(line2);\n  display.display();\n}",
+        "explanation": "A clean reusable function to wipe the screen buffer and display status updates like 'Connecting to Wi-Fi...'."
+      },
+      {
+        "blockId": "c5-4",
+        "title": "4. Helper Function: connectToWiFi()",
+        "language": "c",
+        "code": "void connectToWiFi() {\n  WiFi.mode(WIFI_STA);\n  WiFi.begin(WIFI_SSID, WIFI_PASSWORD, 6);\n\n  showMessage(\"Connecting to Wi-Fi...\");\n\n  while (WiFi.status() != WL_CONNECTED) {\n    delay(300);\n    Serial.print(\".\");\n  }\n\n  Serial.println(\"\\nWi-Fi connected\");\n  Serial.print(\"IP address: \");\n  Serial.println(WiFi.localIP());\n}",
+        "explanation": "Puts ESP32 into Station (client) mode and connects to the router with visual serial feedback."
+      },
+      {
+        "blockId": "c5-5",
+        "title": "5. Core Function: fetchLatestReadings()",
+        "language": "c",
+        "code": "void fetchLatestReadings() {\n  if (WiFi.status() != WL_CONNECTED) {\n    connectToWiFi();\n  }\n\n  String url = \"http://api.thingspeak.com/channels/\";\n  url += CHANNEL_ID;\n  url += \"/feeds/last.json?api_key=\";\n  url += READ_API_KEY;\n\n  HTTPClient http;\n  http.begin(url);\n  int responseCode = http.GET();\n  String response = http.getString();\n  http.end();\n\n  if (responseCode != 200) {\n    showMessage(\"ThingSpeak error\", \"Check Serial Monitor\");\n    return;\n  }\n\n  JsonDocument doc;\n  DeserializationError error = deserializeJson(doc, response);\n  if (error) {\n    showMessage(\"JSON read error\", \"Check Serial Monitor\");\n    return;\n  }\n\n  float temperature = doc[\"field1\"].as<String>().toFloat();\n  float humidity = doc[\"field2\"].as<String>().toFloat();\n\n  display.clearDisplay();\n  display.setTextColor(SSD1306_WHITE);\n  display.setTextSize(1);\n  display.setCursor(0, 5);\n  display.println(\"ThingSpeak readings\");\n\n  display.setTextSize(2);\n  display.setCursor(0, 25);\n  display.printf(\"Temp: %.1f C\", temperature);\n\n  display.setCursor(0, 48);\n  display.printf(\"Humi: %.1f%%\", humidity);\n  display.display();\n}",
+        "explanation": "Performs an HTTP GET to ThingSpeak's feeds/last.json, deserializes JSON field1 (Temp) and field2 (Humidity), and prints them to OLED."
+      },
+      {
+        "blockId": "c5-6",
+        "title": "6. Non-Blocking Timing in setup() & loop()",
+        "language": "c",
+        "code": "void setup() {\n  Serial.begin(115200);\n  Wire.begin(OLED_SDA, OLED_SCL);\n\n  if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {\n    Serial.println(\"OLED not found. Check wiring and address 0x3C.\");\n    while (true) delay(100);\n  }\n\n  connectToWiFi();\n  fetchLatestReadings();\n  lastUpdateMs = millis();\n}\n\nvoid loop() {\n  // Non-blocking timer: updates every 20,000 milliseconds (20s)\n  if (millis() - lastUpdateMs >= UPDATE_INTERVAL_MS) {\n    lastUpdateMs = millis();\n    fetchLatestReadings();\n  }\n}",
+        "explanation": "Initializes peripherals, connects to Wi-Fi, and polls the cloud feed every 20 seconds using millis() instead of blocking delay()."
       }
     ],
-    "fullScript": "#include <WiFi.h>\n#include <HTTPClient.h>\n#include <ArduinoJson.h>\n#include <Wire.h>\n#include <Adafruit_GFX.h>\n#include <Adafruit_SSD1306.h>\n\n#define SCREEN_WIDTH 128\n#define SCREEN_HEIGHT 64\nAdafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);\n\nconst char* ssid = \"NXPLORERS_WIFI\";\nconst char* password = \"iotworkshop2026\";\nconst char* serverUrl = \"http://192.168.0.100:3001/api/feed\";\n\nconst int RED_LED = 18;  // ESP32 GPIO 18\nconst int BUZZER = 19;   // ESP32 GPIO 19\n\nvoid setup() {\n  Serial.begin(115200);\n  pinMode(RED_LED, OUTPUT);\n  pinMode(BUZZER, OUTPUT);\n\n  Wire.begin(21, 22);\n  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);\n  display.clearDisplay();\n  display.setTextSize(1);\n  display.setTextColor(SSD1306_WHITE);\n\n  WiFi.begin(ssid, password);\n  while (WiFi.status() != WL_CONNECTED) {\n    delay(500);\n    Serial.print(\".\");\n  }\n  Serial.println(\"\\nWiFi Connected!\");\n}\n\nvoid loop() {\n  if (WiFi.status() == WL_CONNECTED) {\n    HTTPClient http;\n    http.begin(serverUrl);\n    int httpCode = http.GET();\n\n    if (httpCode == 200) {\n      String payload = http.getString();\n      StaticJsonDocument<1024> doc;\n      deserializeJson(doc, payload);\n\n      JsonObject feed = doc[\"feeds\"][0];\n      float temp = feed[\"field1\"] | 0.0;\n      float humi = feed[\"field2\"] | 0.0;\n      float soil = feed[\"field4\"] | 0.0;\n\n      display.clearDisplay();\n      display.setCursor(12, 0);\n      display.println(\"LIVE CLOUD FEED\");\n      display.setCursor(0, 16);\n      display.printf(\"Temp: %.1f C\\n\", temp);\n      display.printf(\"Humi: %.1f %%\\n\", humi);\n      display.printf(\"Soil: %.1f %%\\n\", soil);\n\n      if (temp > 30.0 || soil < 25.0) {\n        digitalWrite(RED_LED, HIGH);\n        digitalWrite(BUZZER, HIGH);\n        display.setCursor(0, 52);\n        display.println(\"ALERT: HAZARD ACTIVE!\");\n      } else {\n        digitalWrite(RED_LED, LOW);\n        digitalWrite(BUZZER, LOW);\n        display.setCursor(0, 52);\n        display.println(\"STATUS: SAFE / NORMAL\");\n      }\n      display.display();\n    }\n    http.end();\n  }\n  delay(15000);\n}",
+    "fullScript": "#include <WiFi.h>\n#include <HTTPClient.h>\n#include <ArduinoJson.h>\n#include <Wire.h>\n#include <Adafruit_GFX.h>\n#include <Adafruit_SSD1306.h>\n\n// Replace with your local classroom Wi-Fi or hotspot\nconst char* WIFI_SSID = \"YOUR_WIFI_NAME\";\nconst char* WIFI_PASSWORD = \"YOUR_WIFI_PASSWORD\";\n\n// ThingSpeak channel details (Unlocked via Puzzle!)\nconst char* CHANNEL_ID = \"3594258\";\nconst char* READ_API_KEY = \"XKXDZN01ERL8CVHX\";\n\n#define OLED_SDA 21\n#define OLED_SCL 22\n#define OLED_WIDTH 128\n#define OLED_HEIGHT 64\n#define OLED_RESET -1\n\nAdafruit_SSD1306 display(\n  OLED_WIDTH,\n  OLED_HEIGHT,\n  &Wire,\n  OLED_RESET\n);\n\nconst unsigned long UPDATE_INTERVAL_MS = 20000;\nunsigned long lastUpdateMs = 0;\n\nvoid showMessage(const char* line1, const char* line2 = \"\") {\n  display.clearDisplay();\n  display.setTextColor(SSD1306_WHITE);\n  display.setTextSize(1);\n  display.setCursor(0, 18);\n  display.println(line1);\n  display.println(line2);\n  display.display();\n}\n\nvoid connectToWiFi() {\n  WiFi.mode(WIFI_STA);\n  WiFi.begin(WIFI_SSID, WIFI_PASSWORD, 6);\n\n  showMessage(\"Connecting to Wi-Fi...\");\n\n  while (WiFi.status() != WL_CONNECTED) {\n    delay(300);\n    Serial.print(\".\");\n  }\n\n  Serial.println();\n  Serial.println(\"Wi-Fi connected\");\n  Serial.print(\"IP address: \");\n  Serial.println(WiFi.localIP());\n}\n\nvoid fetchLatestReadings() {\n  if (WiFi.status() != WL_CONNECTED) {\n    connectToWiFi();\n  }\n\n  String url = \"http://api.thingspeak.com/channels/\";\n  url += CHANNEL_ID;\n  url += \"/feeds/last.json?api_key=\";\n  url += READ_API_KEY;\n\n  HTTPClient http;\n  http.begin(url);\n\n  int responseCode = http.GET();\n  String response = http.getString();\n\n  Serial.printf(\"ThingSpeak HTTP code: %d\\n\", responseCode);\n  Serial.println(\"ThingSpeak response:\");\n  Serial.println(response);\n\n  http.end();\n\n  if (responseCode != 200) {\n    showMessage(\"ThingSpeak error\", \"Check Serial Monitor\");\n    return;\n  }\n\n  JsonDocument doc;\n  DeserializationError error = deserializeJson(doc, response);\n\n  if (error) {\n    Serial.print(\"JSON error: \");\n    Serial.println(error.c_str());\n    showMessage(\"JSON read error\", \"Check Serial Monitor\");\n    return;\n  }\n\n  String tempText = doc[\"field1\"].as<String>();\n  String humidityText = doc[\"field2\"].as<String>();\n\n  if (tempText.length() == 0 || humidityText.length() == 0) {\n    Serial.println(\"Missing field1 or field2 in response.\");\n    showMessage(\"Missing field data\", \"Check Serial Monitor\");\n    return;\n  }\n\n  float temperature = tempText.toFloat();\n  float humidity = humidityText.toFloat();\n\n  Serial.printf(\"Temperature: %.1f C\\n\", temperature);\n  Serial.printf(\"Humidity: %.1f%%\\n\", humidity);\n\n  display.clearDisplay();\n  display.setTextColor(SSD1306_WHITE);\n\n  display.setTextSize(1);\n  display.setCursor(0, 5);\n  display.println(\"ThingSpeak readings\");\n\n  display.setTextSize(2);\n  display.setCursor(0, 25);\n  display.printf(\"Temp: %.1f C\", temperature);\n\n  display.setCursor(0, 48);\n  display.printf(\"Humi: %.1f%%\", humidity);\n\n  display.display();\n}\n\nvoid setup() {\n  Serial.begin(115200);\n\n  Wire.begin(OLED_SDA, OLED_SCL);\n\n  if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {\n    Serial.println(\"OLED not found. Check wiring and I2C address.\");\n    while (true) {\n      delay(100);\n    }\n  }\n\n  connectToWiFi();\n  fetchLatestReadings();\n  lastUpdateMs = millis();\n}\n\nvoid loop() {\n  if (millis() - lastUpdateMs >= UPDATE_INTERVAL_MS) {\n    lastUpdateMs = millis();\n    fetchLatestReadings();\n  }\n}",
     "verificationChallenge": {
-      "instruction": "Watch your OLED screen synchronize with the live classroom feed. When the facilitator triggers a temperature or soil spike in the dashboard, verify your OLED and buzzer react within 15 seconds.",
-      "expectedObservableResult": "All team OLED screens and warning buzzers trigger in unison based on broadcast sensor changes."
+      "instruction": "Set your Wi-Fi credentials in the code, upload to your ESP32, and solve the Cloud Mystery Puzzle to verify your Channel ID (3594258) and Read API Key.",
+      "expectedObservableResult": "Your OLED display illuminates with 'ThingSpeak readings', showing live temperature (~30.8 C) and humidity (~72.0%) polled from the instructor's weather station every 20 seconds!"
     }
   }
 ]

@@ -72,22 +72,22 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
   const getHighlightHoles = (): string[] => {
     if (levelNumber === 2) {
       if (currentStepIndex === 0) return ['b-2'];
-      if (currentStepIndex === 1) return ['b-2', 'b-4', 'e20'];
-      if (currentStepIndex === 2) return ['b-2', 'b-4', 'e20', 'a15'];
-      if (currentStepIndex === 3) return ['b-2', 'b-4', 'e20', 'a15', 'c15', 'c21'];
-      return ['b-2', 'b-4', 'e20', 'a15', 'c15', 'c21', 'a21', 'a20'];
+      if (currentStepIndex === 1) return ['b-2', 'a15'];
+      if (currentStepIndex === 2) return ['b-2', 'a15', 'c15', 'c21'];
+      if (currentStepIndex === 3) return ['b-2', 'a15', 'c15', 'c21', 'd21', 'd20'];
+      return ['b-2', 'a15', 'c15', 'c21', 'd21', 'd20', 'e20', 'b-4'];
     }
     if (levelNumber === 3) {
-      if (currentStepIndex === 0) return ['c30', 'e30', 'c37', 'e37'];
-      if (currentStepIndex === 1) return ['c30', 'e30', 'c37', 'e37', 'a30'];
-      if (currentStepIndex === 2) return ['c30', 'e30', 'c37', 'e37', 'a30', 't-6'];
-      return ['c30', 'e30', 'c37', 'e37', 'a30', 't-6', 'j15', 'j24'];
+      if (currentStepIndex === 0) return ['e25', 'f25'];
+      if (currentStepIndex === 1) return ['e25', 'f25', 'a25'];
+      if (currentStepIndex === 2) return ['e25', 'f25', 'a25', 'j25', 'b-7'];
+      return ['e25', 'f25', 'a25', 'j25', 'b-7', 'a30', 'c30', 'c36', 'd36', 'd35', 'e35', 'b-9'];
     }
     if (levelNumber === 4) {
-      return ['j38', 'j39', 'j40', 'j41', 'b-7', 'b+7'];
+      return ['b+2', 'b-2', 'b+10', 'b-10', 'f38', 'f39', 'f40', 'f41'];
     }
     if (levelNumber === 5) {
-      return ['j38', 'j39', 'j40', 'j41', 'j24', 'j15'];
+      return ['b+2', 'b-2', 'b+10', 'b-10', 'f38', 'f39', 'f40', 'f41', 'f20', 'f15'];
     }
     return [];
   };
@@ -124,15 +124,17 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
   };
 
   // Component positions using exact breadboard coordinate mapping
-  const l2Resistor = placeByPin(resistorMeta, '1', at(getHole('c', 15)));
-  const l2Led = placeByPin(ledMeta, 'C', at(getHole('a', 20)));
+  // Level 2 & 3: Green LED circuit (Cols 15-21)
+  const l2Resistor = placeByPin(resistorMeta, '1', at(getHole('c', 15))); // bridges c15 to c21
+  const l2Led = placeByPin(ledMeta, 'A', at(getHole('d', 21))); // Anode in d21, Cathode in d20
 
-  const l3Btn = placeByPin(pushButtonMeta, '1.l', at(getHole('c', 30)));
-  const l3GreenLed = placeByPin(ledMeta, 'C', at(getHole('f', 15)));
-  const l3OrangeLed = placeByPin(ledMeta, 'C', at(getHole('f', 24)));
-  const l3ResGreen = placeByPin(resistorMeta, '1', at(getHole('h', 15)));
-  const l3ResOrange = placeByPin(resistorMeta, '1', at(getHole('h', 24)));
+  // Level 3: Tactile Push Button straddling trench at Col 25
+  const l3Btn = placeByPin(pushButtonMeta, '1.l', at(getHole('c', 25)));
+  // Level 3: Orange Alert LED circuit (Cols 30-36)
+  const l3ResOrange = placeByPin(resistorMeta, '1', at(getHole('c', 30))); // bridges c30 to c36
+  const l3OrangeLed = placeByPin(ledMeta, 'A', at(getHole('d', 36))); // Anode in d36, Cathode in d35
 
+  // Level 4 & 5: OLED Display mounted over lower breadboard section (Cols 38-41)
   const l4Oled = placeByPin(oledMeta, 'GND', at(getHole('f', 38)));
 
   return (
@@ -321,19 +323,8 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
                     'l2-gnd-main'
                   )}
 
-                  {/* Step 2: Ground Extension Wire (Bottom Blue Rail -> Col 20 Row e) */}
+                  {/* Step 2: D15 Signal Wire (ESP32 D15 -> Col 15 Row a) */}
                   {currentStepIndex >= 1 && (
-                    renderWire(
-                      at(getRailHole('bottom', '-', 4)),
-                      at(getHole('e', 20)),
-                      '#1E293B',
-                      -20,
-                      'l2-gnd-ext'
-                    )
-                  )}
-
-                  {/* Step 3: D15 Wire (ESP32 D15 -> Col 15 Row a) */}
-                  {currentStepIndex >= 2 && (
                     renderWire(
                       pinPosition(esp32Meta, 'D15', ESP),
                       at(getHole('a', 15)),
@@ -343,16 +334,16 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
                     )
                   )}
 
-                  {/* Step 4: 220Ω Resistor across Col 15 -> Col 21 */}
-                  {currentStepIndex >= 3 && (
+                  {/* Step 3: 220Ω Resistor across Col 15 -> Col 21 (Row c) */}
+                  {currentStepIndex >= 2 && (
                     <g>
                       <Resistor {...l2Resistor} ohms={220} />
                       <PartHover meta={resistorMeta} {...l2Resistor} />
                     </g>
                   )}
 
-                  {/* Step 5: 5mm Green LED (Anode in Col 21, Cathode in Col 20) */}
-                  {currentStepIndex >= 4 && (
+                  {/* Step 4: 5mm Green LED (Anode in Col 21, Cathode in Col 20, Row d) */}
+                  {currentStepIndex >= 3 && (
                     <g>
                       <Led
                         {...l2Led}
@@ -363,94 +354,137 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
                       <PartHover meta={ledMeta} {...l2Led} />
                     </g>
                   )}
+
+                  {/* Step 5: Ground Jumper Wire (Col 20 Row e -> Bottom Blue Rail) */}
+                  {currentStepIndex >= 4 && (
+                    renderWire(
+                      at(getHole('e', 20)),
+                      at(getRailHole('bottom', '-', 4)),
+                      '#1E293B',
+                      -15,
+                      'l2-gnd-led'
+                    )
+                  )}
                 </g>
               )}
 
-              {/* === LEVEL 3: Push Button & Dual LEDs Circuit === */}
+              {/* === LEVEL 3: Push Button Across Trench & Dual LEDs Circuit === */}
               {levelNumber === 3 && (
                 <g>
-                  {/* Ground Wire from ESP32 GND.2 to Top Rail (-) */}
+                  {/* Common Ground: ESP32 GND.1 to Blue Ground Rail */}
                   {renderWire(
-                    pinPosition(esp32Meta, 'GND.2', ESP),
-                    at(getRailHole('top', '-', 6)),
+                    pinPosition(esp32Meta, 'GND.1', ESP),
+                    at(getRailHole('bottom', '-', 2)),
                     '#1E293B',
-                    -35,
-                    'l3-w1'
+                    30,
+                    'l3-gnd-main'
                   )}
 
-                  {/* Push Button mounted across Col 30 and Col 37 */}
-                  <PushButton
-                    {...l3Btn}
-                    color="green"
-                    pressed={interactivePressed}
-                    onMouseDown={() => setInteractivePressed(true)}
-                    onMouseUp={() => setInteractivePressed(false)}
-                    className="cursor-pointer"
-                  />
+                  {/* 1. Normal State: Green LED Circuit on Col 15-21 (GPIO 15) */}
+                  <g>
+                    {renderWire(
+                      pinPosition(esp32Meta, 'D15', ESP),
+                      at(getHole('a', 15)),
+                      '#2A9D8F',
+                      40,
+                      'l3-sig-d15'
+                    )}
+                    <Resistor {...l2Resistor} ohms={220} />
+                    <Led {...l2Led} color="green" lit={!interactivePressed} brightness={1.3} />
+                    {renderWire(
+                      at(getHole('e', 20)),
+                      at(getRailHole('bottom', '-', 4)),
+                      '#1E293B',
+                      -15,
+                      'l3-gnd-green'
+                    )}
+                  </g>
 
-                  {/* D14 Signal Wire (ESP32 D14 -> Col 30 Row a) */}
+                  {/* 2. Tactile Push Button mounted across center trench at Col 25 */}
+                  <g transform={`translate(${at(getHole('e', 25)).x - 33.6}, ${at(getHole('e', 25)).y + 5}) rotate(90, 33.6, 22.2)`}>
+                    <PushButton
+                      {...l3Btn}
+                      color="green"
+                      pressed={interactivePressed}
+                      onMouseDown={() => setInteractivePressed(true)}
+                      onMouseUp={() => setInteractivePressed(false)}
+                      className="cursor-pointer"
+                    />
+                  </g>
+
+                  {/* D14 Signal Wire (ESP32 D14 -> Col 25 Row a) */}
                   {currentStepIndex >= 1 && (
                     renderWire(
                       pinPosition(esp32Meta, 'D14', ESP),
-                      at(getHole('a', 30)),
+                      at(getHole('a', 25)),
                       '#EAB308',
-                      50,
-                      'l3-w2'
+                      45,
+                      'l3-w-d14'
                     )
                   )}
 
-                  {/* Button Ground Wire (Col 37 Row a -> Top Rail -) */}
+                  {/* Button Ground Wire (Col 25 Row j -> Bottom Blue Rail) */}
                   {currentStepIndex >= 2 && (
                     renderWire(
-                      at(getHole('a', 37)),
-                      at(getRailHole('top', '-', 6)),
+                      at(getHole('j', 25)),
+                      at(getRailHole('bottom', '-', 6)),
                       '#1E293B',
-                      -20,
-                      'l3-w3'
+                      20,
+                      'l3-btn-gnd'
                     )
                   )}
 
-                  {/* Dual LEDs on Breadboard (Step 4: Green on D15, Orange Alert on D4) */}
+                  {/* 3. Orange Alert LED Circuit on Col 30-36 (GPIO 4) */}
                   {currentStepIndex >= 3 && (
                     <g>
-                      <Led {...l3GreenLed} color="green" lit={!interactivePressed} brightness={1.2} />
-                      <Resistor {...l3ResGreen} ohms={220} />
-                      <Led {...l3OrangeLed} color="orange" lit={interactivePressed} brightness={1.2} />
+                      {renderWire(
+                        pinPosition(esp32Meta, 'D4', ESP),
+                        at(getHole('a', 30)),
+                        '#F4C95D',
+                        50,
+                        'l3-sig-d4'
+                      )}
                       <Resistor {...l3ResOrange} ohms={220} />
-
-                      {renderWire(pinPosition(esp32Meta, 'D15', ESP), at(getHole('j', 15)), '#2A9D8F', 45, 'l3-w-green')}
-                      {renderWire(pinPosition(esp32Meta, 'D4', ESP), at(getHole('j', 24)), '#F4C95D', 45, 'l3-w-orange')}
+                      <Led {...l3OrangeLed} color="orange" lit={interactivePressed} brightness={1.4} />
+                      {renderWire(
+                        at(getHole('e', 35)),
+                        at(getRailHole('bottom', '-', 8)),
+                        '#1E293B',
+                        -15,
+                        'l3-orange-gnd'
+                      )}
                     </g>
                   )}
 
-                  <PartHover meta={pushButtonMeta} {...l3Btn} />
+                  <PartHover meta={pushButtonMeta} x={at(getHole('e', 25)).x - 22} y={at(getHole('e', 25)).y + 5} />
                 </g>
               )}
 
-              {/* === LEVEL 4: SSD1306 OLED Display === */}
+              {/* === LEVEL 4: SSD1306 OLED Display Circuit === */}
               {levelNumber === 4 && (
                 <g>
+                  {/* OLED Hardware with ThingSpeak Readings Screen Fields */}
                   <Oled {...l4Oled} scale={1}>
-                    <text x="64" y="16" fill="#38BDF8" fontFamily="monospace" fontSize="10" textAnchor="middle">NXPLORERS IoT</text>
-                    <text x="64" y="32" fill="#FFFFFF" fontFamily="monospace" fontSize="11" fontWeight="bold" textAnchor="middle">CyberKnights</text>
-                    <text x="64" y="46" fill="#4ADE80" fontFamily="monospace" fontSize="8" textAnchor="middle">Age: 13 | Subbiah</text>
-                    <text x="64" y="58" fill="#94A3B8" fontFamily="monospace" fontSize="7" textAnchor="middle">I2C: 0x3C ONLINE</text>
+                    <text x="64" y="14" fill="#38BDF8" fontFamily="sans-serif" fontSize="8" textAnchor="middle">ThingSpeak readings</text>
+                    <text x="64" y="32" fill="#FFFFFF" fontFamily="monospace" fontSize="13" fontWeight="bold" textAnchor="middle">Temp: 30.8 C</text>
+                    <text x="64" y="48" fill="#4ADE80" fontFamily="monospace" fontSize="13" fontWeight="bold" textAnchor="middle">Humi: 72.0%</text>
+                    <text x="64" y="60" fill="#94A3B8" fontFamily="monospace" fontSize="6.5" textAnchor="middle">I2C: 0x3C | Wi-Fi: OK</text>
                   </Oled>
 
-                  {/* Power Rails Wires to OLED */}
-                  {renderWire(at(getHole('j', 38)), at(getRailHole('bottom', '-', 7)), '#1E293B', 20, 'l4-gnd')}
-                  {renderWire(at(getHole('j', 39)), at(getRailHole('bottom', '+', 7)), '#EF4444', 25, 'l4-vcc')}
-
-                  {/* ESP32 Main Power to Rails */}
+                  {/* ESP32 Main Power to Rails (Hole 2) */}
                   {renderWire(pinPosition(esp32Meta, '3V3', ESP), at(getRailHole('bottom', '+', 2)), '#EF4444', 25, 'l4-esp-3v3')}
                   {renderWire(pinPosition(esp32Meta, 'GND.1', ESP), at(getRailHole('bottom', '-', 2)), '#1E293B', 30, 'l4-esp-gnd')}
 
+                  {/* Power Rails Wires to OLED from Col 10 (Matching User Reference Image 4) */}
+                  {renderWire(at(getRailHole('bottom', '+', 10)), at(getHole('f', 39)), '#EF4444', 25, 'l4-vcc')}
+                  {renderWire(at(getRailHole('bottom', '-', 10)), at(getHole('f', 38)), '#1E293B', 20, 'l4-gnd')}
+
                   {/* I2C Signal Wires (ESP32 D21 SDA, D22 SCL) */}
                   {currentStepIndex >= 1 && (
-                    renderWire(pinPosition(esp32Meta, 'D21', ESP), at(getHole('j', 41)), '#3B82F6', 45, 'l4-sda')
+                    renderWire(pinPosition(esp32Meta, 'D21', ESP), at(getHole('f', 41)), '#3B82F6', 45, 'l4-sda')
                   )}
                   {currentStepIndex >= 2 && (
-                    renderWire(pinPosition(esp32Meta, 'D22', ESP), at(getHole('j', 40)), '#EAB308', 40, 'l4-scl')
+                    renderWire(pinPosition(esp32Meta, 'D22', ESP), at(getHole('f', 40)), '#EAB308', 40, 'l4-scl')
                   )}
 
                   <PartHover meta={oledMeta} {...l4Oled} />
@@ -460,27 +494,30 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
               {/* === LEVEL 5: Grand IoT Challenge Node === */}
               {levelNumber === 5 && (
                 <g>
+                  {/* OLED Display with Live ThingSpeak Stream */}
                   <Oled {...l4Oled} scale={1}>
-                    <text x="64" y="14" fill="#F4C95D" fontFamily="monospace" fontSize="9" textAnchor="middle">LIVE CLOUD FEED</text>
-                    <text x="64" y="28" fill="#FFFFFF" fontFamily="monospace" fontSize="10" fontWeight="bold" textAnchor="middle">TEMP: 26.8°C</text>
-                    <text x="64" y="42" fill="#38BDF8" fontFamily="monospace" fontSize="10" textAnchor="middle">HUMID: 55.4%</text>
-                    <text x="64" y="56" fill="#4ADE80" fontFamily="monospace" fontSize="9" textAnchor="middle">SOIL: 42.1% OK</text>
+                    <text x="64" y="14" fill="#38BDF8" fontFamily="sans-serif" fontSize="8" textAnchor="middle">ThingSpeak readings</text>
+                    <text x="64" y="32" fill="#FFFFFF" fontFamily="monospace" fontSize="13" fontWeight="bold" textAnchor="middle">Temp: 30.8 C</text>
+                    <text x="64" y="48" fill="#4ADE80" fontFamily="monospace" fontSize="13" fontWeight="bold" textAnchor="middle">Humi: 72.0%</text>
+                    <text x="64" y="60" fill="#94A3B8" fontFamily="monospace" fontSize="6.5" textAnchor="middle">Channel: 3594258 | OK</text>
                   </Oled>
-                  {renderWire(at(getHole('j', 38)), at(getRailHole('bottom', '-', 7)), '#1E293B', 20, 'l5-gnd')}
-                  {renderWire(at(getHole('j', 39)), at(getRailHole('bottom', '+', 7)), '#EF4444', 25, 'l5-vcc')}
+
+                  {/* Power & Rails Wires */}
                   {renderWire(pinPosition(esp32Meta, '3V3', ESP), at(getRailHole('bottom', '+', 2)), '#EF4444', 25, 'l5-esp-3v3')}
                   {renderWire(pinPosition(esp32Meta, 'GND.1', ESP), at(getRailHole('bottom', '-', 2)), '#1E293B', 30, 'l5-esp-gnd')}
+                  {renderWire(at(getRailHole('bottom', '+', 10)), at(getHole('f', 39)), '#EF4444', 25, 'l5-vcc')}
+                  {renderWire(at(getRailHole('bottom', '-', 10)), at(getHole('f', 38)), '#1E293B', 20, 'l5-gnd')}
 
                   {/* I2C Lines */}
-                  {renderWire(pinPosition(esp32Meta, 'D21', ESP), at(getHole('j', 41)), '#3B82F6', 45, 'l5-sda')}
-                  {renderWire(pinPosition(esp32Meta, 'D22', ESP), at(getHole('j', 40)), '#EAB308', 40, 'l5-scl')}
+                  {renderWire(pinPosition(esp32Meta, 'D21', ESP), at(getHole('f', 41)), '#3B82F6', 45, 'l5-sda')}
+                  {renderWire(pinPosition(esp32Meta, 'D22', ESP), at(getHole('f', 40)), '#EAB308', 40, 'l5-scl')}
 
                   {/* Red Alert LED on D18 */}
                   <Led {...l3OrangeLed} color="red" lit={true} brightness={1.4} />
-                  {renderWire(pinPosition(esp32Meta, 'D18', ESP), at(getHole('j', 24)), '#EF4444', 45, 'l5-led')}
+                  {renderWire(pinPosition(esp32Meta, 'D18', ESP), at(getHole('f', 20)), '#EF4444', 45, 'l5-led')}
 
                   {/* Buzzer Line on D19 */}
-                  {renderWire(pinPosition(esp32Meta, 'D19', ESP), at(getHole('j', 15)), '#F59E0B', 50, 'l5-buzzer')}
+                  {renderWire(pinPosition(esp32Meta, 'D19', ESP), at(getHole('f', 15)), '#F59E0B', 50, 'l5-buzzer')}
 
                   <PartHover meta={oledMeta} {...l4Oled} />
                 </g>

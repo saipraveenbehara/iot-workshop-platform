@@ -8,21 +8,47 @@ import {
   RotateCcw, 
   CheckCircle2, 
   Clock, 
-  Server
+  Server,
+  Users,
+  Plus,
+  Trash2,
+  ArrowRight,
+  Sparkles
 } from 'lucide-react';
 import { useSocketStore } from '../../store/useSocketStore.js';
+import { useRosterStore } from '../../store/useRosterStore.js';
 
-export const FacilitatorView: React.FC = () => {
+interface FacilitatorViewProps {
+  onLaunchWorkshop?: () => void;
+}
+
+export const FacilitatorView: React.FC<FacilitatorViewProps> = ({ onLaunchWorkshop }) => {
   const { 
     leaderboard, 
     cancelHand, 
     adminResetRoom
   } = useSocketStore();
 
+  const { teams, addTeam, removeTeam, loadPresetTeams, resetRoster } = useRosterStore();
+
+  const [newTeamName, setNewTeamName] = useState('');
+  const [teamAddError, setTeamAddError] = useState<string | null>(null);
   const [alertFeedback, setAlertFeedback] = useState<string | null>(null);
 
   // Teams with active hand raises
   const handsRaised = leaderboard.filter((t) => t.handRaised);
+
+  const handleAddTeam = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newTeamName.trim()) return;
+    const ok = addTeam(newTeamName.trim());
+    if (ok) {
+      setNewTeamName('');
+      setTeamAddError(null);
+    } else {
+      setTeamAddError('Team name already exists in roster.');
+    }
+  };
 
   const handleTriggerAlert = async (type: 'heat' | 'dry' | 'reset') => {
     try {
@@ -47,31 +73,149 @@ export const FacilitatorView: React.FC = () => {
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#E6F4F2] border border-[#B2DFDB] text-[#2A9D8F] text-xs font-bold uppercase tracking-wider mb-2">
               <Radio className="w-3.5 h-3.5 text-[#2A9D8F]" />
-              Facilitator Dashboard
+              Instructor Portal
             </div>
             <h2 className="text-2xl lg:text-3xl font-extrabold text-[#24313A] tracking-tight">
-              Classroom Progress Overview
+              Workshop Management & Telemetry
             </h2>
             <p className="text-sm text-[#576875] mt-1">
-              Live telemetry and team tracking for student teams across workshop cohorts.
+              Create student team accounts, monitor live workbench progress, and inject environmental sensor events.
             </p>
           </div>
 
           {/* Quick Actions */}
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
+            {teams.length > 0 && onLaunchWorkshop && (
+              <button
+                onClick={onLaunchWorkshop}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#2A9D8F] hover:bg-[#21867A] text-white text-xs font-extrabold transition-all shadow-sm cursor-pointer"
+              >
+                <span>Launch Workshop Session</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            )}
+
             <button
               onClick={() => {
-                if (confirm('Are you sure you want to reset all team scores and progress for a fresh workshop?')) {
+                if (confirm('Reset workshop session and clear team progress?')) {
                   adminResetRoom();
                 }
               }}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-[#EBE6DC] hover:border-[#F28C75] hover:bg-[#FDF1EE] text-[#576875] hover:text-[#D95D43] text-xs font-bold transition-all shadow-xs"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-[#EBE6DC] hover:border-[#F28C75] hover:bg-[#FDF1EE] text-[#576875] hover:text-[#D95D43] text-xs font-bold transition-all shadow-xs cursor-pointer"
             >
               <RotateCcw className="w-4 h-4" />
               <span>Reset Session</span>
             </button>
           </div>
         </div>
+      </div>
+
+      {/* STEP 1: TEAM ACCOUNT CREATOR & ROSTER MANAGER */}
+      <div className="bg-white border border-[#EBE6DC] rounded-3xl p-6 lg:p-8 shadow-sm space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#EBE6DC]">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-[#E6F4F2] border border-[#B2DFDB] flex items-center justify-center text-[#2A9D8F] shrink-0">
+              <Users className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#21867A] font-mono">
+                  Setup Step 1
+                </span>
+                <span className="px-2 py-0.5 rounded-full bg-[#E6F4F2] text-[#21867A] border border-[#B2DFDB] text-[10px] font-bold">
+                  {teams.length} Accounts Active
+                </span>
+              </div>
+              <h3 className="text-xl font-black text-[#24313A]">
+                Create Student Team Accounts
+              </h3>
+            </div>
+          </div>
+
+          <button
+            onClick={loadPresetTeams}
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#FFFDF7] border border-[#EBE6DC] hover:border-[#2A9D8F] text-[#24313A] text-xs font-bold transition-all shadow-xs self-start sm:self-auto cursor-pointer"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-[#2A9D8F]" />
+            <span>Quick-Fill 6 Starter Teams</span>
+          </button>
+        </div>
+
+        <p className="text-xs sm:text-sm text-[#576875] leading-relaxed">
+          Add unique team names for each student group. Once created, these names will immediately appear on the children’s login screen so they can select their account and begin Stage 0.
+        </p>
+
+        {/* Add Team Input Form */}
+        <form onSubmit={handleAddTeam} className="flex flex-col sm:flex-row items-center gap-3">
+          <input
+            type="text"
+            value={newTeamName}
+            onChange={(e) => {
+              setNewTeamName(e.target.value);
+              setTeamAddError(null);
+            }}
+            placeholder="Enter Team Name (e.g., CyberKnights, SolarMinds, RoboExplorers)..."
+            className="w-full sm:flex-1 bg-[#FFFDF7] border border-[#EBE6DC] focus:border-[#2A9D8F] rounded-2xl px-4 py-3 text-sm text-[#24313A] font-semibold focus:outline-none transition-all shadow-xs"
+          />
+          <button
+            type="submit"
+            disabled={!newTeamName.trim()}
+            className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-[#2A9D8F] hover:bg-[#21867A] disabled:opacity-40 text-white font-extrabold text-xs sm:text-sm transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer shrink-0"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add Team Account</span>
+          </button>
+        </form>
+
+        {teamAddError && (
+          <p className="text-xs text-[#D95D43] font-bold">{teamAddError}</p>
+        )}
+
+        {/* Active Accounts Roster */}
+        {teams.length === 0 ? (
+          <div className="p-8 rounded-2xl bg-[#FFFDF7] border-2 border-dashed border-[#EBE6DC] text-center space-y-2">
+            <Users className="w-8 h-8 text-[#899AA8] mx-auto opacity-50" />
+            <p className="text-xs text-[#576875] font-bold">
+              No team accounts created yet.
+            </p>
+            <p className="text-[11px] text-[#899AA8]">
+              Type a name above or click "Quick-Fill 6 Starter Teams" to initialize the workshop.
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            <div className="flex flex-wrap items-center gap-2.5">
+              {teams.map((t) => (
+                <div
+                  key={t}
+                  className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#FFFDF7] border border-[#EBE6DC] shadow-xs text-xs font-bold text-[#24313A] group hover:border-[#D5CFC2]"
+                >
+                  <span className="w-2 h-2 rounded-full bg-[#2A9D8F]" />
+                  <span>{t}</span>
+                  <button
+                    onClick={() => removeTeam(t)}
+                    className="p-1 rounded-md text-[#899AA8] hover:text-[#D95D43] hover:bg-[#FDF1EE] transition-all ml-1"
+                    title={`Remove ${t}`}
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            {onLaunchWorkshop && (
+              <div className="pt-2 flex justify-end">
+                <button
+                  onClick={onLaunchWorkshop}
+                  className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-[#2A9D8F] hover:bg-[#21867A] text-white font-black text-xs sm:text-sm shadow-sm transition-all cursor-pointer"
+                >
+                  <span>Launch Workshop with {teams.length} Teams</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

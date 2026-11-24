@@ -45,6 +45,40 @@ export const OLEDAnatomyCard: React.FC = () => {
         </div>
       </div>
 
+      {/* ONE-PAGER: WHAT IS A C LIBRARY? (Pre-OLED Foundation) */}
+      <div className="p-6 rounded-2xl bg-[#FFFDF7] border-2 border-[#2A9D8F]/30 space-y-4 shadow-sm">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-[#E6F4F2] border border-[#B2DFDB] flex items-center justify-center text-[#2A9D8F]">
+            <Compass className="w-4 h-4" />
+          </div>
+          <div>
+            <span className="text-[10px] font-mono uppercase font-bold text-[#21867A]">Essential Concept</span>
+            <h4 className="text-base font-black text-[#24313A]">
+              Before We Draw on Glass: What is a C Library?
+            </h4>
+          </div>
+        </div>
+
+        <p className="text-xs text-[#576875] leading-relaxed">
+          In C and Arduino programming, a <strong>Library</strong> is a collection of pre-written, tested code created by specialist engineers. Instead of writing 1,000 lines of complex timing loops to send raw binary pulses over silicon wires, you import a library and call simple commands like <code>display.println("Hello!")</code>.
+        </p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+          <div className="p-3.5 rounded-xl bg-white border border-[#EBE6DC] space-y-1">
+            <span className="text-[11px] font-mono font-bold text-[#2A9D8F]">1. &lt;Wire.h&gt;</span>
+            <p className="text-[11px] text-[#576875]">The hardware I2C bus translator. Manages the Clock (SCL) and Data (SDA) physical lines at 400 kHz.</p>
+          </div>
+          <div className="p-3.5 rounded-xl bg-white border border-[#EBE6DC] space-y-1">
+            <span className="text-[11px] font-mono font-bold text-[#2A9D8F]">2. &lt;Adafruit_GFX.h&gt;</span>
+            <p className="text-[11px] text-[#576875]">The master artist. Knows how to draw pixel coordinates, lines, rectangles, circles, and font typography.</p>
+          </div>
+          <div className="p-3.5 rounded-xl bg-white border border-[#EBE6DC] space-y-1">
+            <span className="text-[11px] font-mono font-bold text-[#2A9D8F]">3. &lt;Adafruit_SSD1306.h&gt;</span>
+            <p className="text-[11px] text-[#576875]">The screen driver. Speaks the exact electrical dialect of the 0.96" 128×64 glass panel chip.</p>
+          </div>
+        </div>
+      </div>
+
       {/* 3 Core Explanation Pillars */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         
@@ -101,10 +135,10 @@ export const OLEDAnatomyCard: React.FC = () => {
           >
             <svg viewBox="0 0 200 160" className="w-[220px] h-[170px] select-none" style={{ overflow: 'visible' }}>
               <Oled x={25} y={15} scale={1.4}>
-                <text x="64" y="16" fill="#38BDF8" fontFamily="monospace" fontSize="10" textAnchor="middle">NXPLORERS IoT</text>
-                <text x="64" y="32" fill="#FFFFFF" fontFamily="monospace" fontSize="11" fontWeight="bold" textAnchor="middle">CyberKnights</text>
-                <text x="64" y="46" fill="#4ADE80" fontFamily="monospace" fontSize="8" textAnchor="middle">T: 27°C | Soil: 42%</text>
-                <text x="64" y="58" fill="#94A3B8" fontFamily="monospace" fontSize="7" textAnchor="middle">I2C: 0x3C ONLINE</text>
+                <text x="64" y="14" fill="#38BDF8" fontFamily="sans-serif" fontSize="8" textAnchor="middle">ThingSpeak readings</text>
+                <text x="64" y="32" fill="#FFFFFF" fontFamily="monospace" fontSize="13" fontWeight="bold" textAnchor="middle">Temp: 30.8 C</text>
+                <text x="64" y="48" fill="#4ADE80" fontFamily="monospace" fontSize="13" fontWeight="bold" textAnchor="middle">Humi: 72.0%</text>
+                <text x="64" y="60" fill="#94A3B8" fontFamily="monospace" fontSize="6.5" textAnchor="middle">I2C: 0x3C ONLINE</text>
               </Oled>
 
               <PartHover
