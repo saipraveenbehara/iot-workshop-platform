@@ -10,7 +10,14 @@ import {
   Layers,
   Sparkles,
   CheckCircle2,
-  Radio
+  Radio,
+  Sliders,
+  Volume2,
+  VolumeX,
+  Droplets,
+  Sun,
+  Moon,
+  Gauge
 } from 'lucide-react';
 import { CircuitPanZoom } from '../circuit/CircuitPanZoom.js';
 import { 
@@ -26,6 +33,8 @@ import {
   resistorMeta,
   PartHover 
 } from '../../hardware/index.js';
+import PotModule from '../../hardware/PotModule.jsx';
+import Dht22 from '../../hardware/Dht22.jsx';
 
 interface WokwiInteractiveBoardProps {
   levelNumber: number;
@@ -34,18 +43,37 @@ interface WokwiInteractiveBoardProps {
 export const WokwiInteractiveBoard: React.FC<WokwiInteractiveBoardProps> = ({ levelNumber }) => {
   // Simulator interactive states
   const [ledState, setLedState] = useState({
-    onboard: false,
-    green: false,
-    orange: false,
-    red: false,
+    onboard: false, // GPIO 2
+    red: false,     // GPIO 18
+    green: true,    // GPIO 19
   });
-  const [isButtonPressed, setIsButtonPressed] = useState(false);
+  const [isButtonPressed, setIsButtonPressed] = useState(false); // GPIO 27
   const [isSimRunning, setIsSimRunning] = useState(false);
+  
+  // Level 3 Analog values
+  const [potVal, setPotVal] = useState<number>(0.65);
+  const potRaw = Math.round(potVal * 4095);
+  const potScaled = Math.max(1, Math.min(100, Math.round(1 + (potVal * 99))));
+
+  // Level 4 Custom OLED inputs
+  const [studentName, setStudentName] = useState('Alex');
+  const [studentAge, setStudentAge] = useState('12');
+  const [studentHobby, setStudentHobby] = useState('Robotics');
+
+  // Level 5 ThingSpeak view tab
+  const [thingSpeakTab, setThingSpeakTab] = useState<'pot' | 'dht'>('dht');
+
+  // Level 6 Autonomous Plant Guardian states
+  const [simSoilPercent, setSimSoilPercent] = useState<number>(65);
+  const [simLightDetected, setSimLightDetected] = useState<boolean>(true);
+  const isSoilGood = simSoilPercent >= 30.0;
+  const isGuardianGood = isSoilGood && simLightDetected;
+
   const [replLogs, setReplLogs] = useState<string[]>([
-    '[ESP32 Boot] Chip: ESP32-D0WDQ6 (240MHz Dual-Core)',
+    '[ESP32 Boot] Chip: ESP32-D0WDQ6 (240MHz Dual-Core Xtensa LX6)',
     '[ESP32] Flash: 4MB | RAM: 520KB | WiFi: 802.11 b/g/n',
     '[Serial] Connected at 115200 baud.',
-    '>>> Serial.println("ESP32 DevKit V1 Initialized");'
+    '>>> Serial.println("ESP32 Sensor Project Codebook Ready");'
   ]);
 
   const addReplLog = (command: string, response?: string) => {
@@ -56,41 +84,44 @@ export const WokwiInteractiveBoard: React.FC<WokwiInteractiveBoardProps> = ({ le
     });
   };
 
-  // Auto-pulse loop if simulation running in Level 1
+  // Auto-pulse loop if simulation running in Level 1 or Level 2
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (isSimRunning && levelNumber === 1) {
       interval = setInterval(() => {
         setLedState((prev) => {
           const next = !prev.onboard;
-          addReplLog(`digitalWrite(2, ${next ? 'HIGH' : 'LOW'});`, next ? 'GPIO 2 set HIGH (+3.3V ON)' : 'GPIO 2 set LOW (0V OFF)');
+          addReplLog(`digitalWrite(2, ${next ? 'HIGH' : 'LOW'});`, next ? 'GPIO 2: HIGH (+3.3V ON)' : 'GPIO 2: LOW (0V OFF)');
           return { ...prev, onboard: next };
         });
-      }, 1000);
+      }, 500);
+    } else if (isSimRunning && levelNumber === 2) {
+      interval = setInterval(() => {
+        setLedState((prev) => {
+          const nextRed = !prev.red;
+          const nextGreen = prev.red;
+          addReplLog(
+            `digitalWrite(18, ${nextRed ? 'HIGH' : 'LOW'}); digitalWrite(19, ${nextGreen ? 'HIGH' : 'LOW'});`,
+            `Red (GPIO 18): ${nextRed ? 'ON' : 'OFF'} | Green (GPIO 19): ${nextGreen ? 'ON' : 'OFF'}`
+          );
+          return { ...prev, red: nextRed, green: nextGreen };
+        });
+      }, 500);
     }
     return () => clearInterval(interval);
   }, [isSimRunning, levelNumber]);
 
-  // Handle push button interaction in Level 3
+  // Handle push button interaction in Level 2/3 (GPIO 27)
   const handleButtonDown = () => {
     setIsButtonPressed(true);
-    setLedState((prev) => ({ ...prev, green: false, orange: true }));
-    addReplLog('digitalRead(14) == LOW', 'Switch closed to Ground (0V): Green OFF, Orange ON');
+    setLedState((prev) => ({ ...prev, red: true, green: false }));
+    addReplLog('digitalRead(27) == LOW', 'Button pressed (GPIO 27 connected to GND): Red (D18) ON, Green (D19) OFF');
   };
 
   const handleButtonUp = () => {
     setIsButtonPressed(false);
-    setLedState((prev) => ({ ...prev, green: true, orange: false }));
-    addReplLog('digitalRead(14) == HIGH', 'Button released: INPUT_PULLUP active (+3.3V): Green ON');
-  };
-
-  const handleToggleLED = (color: 'green' | 'orange' | 'red') => {
-    const pinMap = { green: 15, orange: 4, red: 18 };
-    setLedState((prev) => {
-      const next = !prev[color];
-      addReplLog(`digitalWrite(${pinMap[color]}, ${next ? 'HIGH' : 'LOW'});`, `GPIO ${pinMap[color]} (${color.toUpperCase()} LED) set to ${next ? 'HIGH (3.3V)' : 'LOW (0V)'}`);
-      return { ...prev, [color]: next };
-    });
+    setLedState((prev) => ({ ...prev, red: false, green: true }));
+    addReplLog('digitalRead(27) == HIGH', 'Button released (INPUT_PULLUP pulled to 3.3V): Red (D18) OFF, Green (D19) ON');
   };
 
   return (
@@ -105,29 +136,31 @@ export const WokwiInteractiveBoard: React.FC<WokwiInteractiveBoardProps> = ({ le
             </span>
           </div>
           <h3 className="text-lg font-extrabold text-[#24313A] mt-0.5">
-            Level {levelNumber} Live Simulation Test
+            Stage {levelNumber} Live Simulation Testbench
           </h3>
         </div>
 
         <div className="flex items-center gap-2">
-          <button
-            onClick={() => setIsSimRunning(!isSimRunning)}
-            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all shadow-sm ${
-              isSimRunning
-                ? 'bg-[#F4C95D] hover:bg-[#E5BC50] text-[#24313A]'
-                : 'bg-[#2A9D8F] hover:bg-[#21867A] text-white'
-            }`}
-          >
-            {isSimRunning ? (
-              <>
-                <RotateCcw className="w-3.5 h-3.5" /> Pause Auto-Pulse
-              </>
-            ) : (
-              <>
-                <Play className="w-3.5 h-3.5 fill-current" /> Run Test Pulse
-              </>
-            )}
-          </button>
+          {(levelNumber === 1 || levelNumber === 2) && (
+            <button
+              onClick={() => setIsSimRunning(!isSimRunning)}
+              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer ${
+                isSimRunning
+                  ? 'bg-[#F4C95D] hover:bg-[#E5BC50] text-[#24313A]'
+                  : 'bg-[#2A9D8F] hover:bg-[#21867A] text-white'
+              }`}
+            >
+              {isSimRunning ? (
+                <>
+                  <RotateCcw className="w-3.5 h-3.5" /> Pause Blink
+                </>
+              ) : (
+                <>
+                  <Play className="w-3.5 h-3.5 fill-current" /> Run Blink Loop
+                </>
+              )}
+            </button>
+          )}
 
           <a
             href="https://wokwi.com/projects/new/esp32"
@@ -135,7 +168,7 @@ export const WokwiInteractiveBoard: React.FC<WokwiInteractiveBoardProps> = ({ le
             rel="noopener noreferrer"
             className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-[#EBE6DC] hover:border-[#2A9D8F] hover:bg-[#E6F4F2] text-[#576875] hover:text-[#2A9D8F] text-xs font-bold transition-all"
           >
-            <span>Open in Wokwi ESP32 Web</span>
+            <span>Open Wokwi</span>
             <ExternalLink className="w-3 h-3" />
           </a>
         </div>
@@ -151,7 +184,7 @@ export const WokwiInteractiveBoard: React.FC<WokwiInteractiveBoardProps> = ({ le
         {levelNumber === 0 && (
           <div className="flex flex-col items-center text-center space-y-4 max-w-md z-10 animate-fade-in">
             <span className="text-[11px] font-mono font-bold text-[#899AA8] uppercase tracking-wider">
-              Hover over pins for names and specs
+              Hover over pins for pinout and specifications
             </span>
             <div className="relative p-6 rounded-2xl bg-white border border-[#EBE6DC] shadow-sm flex justify-center">
               <svg viewBox="0 0 107 201" className="w-[140px] h-[230px]" style={{ overflow: 'visible' }}>
@@ -160,7 +193,7 @@ export const WokwiInteractiveBoard: React.FC<WokwiInteractiveBoardProps> = ({ le
               </svg>
             </div>
             <p className="text-xs text-[#576875] bg-white border border-[#EBE6DC] p-3 rounded-xl shadow-sm">
-              Inspect your ESP32 DevKit V1 and verify the 30 pins are ready for breadboard insertion.
+              ESP32 DevKit V1: 30 pins, Dual-Core Xtensa LX6 at 240MHz, 2.4GHz Wi-Fi + Bluetooth, 12-bit ADC.
             </p>
           </div>
         )}
@@ -182,7 +215,7 @@ export const WokwiInteractiveBoard: React.FC<WokwiInteractiveBoardProps> = ({ le
                     <PartHover meta={ledMeta} x={5} y={5} scale={1} />
                   </svg>
                 </div>
-                <span className="text-xs font-bold text-[#24313A]">ESP32 Onboard LED</span>
+                <span className="text-xs font-bold text-[#24313A]">Onboard LED (GPIO 2)</span>
                 <span className="text-[10px] font-mono text-[#899AA8]">digitalWrite(2, HIGH)</span>
               </div>
 
@@ -208,95 +241,20 @@ export const WokwiInteractiveBoard: React.FC<WokwiInteractiveBoardProps> = ({ le
               </div>
             </div>
             <p className="text-xs text-[#576875] max-w-md">
-              Toggle the LED to see the corresponding C command and voltage state change in real time.
+              Activity 1: No external wiring needed! Blinks the built-in LED wired directly to GPIO 2.
             </p>
           </div>
         )}
 
-        {/* Level 2: External Breadboard LEDs with 220Ω Resistors */}
+        {/* Level 2: External Red (GPIO 18), Green (GPIO 19) LEDs & Push Button (GPIO 27) */}
         {levelNumber === 2 && (
           <div className="flex flex-col items-center space-y-6 z-10 w-full animate-fade-in">
             <span className="text-[11px] font-mono font-bold text-[#899AA8] uppercase tracking-wider">
-              Authentic Wokwi LEDs (Hover for pin specs)
+              Activities 2 & 3: Alternating LEDs & Push Button (GPIO 27 INPUT_PULLUP)
             </span>
-            <div className="grid grid-cols-3 gap-6 bg-white border border-[#EBE6DC] p-6 rounded-2xl w-full max-w-lg shadow-sm">
+            <div className="flex flex-col md:flex-row items-center gap-6 bg-white border border-[#EBE6DC] p-6 rounded-2xl w-full max-w-xl shadow-sm justify-around">
               
-              {/* Green LED (GPIO 15) */}
-              <div className="flex flex-col items-center gap-2">
-                <svg viewBox="0 0 35 45" className="w-12 h-14" style={{ overflow: 'visible' }}>
-                  <Led x={3} y={5} scale={1} color="green" lit={ledState.green} brightness={1.3} />
-                  <PartHover meta={ledMeta} x={3} y={5} scale={1} />
-                </svg>
-                <span className="text-xs font-bold text-[#2A9D8F] font-mono">Green (D15)</span>
-                <span className="text-[10px] text-[#576875]">220Ω in series</span>
-                <button
-                  onClick={() => handleToggleLED('green')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm cursor-pointer ${
-                    ledState.green 
-                      ? 'bg-[#E6F4F2] border border-[#B2DFDB] text-[#2A9D8F]'
-                      : 'bg-white border border-[#EBE6DC] text-[#576875] hover:text-[#24313A]'
-                  }`}
-                >
-                  {ledState.green ? 'Cut 0V' : 'Supply 3.3V'}
-                </button>
-              </div>
-
-              {/* Orange LED (GPIO 4) */}
-              <div className="flex flex-col items-center gap-2">
-                <svg viewBox="0 0 35 45" className="w-12 h-14" style={{ overflow: 'visible' }}>
-                  <Led x={3} y={5} scale={1} color="orange" lit={ledState.orange} brightness={1.3} />
-                  <PartHover meta={ledMeta} x={3} y={5} scale={1} />
-                </svg>
-                <span className="text-xs font-bold text-[#B88719] font-mono">Orange (D4)</span>
-                <span className="text-[10px] text-[#576875]">220Ω in series</span>
-                <button
-                  onClick={() => handleToggleLED('orange')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm cursor-pointer ${
-                    ledState.orange 
-                      ? 'bg-[#FEF9EC] border border-[#F4C95D] text-[#B88719]'
-                      : 'bg-white border border-[#EBE6DC] text-[#576875] hover:text-[#24313A]'
-                  }`}
-                >
-                  {ledState.orange ? 'Cut 0V' : 'Supply 3.3V'}
-                </button>
-              </div>
-
-              {/* Red LED (GPIO 18) */}
-              <div className="flex flex-col items-center gap-2">
-                <svg viewBox="0 0 35 45" className="w-12 h-14" style={{ overflow: 'visible' }}>
-                  <Led x={3} y={5} scale={1} color="red" lit={ledState.red} brightness={1.3} />
-                  <PartHover meta={ledMeta} x={3} y={5} scale={1} />
-                </svg>
-                <span className="text-xs font-bold text-[#D95D43] font-mono">Red (D18)</span>
-                <span className="text-[10px] text-[#576875]">220Ω in series</span>
-                <button
-                  onClick={() => handleToggleLED('red')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm cursor-pointer ${
-                    ledState.red 
-                      ? 'bg-[#FDF1EE] border border-[#F28C75] text-[#D95D43]'
-                      : 'bg-white border border-[#EBE6DC] text-[#576875] hover:text-[#24313A]'
-                  }`}
-                >
-                  {ledState.red ? 'Cut 0V' : 'Supply 3.3V'}
-                </button>
-              </div>
-
-            </div>
-            <p className="text-xs text-[#576875] text-center">
-              Each semiconductor LED connects through a 220Ω current-limiting resistor to protect the ESP32 GPIO pin.
-            </p>
-          </div>
-        )}
-
-        {/* Level 3: Push Button with Internal Pull-Up Logic */}
-        {levelNumber === 3 && (
-          <div className="flex flex-col items-center space-y-6 z-10 animate-fade-in">
-            <span className="text-[11px] font-mono font-bold text-[#899AA8] uppercase tracking-wider">
-              Click & Hold tactile button to test active-low pull-up in C
-            </span>
-            <div className="flex items-center gap-10 bg-white border border-[#EBE6DC] p-6 rounded-2xl shadow-sm">
-              
-              {/* Pushbutton */}
+              {/* Push Button (GPIO 27) */}
               <div className="flex flex-col items-center gap-2">
                 <div
                   onMouseDown={handleButtonDown}
@@ -310,131 +268,282 @@ export const WokwiInteractiveBoard: React.FC<WokwiInteractiveBoardProps> = ({ le
                     <PartHover meta={pushButtonMeta} x={6} y={5} scale={1} />
                   </svg>
                 </div>
-                <span className="text-xs font-bold text-[#24313A]">Tactile Switch (D14)</span>
-                <span className="text-[10px] text-[#576875]">Click & Hold</span>
-              </div>
-
-              {/* Logical Arrow */}
-              <div className="flex flex-col items-center text-center">
-                <span className="text-xs font-mono font-bold text-[#2A9D8F]">
-                  {isButtonPressed ? 'digitalRead(14) == LOW' : 'digitalRead(14) == HIGH'}
-                </span>
-                <span className="text-[10px] text-[#576875] mt-1 font-mono">
-                  {isButtonPressed ? 'GND (0V / Active Low)' : 'INPUT_PULLUP (3.3V)'}
+                <span className="text-xs font-bold text-[#24313A]">Button (GPIO 27)</span>
+                <span className="text-[10px] text-[#576875] font-mono">
+                  {isButtonPressed ? 'Pressed: LOW (0V)' : 'Released: HIGH (3.3V)'}
                 </span>
               </div>
 
-              {/* Controlled LEDs */}
-              <div className="flex items-center gap-4">
-                <div className="flex flex-col items-center gap-1">
-                  <svg viewBox="0 0 35 45" className="w-10 h-12" style={{ overflow: 'visible' }}>
-                    <Led x={3} y={5} scale={0.9} color="green" lit={!isButtonPressed} brightness={1.2} />
-                  </svg>
-                  <span className="text-[10px] font-bold text-[#2A9D8F]">Normal (D15)</span>
-                </div>
-                <div className="flex flex-col items-center gap-1">
-                  <svg viewBox="0 0 35 45" className="w-10 h-12" style={{ overflow: 'visible' }}>
-                    <Led x={3} y={5} scale={0.9} color="orange" lit={isButtonPressed} brightness={1.2} />
-                  </svg>
-                  <span className="text-[10px] font-bold text-[#B88719]">Alert (D4)</span>
-                </div>
+              <div className="h-20 w-px bg-[#EBE6DC] hidden md:block" />
+
+              {/* Red LED (GPIO 18) */}
+              <div className="flex flex-col items-center gap-2">
+                <svg viewBox="0 0 35 45" className="w-12 h-14" style={{ overflow: 'visible' }}>
+                  <Led x={3} y={5} scale={1} color="red" lit={ledState.red} brightness={1.4} />
+                  <PartHover meta={ledMeta} x={3} y={5} scale={1} />
+                </svg>
+                <span className="text-xs font-bold text-[#D95D43] font-mono">Red LED (GPIO 18)</span>
+                <span className="text-[10px] font-mono text-[#576875]">
+                  {ledState.red ? 'HIGH (3.3V ON)' : 'LOW (0V OFF)'}
+                </span>
+              </div>
+
+              {/* Green LED (GPIO 19) */}
+              <div className="flex flex-col items-center gap-2">
+                <svg viewBox="0 0 35 45" className="w-12 h-14" style={{ overflow: 'visible' }}>
+                  <Led x={3} y={5} scale={1} color="green" lit={ledState.green} brightness={1.4} />
+                  <PartHover meta={ledMeta} x={3} y={5} scale={1} />
+                </svg>
+                <span className="text-xs font-bold text-[#2A9D8F] font-mono">Green LED (GPIO 19)</span>
+                <span className="text-[10px] font-mono text-[#576875]">
+                  {ledState.green ? 'HIGH (3.3V ON)' : 'LOW (0V OFF)'}
+                </span>
               </div>
 
             </div>
             <p className="text-xs text-[#576875] text-center max-w-md">
-              Press and hold the virtual button to simulate active-low logic pulling GPIO 14 to Ground.
+              Hold the tactile button to see active-low logic: pressing pulls GPIO 27 to GND, switching Red ON and Green OFF!
             </p>
           </div>
         )}
 
-        {/* Level 4: I2C SSD1306 OLED Display */}
-        {levelNumber === 4 && (
-          <div className="flex flex-col items-center space-y-5 z-10 animate-fade-in">
+        {/* Level 3: Analog Sensors Interactive Twin (Potentiometer GPIO 35 & Scaling) */}
+        {levelNumber === 3 && (
+          <div className="flex flex-col items-center space-y-5 z-10 w-full animate-fade-in">
             <span className="text-[11px] font-mono font-bold text-[#899AA8] uppercase tracking-wider">
-              Authentic SSD1306 OLED (Hover pins for I2C specs)
+              12-Bit ADC Live Converter (0..4095 ➔ 1..100)
             </span>
-            <div className="flex flex-col items-center gap-4 bg-white border border-[#EBE6DC] p-6 rounded-2xl shadow-sm">
+            <div className="flex flex-col md:flex-row items-center gap-6 bg-white border border-[#EBE6DC] p-6 rounded-2xl w-full max-w-lg shadow-sm">
+              <div className="flex flex-col items-center gap-2">
+                <PotModule x={0} y={0} scale={1.2} value={potVal} />
+                <span className="text-xs font-mono font-bold text-[#576875]">Potentiometer (GPIO 35)</span>
+              </div>
+
+              <div className="flex-1 w-full space-y-3">
+                <div className="flex justify-between text-xs font-bold text-[#24313A]">
+                  <span>Turn Knob:</span>
+                  <span className="font-mono text-[#2A9D8F]">{(potVal * 100).toFixed(0)}%</span>
+                </div>
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.01"
+                  value={potVal}
+                  onChange={(e) => {
+                    const v = parseFloat(e.target.value);
+                    setPotVal(v);
+                    const raw = Math.round(v * 4095);
+                    const scaled = Math.max(1, Math.min(100, Math.round(1 + (v * 99))));
+                    addReplLog(`analogRead(35) == ${raw}`, `Scaled to 1–100: ${scaled}`);
+                  }}
+                  className="w-full accent-[#2A9D8F] cursor-pointer h-2 bg-[#EBE6DC] rounded-lg"
+                />
+
+                <div className="grid grid-cols-2 gap-2 text-center">
+                  <div className="p-2.5 rounded-xl bg-[#FFFDF7] border border-[#EBE6DC]">
+                    <span className="text-[9px] font-mono text-[#899AA8] uppercase">Raw 12-Bit</span>
+                    <p className="text-lg font-mono font-black text-[#24313A]">{potRaw}</p>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-[#E6F4F2] border border-[#B2DFDB]">
+                    <span className="text-[9px] font-mono text-[#21867A] uppercase">Scaled (map)</span>
+                    <p className="text-lg font-mono font-black text-[#21867A]">{potScaled} / 100</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p className="text-xs text-[#576875] text-center max-w-md">
+              The ESP32 reads continuous voltage on GPIO 35. <code className="text-[#21867A]">map(raw, 0, 4095, 1, 100)</code> converts it into a clean percentage.
+            </p>
+          </div>
+        )}
+
+        {/* Level 4: Activity 4 OLED Name, Age, Hobby Display */}
+        {levelNumber === 4 && (
+          <div className="flex flex-col items-center space-y-5 z-10 animate-fade-in w-full max-w-md">
+            <span className="text-[11px] font-mono font-bold text-[#899AA8] uppercase tracking-wider">
+              Activity 4: SSD1306 OLED (SDA 21, SCL 22, 0x3C)
+            </span>
+            <div className="flex flex-col items-center gap-4 bg-white border border-[#EBE6DC] p-6 rounded-2xl shadow-sm w-full">
               <svg viewBox="0 0 160 120" className="w-68 h-44" style={{ overflow: 'visible' }}>
                 <Oled x={28} y={15} scale={1}>
-                  <text x="64" y="14" fill="#38BDF8" fontFamily="sans-serif" fontSize="8" textAnchor="middle">ThingSpeak readings</text>
-                  <text x="64" y="32" fill="#FFFFFF" fontFamily="monospace" fontSize="13" fontWeight="bold" textAnchor="middle">Temp: 30.8 C</text>
-                  <text x="64" y="48" fill="#4ADE80" fontFamily="monospace" fontSize="13" fontWeight="bold" textAnchor="middle">Humi: 72.0%</text>
-                  <text x="64" y="60" fill="#94A3B8" fontFamily="monospace" fontSize="6.5" textAnchor="middle">I2C: 0x3C ONLINE</text>
+                  <text x="4" y="16" fill="#FFFFFF" fontFamily="sans-serif" fontSize="13" fontWeight="bold">Name: {studentName}</text>
+                  <text x="4" y="34" fill="#FFFFFF" fontFamily="sans-serif" fontSize="13" fontWeight="bold">Age: {studentAge}</text>
+                  <text x="4" y="52" fill="#38BDF8" fontFamily="monospace" fontSize="9">Hobby: {studentHobby}</text>
                 </Oled>
                 <PartHover meta={oledMeta} x={28} y={15} scale={1} />
               </svg>
 
-              {/* Pin Connections Guide */}
-              <div className="flex items-center gap-2.5 text-xs font-mono text-[#24313A]">
-                <span className="px-2.5 py-1 rounded-md bg-[#FFFDF7] border border-[#EBE6DC]">VCC ➔ 3V3</span>
-                <span className="px-2.5 py-1 rounded-md bg-[#FFFDF7] border border-[#EBE6DC]">GND ➔ Rail</span>
-                <span className="px-2.5 py-1 rounded-md bg-[#E6F4F2] border border-[#B2DFDB] text-[#2A9D8F] font-bold">SDA ➔ D21</span>
-                <span className="px-2.5 py-1 rounded-md bg-[#E6F4F2] border border-[#B2DFDB] text-[#2A9D8F] font-bold">SCL ➔ D22</span>
+              {/* Editable Name / Age / Hobby fields */}
+              <div className="grid grid-cols-3 gap-2 w-full pt-1">
+                <div>
+                  <span className="text-[10px] font-bold text-[#576875]">Name</span>
+                  <input
+                    type="text"
+                    value={studentName}
+                    onChange={(e) => setStudentName(e.target.value)}
+                    className="w-full px-2.5 py-1 text-xs rounded-lg border border-[#EBE6DC] font-mono"
+                  />
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold text-[#576875]">Age</span>
+                  <input
+                    type="text"
+                    value={studentAge}
+                    onChange={(e) => setStudentAge(e.target.value)}
+                    className="w-full px-2.5 py-1 text-xs rounded-lg border border-[#EBE6DC] font-mono"
+                  />
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold text-[#576875]">Hobby</span>
+                  <input
+                    type="text"
+                    value={studentHobby}
+                    onChange={(e) => setStudentHobby(e.target.value)}
+                    className="w-full px-2.5 py-1 text-xs rounded-lg border border-[#EBE6DC] font-mono"
+                  />
+                </div>
               </div>
             </div>
-            <p className="text-xs text-[#576875] text-center max-w-md">
-              The SSD1306 controller receives drawing commands from the ESP32 over I2C (SDA=21, SCL=22) at address 0x3C.
+            <p className="text-xs text-[#576875] text-center">
+              Type your profile details above to preview how Adafruit SSD1306 renders them in off-screen RAM before calling <code>display.display()</code>!
             </p>
           </div>
         )}
 
-        {/* Level 5: ThingSpeak Cloud Telemetry & Alert Alarms */}
+        {/* Level 5: ThingSpeak Activities 5 & 6 (Potentiometer & DHT22 from Cloud) */}
         {levelNumber === 5 && (
-          <div className="flex flex-col items-center space-y-5 z-10 w-full animate-fade-in">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-xl">
+          <div className="flex flex-col items-center space-y-4 z-10 w-full animate-fade-in max-w-md">
+            {/* Tab switch between Activity 5 (Pot) and Activity 6 (DHT22) */}
+            <div className="flex items-center gap-2 p-1 bg-white border border-[#EBE6DC] rounded-xl shadow-xs">
+              <button
+                onClick={() => setThingSpeakTab('pot')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  thingSpeakTab === 'pot' ? 'bg-[#2A9D8F] text-white' : 'text-[#576875] hover:text-[#24313A]'
+                }`}
+              >
+                Activity 5: Potentiometer (Field 5)
+              </button>
+              <button
+                onClick={() => setThingSpeakTab('dht')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  thingSpeakTab === 'dht' ? 'bg-[#2A9D8F] text-white' : 'text-[#576875] hover:text-[#24313A]'
+                }`}
+              >
+                Activity 6: DHT22 (Fields 1 & 2)
+              </button>
+            </div>
+
+            <div className="bg-white border border-[#EBE6DC] rounded-2xl p-6 flex flex-col items-center justify-center shadow-sm w-full">
+              <svg viewBox="0 0 160 120" className="w-68 h-44" style={{ overflow: 'visible' }}>
+                <Oled x={28} y={15} scale={1}>
+                  {thingSpeakTab === 'pot' ? (
+                    <>
+                      <text x="64" y="14" fill="#38BDF8" fontFamily="sans-serif" fontSize="8" textAnchor="middle">Potentiometer</text>
+                      <text x="64" y="42" fill="#FFFFFF" fontFamily="monospace" fontSize="22" fontWeight="bold" textAnchor="middle">65</text>
+                      <text x="64" y="58" fill="#94A3B8" fontFamily="monospace" fontSize="6.5" textAnchor="middle">Field 5 / 100 • 20s Polling</text>
+                    </>
+                  ) : (
+                    <>
+                      <text x="64" y="12" fill="#38BDF8" fontFamily="sans-serif" fontSize="7" textAnchor="middle">DHT22 from ThingSpeak</text>
+                      <text x="64" y="30" fill="#FFFFFF" fontFamily="monospace" fontSize="13" fontWeight="bold" textAnchor="middle">T: 30.8 C</text>
+                      <text x="64" y="48" fill="#4ADE80" fontFamily="monospace" fontSize="13" fontWeight="bold" textAnchor="middle">H: 72.0%</text>
+                      <text x="64" y="60" fill="#94A3B8" fontFamily="monospace" fontSize="6.5" textAnchor="middle">Channel: 3594258 | OK</text>
+                    </>
+                  )}
+                </Oled>
+                <PartHover meta={oledMeta} x={28} y={15} scale={1} />
+              </svg>
+              <span className="text-[10px] font-mono text-[#899AA8] mt-2">HTTP GET /channels/3594258/feeds/last.json ➔ 200 OK</span>
+            </div>
+            <p className="text-xs text-[#576875] text-center">
+              Student ESP32 polls the instructor's cloud feeds every 20 seconds, deserializes the JSON with ArduinoJson, and renders the latest values.
+            </p>
+          </div>
+        )}
+
+        {/* Level 6: Activity 7 Autonomous Plant Guardian (Decisions, Alerts, Buzzer & LEDs) */}
+        {levelNumber === 6 && (
+          <div className="flex flex-col items-center space-y-4 z-10 w-full animate-fade-in max-w-xl">
+            <span className="text-[11px] font-mono font-bold text-[#899AA8] uppercase tracking-wider">
+              Activity 7: Smart Plant Guardian Decision Simulator
+            </span>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
               
-              {/* Virtual OLED Alert Display */}
-              <div className="bg-white border border-[#EBE6DC] rounded-xl p-4 flex flex-col items-center justify-center shadow-sm">
+              {/* Virtual OLED */}
+              <div className="bg-white border border-[#EBE6DC] rounded-2xl p-4 flex flex-col items-center justify-center shadow-sm">
                 <svg viewBox="0 0 150 115" className="w-full max-w-[200px]" style={{ overflow: 'visible' }}>
                   <Oled x={22} y={15} scale={1}>
-                    <text x="64" y="14" fill="#38BDF8" fontFamily="sans-serif" fontSize="8" textAnchor="middle">ThingSpeak readings</text>
-                    <text x="64" y="32" fill="#FFFFFF" fontFamily="monospace" fontSize="13" fontWeight="bold" textAnchor="middle">Temp: 30.8 C</text>
-                    <text x="64" y="48" fill="#4ADE80" fontFamily="monospace" fontSize="13" fontWeight="bold" textAnchor="middle">Humi: 72.0%</text>
-                    <text x="64" y="60" fill="#94A3B8" fontFamily="monospace" fontSize="6.5" textAnchor="middle">Channel: 3594258 | OK</text>
+                    <text x="4" y="12" fill="#38BDF8" fontFamily="sans-serif" fontSize="7">Soil and light status</text>
+                    <text x="4" y="28" fill="#FFFFFF" fontFamily="monospace" fontSize="12" fontWeight="bold">Soil: {simSoilPercent}%</text>
+                    <text x="4" y="44" fill="#94A3B8" fontFamily="monospace" fontSize="7">Raw: 2100  Light: {simLightDetected ? 'YES' : 'NO'}</text>
+                    <text x="4" y="58" fill={isGuardianGood ? '#4ADE80' : '#F87171'} fontFamily="monospace" fontSize="9" fontWeight="bold">
+                      Status: {isGuardianGood ? 'GOOD' : 'CHECK'}
+                    </text>
                   </Oled>
-                  <PartHover meta={oledMeta} x={22} y={15} scale={1} />
                 </svg>
-                <span className="text-[10px] font-mono text-[#899AA8] mt-1">HTTP GET /api/feed ➔ 200 OK</span>
+                <span className="text-[10px] font-mono text-[#899AA8] mt-1">Status: {isGuardianGood ? 'GOOD' : 'ALERT!'}</span>
               </div>
 
-              {/* Virtual Alarm Hardware (Red LED & Buzzer) */}
-              <div className="bg-white border border-[#EBE6DC] rounded-xl p-4 flex flex-col items-center justify-center gap-3 shadow-sm">
-                <div className="flex items-center gap-6">
+              {/* Physical Actuators (Red 18, Green 19, Buzzer 23) */}
+              <div className="bg-white border border-[#EBE6DC] rounded-2xl p-4 flex flex-col justify-between gap-3 shadow-sm">
+                <div className="flex items-center justify-around">
+                  {/* Red Alert LED (GPIO 18) */}
                   <div className="flex flex-col items-center">
                     <svg viewBox="0 0 35 45" className="w-10 h-12" style={{ overflow: 'visible' }}>
-                      <Led x={3} y={5} scale={0.9} color="red" lit={ledState.red} brightness={1.4} />
-                      <PartHover meta={ledMeta} x={3} y={5} scale={0.9} />
+                      <Led x={3} y={5} scale={0.9} color="red" lit={!isGuardianGood} brightness={1.4} />
                     </svg>
-                    <span className="text-[10px] text-[#D95D43] font-bold mt-1">Alarm LED (D18)</span>
+                    <span className="text-[10px] text-[#D95D43] font-bold mt-1">Red (D18)</span>
+                    <span className="text-[9px] font-mono">{!isGuardianGood ? 'ON' : 'OFF'}</span>
                   </div>
+
+                  {/* Green Normal LED (GPIO 19) */}
                   <div className="flex flex-col items-center">
-                    <div className="w-9 h-9 rounded-full bg-[#FFFDF7] border border-[#EBE6DC] flex items-center justify-center">
-                      <Zap className="w-4 h-4 text-[#F4C95D]" />
+                    <svg viewBox="0 0 35 45" className="w-10 h-12" style={{ overflow: 'visible' }}>
+                      <Led x={3} y={5} scale={0.9} color="green" lit={isGuardianGood} brightness={1.4} />
+                    </svg>
+                    <span className="text-[10px] text-[#2A9D8F] font-bold mt-1">Green (D19)</span>
+                    <span className="text-[9px] font-mono">{isGuardianGood ? 'ON' : 'OFF'}</span>
+                  </div>
+
+                  {/* Buzzer (GPIO 23) */}
+                  <div className="flex flex-col items-center">
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+                      !isGuardianGood ? 'bg-[#FDF1EE] text-[#D95D43] animate-pulse border border-[#F28C75]' : 'bg-[#FFFDF7] text-[#899AA8] border border-[#EBE6DC]'
+                    }`}>
+                      {!isGuardianGood ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
                     </div>
-                    <span className="text-[10px] text-[#B88719] font-bold mt-1">Buzzer (D19)</span>
+                    <span className="text-[10px] text-[#B88719] font-bold mt-1">Buzzer (D23)</span>
+                    <span className="text-[9px] font-mono">{!isGuardianGood ? 'BEEP!' : 'Off'}</span>
                   </div>
                 </div>
 
-                <button
-                  onClick={() => {
-                    const next = !ledState.red;
-                    setLedState((p) => ({ ...p, red: next }));
-                    addReplLog(next ? 'trigger_hazard_alarm()' : 'clear_alarm()', next ? 'HAZARD: Temperature exceeded 30C threshold' : 'Condition normal');
-                  }}
-                  className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm cursor-pointer ${
-                    ledState.red 
-                      ? 'bg-[#FDF1EE] border border-[#F28C75] text-[#D95D43]'
-                      : 'bg-white border border-[#EBE6DC] hover:border-[#F28C75] text-[#576875] hover:text-[#D95D43]'
-                  }`}
-                >
-                  {ledState.red ? 'Silence Alarm' : 'Inject Hazard Alert'}
-                </button>
+                {/* Simulation input toggles */}
+                <div className="pt-2 border-t border-[#EBE6DC] flex items-center justify-between gap-2">
+                  <button
+                    onClick={() => {
+                      const next = simSoilPercent >= 30 ? 15 : 65;
+                      setSimSoilPercent(next);
+                      addReplLog(`sim_soil = ${next}%`, next < 30 ? 'HAZARD: Soil moisture below 30%' : 'Soil moisture restored');
+                    }}
+                    className="flex-1 py-1.5 px-2 rounded-lg bg-[#FFFDF7] hover:bg-[#E6F4F2] border border-[#EBE6DC] text-[10px] font-bold text-[#24313A] cursor-pointer"
+                  >
+                    Toggle Soil ({simSoilPercent}%)
+                  </button>
+                  <button
+                    onClick={() => {
+                      const next = !simLightDetected;
+                      setSimLightDetected(next);
+                      addReplLog(`sim_light = ${next}`, next ? 'Light detected (LOW)' : 'Darkness (HIGH)');
+                    }}
+                    className="flex-1 py-1.5 px-2 rounded-lg bg-[#FFFDF7] hover:bg-[#FEF9EC] border border-[#EBE6DC] text-[10px] font-bold text-[#24313A] cursor-pointer"
+                  >
+                    Toggle Light ({simLightDetected ? 'Light' : 'Dark'})
+                  </button>
+                </div>
               </div>
 
             </div>
-            <p className="text-xs text-[#576875] text-center max-w-md">
-              When broadcast telemetry exceeds safe thresholds, the ESP32 automatically triggers the buzzer and LED.
-            </p>
           </div>
         )}
 

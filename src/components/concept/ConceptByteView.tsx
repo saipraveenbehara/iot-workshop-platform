@@ -17,6 +17,8 @@ import { OLEDAnatomyCard } from '../hardware/OLEDAnatomyCard.js';
 import { APIExplainerCard } from '../hardware/APIExplainerCard.js';
 import { CFunctionsExplainerCard } from '../hardware/CFunctionsExplainerCard.js';
 import { ComputerVsMicrocontrollerCard } from '../hardware/ComputerVsMicrocontrollerCard.js';
+import { AnalogSensorsExplainerCard } from '../hardware/AnalogSensorsExplainerCard.js';
+import { AutonomousPlantGuardianCard } from '../hardware/AutonomousPlantGuardianCard.js';
 
 interface ConceptByteViewProps {
   concept: ConceptByte;
@@ -114,11 +116,16 @@ export const ConceptByteView: React.FC<ConceptByteViewProps> = ({
         </div>
       )}
 
-      {/* Level 2: LED Anatomy */}
-      {levelNumber === 2 && <LEDAnatomyCard />}
+      {/* Level 2: LED & Push Button Digital I/O Anatomy */}
+      {levelNumber === 2 && (
+        <div className="space-y-8">
+          <LEDAnatomyCard />
+          <PushButtonAnatomyCard />
+        </div>
+      )}
 
-      {/* Level 3: Push Button Anatomy */}
-      {levelNumber === 3 && <PushButtonAnatomyCard />}
+      {/* Level 3: Analog Sensors & 12-Bit ADC Laboratory */}
+      {levelNumber === 3 && <AnalogSensorsExplainerCard />}
 
       {/* Level 4: OLED Anatomy & Pixel Sandbox */}
       {levelNumber === 4 && <OLEDAnatomyCard />}
@@ -130,6 +137,9 @@ export const ConceptByteView: React.FC<ConceptByteViewProps> = ({
           <APIExplainerCard />
         </div>
       )}
+
+      {/* Level 6: Autonomous IoT Plant Guardian (Decisions & Actuator Alerts) */}
+      {levelNumber === 6 && <AutonomousPlantGuardianCard />}
 
       {/* Story & Core Takeaways (Editorial 2-Column Spread) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">

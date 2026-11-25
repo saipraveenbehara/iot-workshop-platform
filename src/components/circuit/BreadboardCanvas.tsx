@@ -10,7 +10,8 @@ import {
   Zap,
   Radio,
   Eye,
-  CheckCircle2
+  CheckCircle2,
+  Volume2
 } from 'lucide-react';
 import { CircuitPanZoom } from './CircuitPanZoom.js';
 import { 
@@ -20,6 +21,8 @@ import {
   Resistor, 
   PushButton, 
   Oled,
+  Dht22,
+  PotModule,
   PartHover, 
   BreadboardHover, 
   getHole, 
@@ -30,7 +33,9 @@ import {
   ledMeta, 
   resistorMeta, 
   pushButtonMeta, 
-  oledMeta, 
+  oledMeta,
+  dht22Meta,
+  potModuleMeta,
   Hole 
 } from '../../hardware/index.js';
 
@@ -57,7 +62,7 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
     if (levelNumber === 1) {
       const interval = setInterval(() => {
         setOnboardBlink((prev) => !prev);
-      }, 700);
+      }, 600);
       return () => clearInterval(interval);
     }
   }, [levelNumber]);
@@ -68,31 +73,25 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
   const BB = { x: 135, y: 40 };
   const at = (h: { x: number; y: number }) => ({ x: BB.x + h.x, y: BB.y + h.y });
 
-  // Target hole highlights for each step
+  // Calculate highlighted breadboard holes dynamically
   const getHighlightHoles = (): string[] => {
+    const holes: string[] = [];
     if (levelNumber === 2) {
-      if (currentStepIndex === 0) return ['b-2'];
-      if (currentStepIndex === 1) return ['b-2', 'a15'];
-      if (currentStepIndex === 2) return ['b-2', 'a15', 'c15', 'c21'];
-      if (currentStepIndex === 3) return ['b-2', 'a15', 'c15', 'c21', 'd21', 'd20'];
-      return ['b-2', 'a15', 'c15', 'c21', 'd21', 'd20', 'e20', 'b-4'];
+      holes.push('b-2', 'a15', 'c15', 'e15', 'c20', 'e20', 'd20', 'd19', 'e19', 'b-4');
+      if (currentStepIndex >= 2) holes.push('a22', 'c22', 'e22', 'c26', 'e26', 'd26', 'd25', 'e25', 'b-6');
+      if (currentStepIndex >= 3) holes.push('a32', 'e32', 'f32', 'j32', 'b-8');
+    } else if (levelNumber === 3) {
+      holes.push('f15', 'b+12', 'b-12', 'f25', 'b+25', 'b-25');
+    } else if (levelNumber >= 4) {
+      holes.push('b+2', 'b-2', 'b+10', 'b-10', 'f38', 'f39', 'f40', 'f41');
+      if (levelNumber === 6) {
+        holes.push('a15', 'd20', 'd19', 'a22', 'd26', 'd25', 'a30', 'e30');
+      }
     }
-    if (levelNumber === 3) {
-      if (currentStepIndex === 0) return ['e25', 'f25'];
-      if (currentStepIndex === 1) return ['e25', 'f25', 'a25'];
-      if (currentStepIndex === 2) return ['e25', 'f25', 'a25', 'j25', 'b-7'];
-      return ['e25', 'f25', 'a25', 'j25', 'b-7', 'a30', 'c30', 'c36', 'd36', 'd35', 'e35', 'b-9'];
-    }
-    if (levelNumber === 4) {
-      return ['b+2', 'b-2', 'b+10', 'b-10', 'f38', 'f39', 'f40', 'f41'];
-    }
-    if (levelNumber === 5) {
-      return ['b+2', 'b-2', 'b+10', 'b-10', 'f38', 'f39', 'f40', 'f41', 'f20', 'f15'];
-    }
-    return [];
+    return holes;
   };
 
-  // Helper for drawing realistic DuPont jumper wires
+  // Render curved jumper wire with drop shadow and DuPont sleeves
   const renderWire = (
     from: { x: number; y: number },
     to: { x: number; y: number },
@@ -124,17 +123,22 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
   };
 
   // Component positions using exact breadboard coordinate mapping
-  // Level 2 & 3: Green LED circuit (Cols 15-21)
-  const l2Resistor = placeByPin(resistorMeta, '1', at(getHole('c', 15))); // bridges c15 to c21
-  const l2Led = placeByPin(ledMeta, 'A', at(getHole('d', 21))); // Anode in d21, Cathode in d20
+  // Level 2: Red LED circuit (Cols 15-20) on GPIO 18
+  const l2RedResistor = placeByPin(resistorMeta, '1', at(getHole('c', 15)));
+  const l2RedLed = placeByPin(ledMeta, 'A', at(getHole('d', 20)));
 
-  // Level 3: Tactile Push Button straddling trench at Col 25
-  const l3Btn = placeByPin(pushButtonMeta, '1.l', at(getHole('c', 25)));
-  // Level 3: Orange Alert LED circuit (Cols 30-36)
-  const l3ResOrange = placeByPin(resistorMeta, '1', at(getHole('c', 30))); // bridges c30 to c36
-  const l3OrangeLed = placeByPin(ledMeta, 'A', at(getHole('d', 36))); // Anode in d36, Cathode in d35
+  // Level 2: Green LED circuit (Cols 22-26) on GPIO 19
+  const l2GreenResistor = placeByPin(resistorMeta, '1', at(getHole('c', 22)));
+  const l2GreenLed = placeByPin(ledMeta, 'A', at(getHole('d', 26)));
 
-  // Level 4 & 5: OLED Display mounted over lower breadboard section (Cols 38-41)
+  // Level 2: Push Button straddling trench at Col 32 (Row E to Row F) on GPIO 27
+  const l2Btn = placeByPin(pushButtonMeta, '1.l', at(getHole('c', 32)));
+
+  // Level 3: Analog sensors (Potentiometer on GPIO 35, DHT22 on GPIO 4)
+  const l3Pot = placeByPin(potModuleMeta, 'SIG', at(getHole('f', 15)));
+  const l3Dht = placeByPin(dht22Meta, 'SDA', at(getHole('f', 26)));
+
+  // Level 4, 5, 6: OLED Display mounted over lower breadboard section (Cols 38-41)
   const l4Oled = placeByPin(oledMeta, 'GND', at(getHole('f', 38)));
 
   return (
@@ -229,11 +233,9 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
           {/* === STAGE 0: ESP32 DEVKIT V1 ARCHITECTURE INSPECTION === */}
           {levelNumber === 0 && (
             <g>
-              {/* ESP32 DevKit V1 at comfortable inspection scale */}
               <ESP32 x={65} y={40} scale={1.05} ledPower={true} led1={false} />
               <PartHover meta={esp32Meta} x={65} y={40} scale={1.05} />
 
-              {/* Callout badges pointing to authentic features */}
               <g fontFamily="sans-serif" fontSize="7" fontWeight="bold">
                 {/* Micro-USB Port */}
                 <line x1="121" y1="36" x2="175" y2="20" stroke="#2A9D8F" strokeWidth="1" strokeDasharray="2 2" />
@@ -248,55 +250,36 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
                 {/* Xtensa 32-bit Dual-Core LX6 */}
                 <line x1="121" y1="130" x2="195" y2="135" stroke="#2A9D8F" strokeWidth="1" strokeDasharray="2 2" />
                 <rect x="195" y="126" width="130" height="18" rx="4" fill="#FFFFFF" stroke="#2A9D8F" strokeWidth="1" filter="url(#wireShadow)" />
-                <text x="203" y="138" fill="#21867A">3. Xtensa Dual-Core @ 240 MHz</text>
-
-                {/* EN & BOOT Buttons */}
-                <line x1="83" y1="195" x2="195" y2="185" stroke="#2A9D8F" strokeWidth="1" strokeDasharray="2 2" />
-                <rect x="195" y="176" width="130" height="18" rx="4" fill="#FFFFFF" stroke="#2A9D8F" strokeWidth="1" filter="url(#wireShadow)" />
-                <text x="203" y="188" fill="#21867A">4. EN (Reset) & BOOT Buttons</text>
-
-                {/* 30 Header Pins */}
-                <line x1="67" y1="200" x2="25" y2="245" stroke="#F4C95D" strokeWidth="1" strokeDasharray="2 2" />
-                <rect x="10" y="245" width="135" height="18" rx="4" fill="#FFFFFF" stroke="#F4C95D" strokeWidth="1" filter="url(#wireShadow)" />
-                <text x="18" y="257" fill="#B88719">5. 30 Header Pins (Breadboard Ready)</text>
+                <text x="203" y="138" fill="#21867A">3. Xtensa 32-bit Dual-Core (240MHz)</text>
               </g>
             </g>
           )}
 
-          {/* === STAGE 1: ONBOARD BLINK & USB CABLE === */}
+          {/* === STAGE 1: ONBOARD LED (GPIO 2) === */}
           {levelNumber === 1 && (
             <g>
-              {/* ESP32 DevKit V1 */}
-              <ESP32 x={65} y={45} scale={1.05} ledPower={true} led1={onboardBlink} />
+              <ESP32 x={ESP.x} y={ESP.y} scale={1} ledPower={true} led1={onboardBlink} />
               
-              {/* USB Cable connected to top */}
+              {/* Callout to GPIO 2 Onboard LED */}
               <g filter="url(#wireShadow)">
-                <rect x={65 + 41.5} y={15} width="24" height="28" rx="3" fill="#1E293B" stroke="#475569" strokeWidth="1" />
-                <line x1={65 + 53.5} y1={15} x2={65 + 53.5} y2={-10} stroke="#334155" strokeWidth="6" strokeLinecap="round" />
-              </g>
-
-              {/* Callout box pointing to Onboard Blue LED on GPIO 2 */}
-              <g fontFamily="sans-serif" fontSize="7" fontWeight="bold">
-                <line x1={65 + 71.5 * 1.05} y1={45 + 112.5 * 1.05} x2={190} y2={85} stroke="#2A9D8F" strokeWidth="1" strokeDasharray="2 2" />
-                <rect x="190" y="70" width="150" height="34" rx="6" fill="#FFFFFF" stroke="#2A9D8F" strokeWidth="1" filter="url(#wireShadow)" />
-                <text x="200" y="83" fill="#21867A">Built-in GPIO 2 User LED</text>
-                <text x="200" y="93" fill={onboardBlink ? "#2A9D8F" : "#899AA8"} fontSize="6.5">
-                  State: {onboardBlink ? 'HIGH (3.3V ON)' : 'LOW (0V OFF)'}
-                </text>
-                <text x="200" y="101" fill="#64748B" fontSize="6" fontFamily="monospace">
-                  digitalWrite(2, {onboardBlink ? 'HIGH' : 'LOW'});
+                <circle cx={ESP.x + 92} cy={ESP.y + 115} r="6" fill="#3B82F6" opacity={onboardBlink ? 0.9 : 0.2} filter={onboardBlink ? 'url(#espGlow)' : undefined} />
+                <line x1={ESP.x + 92} y1={ESP.y + 115} x2={ESP.x + 150} y2={ESP.y + 115} stroke="#3B82F6" strokeWidth="1.5" strokeDasharray="3 3" />
+                <rect x={ESP.x + 150} y={ESP.y + 102} width="160" height="26" rx="6" fill="#FFFFFF" stroke="#3B82F6" strokeWidth="1.2" />
+                <text x={ESP.x + 158} y={ESP.y + 118} fontFamily="monospace" fontSize="9" fontWeight="bold" fill="#1E293B">
+                  Built-in LED: GPIO 2
                 </text>
               </g>
 
-              <PartHover meta={esp32Meta} x={65} y={45} scale={1.05} />
+              {/* Breadboard background ready for next stage */}
+              <Breadboard x={BB.x + 50} y={BB.y} highlight={[]} />
             </g>
           )}
 
-          {/* === STAGES 2–5: BREADBOARD CIRCUITS === */}
+          {/* === STAGES 2 - 6: BREADBOARD CIRCUITS === */}
           {levelNumber >= 2 && (
             <g>
-              {/* 1. ESP32 DevKit V1 (Left side, fully visible with USB connection) */}
-              <ESP32 x={ESP.x} y={ESP.y} ledPower={true} led1={levelNumber === 3 ? interactivePressed : false} />
+              {/* 1. ESP32 DevKit V1 placed with clear view */}
+              <ESP32 x={ESP.x} y={ESP.y} scale={1} ledPower={true} led1={false} />
               
               {/* Micro-USB Cable plugged into top */}
               <g className="pointer-events-none" filter="url(#wireShadow)">
@@ -304,17 +287,17 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
                 <line x1={ESP.x + 53.5} y1={ESP.y - 25} x2={ESP.x + 53.5} y2={ESP.y - 40} stroke="#475569" strokeWidth="5" strokeLinecap="round" />
               </g>
 
-              {/* 2. Full Breadboard (Active columns 1-28 front and center) */}
+              {/* 2. Full Breadboard */}
               <Breadboard
                 x={BB.x}
                 y={BB.y}
                 highlight={getHighlightHoles()}
               />
 
-              {/* === LEVEL 2: External LED Circuit === */}
+              {/* === LEVEL 2: Red (GPIO 18) & Green (GPIO 19) LEDs & Push Button (GPIO 27) === */}
               {levelNumber === 2 && (
                 <g>
-                  {/* Step 1: Main Ground Wire (ESP32 GND.1 -> Breadboard Bottom Blue Rail) */}
+                  {/* Step 1: Main Ground Wire (ESP32 GND.1 -> Bottom Blue Rail Hole 2) */}
                   {renderWire(
                     pinPosition(esp32Meta, 'GND.1', ESP),
                     at(getRailHole('bottom', '-', 2)),
@@ -323,152 +306,112 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
                     'l2-gnd-main'
                   )}
 
-                  {/* Step 2: D15 Signal Wire (ESP32 D15 -> Col 15 Row a) */}
-                  {currentStepIndex >= 1 && (
-                    renderWire(
-                      pinPosition(esp32Meta, 'D15', ESP),
-                      at(getHole('a', 15)),
-                      '#2A9D8F',
-                      40,
-                      'l2-sig-d15'
-                    )
-                  )}
-
-                  {/* Step 3: 220Ω Resistor across Col 15 -> Col 21 (Row c) */}
-                  {currentStepIndex >= 2 && (
-                    <g>
-                      <Resistor {...l2Resistor} ohms={220} />
-                      <PartHover meta={resistorMeta} {...l2Resistor} />
-                    </g>
-                  )}
-
-                  {/* Step 4: 5mm Green LED (Anode in Col 21, Cathode in Col 20, Row d) */}
-                  {currentStepIndex >= 3 && (
-                    <g>
-                      <Led
-                        {...l2Led}
-                        color="green"
-                        lit={true}
-                        brightness={1.3}
-                      />
-                      <PartHover meta={ledMeta} {...l2Led} />
-                    </g>
-                  )}
-
-                  {/* Step 5: Ground Jumper Wire (Col 20 Row e -> Bottom Blue Rail) */}
-                  {currentStepIndex >= 4 && (
-                    renderWire(
-                      at(getHole('e', 20)),
-                      at(getRailHole('bottom', '-', 4)),
-                      '#1E293B',
-                      -15,
-                      'l2-gnd-led'
-                    )
-                  )}
-                </g>
-              )}
-
-              {/* === LEVEL 3: Push Button Across Trench & Dual LEDs Circuit === */}
-              {levelNumber === 3 && (
-                <g>
-                  {/* Common Ground: ESP32 GND.1 to Blue Ground Rail */}
+                  {/* Step 2: Red LED Circuit on GPIO 18 (Col 15-20) */}
                   {renderWire(
-                    pinPosition(esp32Meta, 'GND.1', ESP),
-                    at(getRailHole('bottom', '-', 2)),
+                    pinPosition(esp32Meta, 'D18', ESP),
+                    at(getHole('a', 15)),
+                    '#EF4444',
+                    40,
+                    'l2-sig-d18'
+                  )}
+                  <Resistor {...l2RedResistor} ohms={220} />
+                  <Led {...l2RedLed} color="red" lit={interactivePressed} brightness={1.4} />
+                  {renderWire(
+                    at(getHole('e', 19)),
+                    at(getRailHole('bottom', '-', 4)),
                     '#1E293B',
-                    30,
-                    'l3-gnd-main'
+                    -15,
+                    'l2-red-gnd'
                   )}
 
-                  {/* 1. Normal State: Green LED Circuit on Col 15-21 (GPIO 15) */}
-                  <g>
-                    {renderWire(
-                      pinPosition(esp32Meta, 'D15', ESP),
-                      at(getHole('a', 15)),
-                      '#2A9D8F',
-                      40,
-                      'l3-sig-d15'
-                    )}
-                    <Resistor {...l2Resistor} ohms={220} />
-                    <Led {...l2Led} color="green" lit={!interactivePressed} brightness={1.3} />
-                    {renderWire(
-                      at(getHole('e', 20)),
-                      at(getRailHole('bottom', '-', 4)),
-                      '#1E293B',
-                      -15,
-                      'l3-gnd-green'
-                    )}
-                  </g>
-
-                  {/* 2. Tactile Push Button mounted across center trench at Col 25 */}
-                  <g transform={`translate(${at(getHole('e', 25)).x - 33.6}, ${at(getHole('e', 25)).y + 5}) rotate(90, 33.6, 22.2)`}>
-                    <PushButton
-                      {...l3Btn}
-                      color="green"
-                      pressed={interactivePressed}
-                      onMouseDown={() => setInteractivePressed(true)}
-                      onMouseUp={() => setInteractivePressed(false)}
-                      className="cursor-pointer"
-                    />
-                  </g>
-
-                  {/* D14 Signal Wire (ESP32 D14 -> Col 25 Row a) */}
-                  {currentStepIndex >= 1 && (
-                    renderWire(
-                      pinPosition(esp32Meta, 'D14', ESP),
-                      at(getHole('a', 25)),
-                      '#EAB308',
-                      45,
-                      'l3-w-d14'
-                    )
-                  )}
-
-                  {/* Button Ground Wire (Col 25 Row j -> Bottom Blue Rail) */}
+                  {/* Step 3: Green LED Circuit on GPIO 19 (Col 22-26) */}
                   {currentStepIndex >= 2 && (
-                    renderWire(
-                      at(getHole('j', 25)),
-                      at(getRailHole('bottom', '-', 6)),
-                      '#1E293B',
-                      20,
-                      'l3-btn-gnd'
-                    )
-                  )}
-
-                  {/* 3. Orange Alert LED Circuit on Col 30-36 (GPIO 4) */}
-                  {currentStepIndex >= 3 && (
                     <g>
                       {renderWire(
-                        pinPosition(esp32Meta, 'D4', ESP),
-                        at(getHole('a', 30)),
-                        '#F4C95D',
-                        50,
-                        'l3-sig-d4'
+                        pinPosition(esp32Meta, 'D19', ESP),
+                        at(getHole('a', 22)),
+                        '#2A9D8F',
+                        35,
+                        'l2-sig-d19'
                       )}
-                      <Resistor {...l3ResOrange} ohms={220} />
-                      <Led {...l3OrangeLed} color="orange" lit={interactivePressed} brightness={1.4} />
+                      <Resistor {...l2GreenResistor} ohms={220} />
+                      <Led {...l2GreenLed} color="green" lit={!interactivePressed} brightness={1.3} />
                       {renderWire(
-                        at(getHole('e', 35)),
-                        at(getRailHole('bottom', '-', 8)),
+                        at(getHole('e', 25)),
+                        at(getRailHole('bottom', '-', 6)),
                         '#1E293B',
                         -15,
-                        'l3-orange-gnd'
+                        'l2-green-gnd'
                       )}
                     </g>
                   )}
 
-                  <PartHover meta={pushButtonMeta} x={at(getHole('e', 25)).x - 22} y={at(getHole('e', 25)).y + 5} />
+                  {/* Step 4: Push Button straddling trench at Col 32 (GPIO 27) */}
+                  {currentStepIndex >= 3 && (
+                    <g>
+                      <g transform={`translate(${at(getHole('e', 32)).x - 33.6}, ${at(getHole('e', 32)).y + 5}) rotate(90, 33.6, 22.2)`}>
+                        <PushButton
+                          {...l2Btn}
+                          color="green"
+                          pressed={interactivePressed}
+                          onMouseDown={() => setInteractivePressed(true)}
+                          onMouseUp={() => setInteractivePressed(false)}
+                          className="cursor-pointer"
+                        />
+                      </g>
+                      {renderWire(
+                        pinPosition(esp32Meta, 'D27', ESP),
+                        at(getHole('a', 32)),
+                        '#F4C95D',
+                        55,
+                        'l2-btn-sig'
+                      )}
+                      {renderWire(
+                        at(getHole('j', 32)),
+                        at(getRailHole('bottom', '-', 8)),
+                        '#1E293B',
+                        20,
+                        'l2-btn-gnd'
+                      )}
+                      <PartHover meta={pushButtonMeta} x={at(getHole('e', 32)).x - 22} y={at(getHole('e', 32)).y + 5} />
+                    </g>
+                  )}
                 </g>
               )}
 
-              {/* === LEVEL 4: SSD1306 OLED Display Circuit === */}
+              {/* === LEVEL 3: Analog Sensors Hardware Overview === */}
+              {levelNumber === 3 && (
+                <g>
+                  {/* Power Rails Connection */}
+                  {renderWire(pinPosition(esp32Meta, '3V3', ESP), at(getRailHole('bottom', '+', 2)), '#EF4444', 25, 'l3-3v3')}
+                  {renderWire(pinPosition(esp32Meta, 'GND.1', ESP), at(getRailHole('bottom', '-', 2)), '#1E293B', 30, 'l3-gnd')}
+
+                  {/* Potentiometer on GPIO 35 (Col 15) */}
+                  <g>
+                    <PotModule {...l3Pot} scale={0.9} value={0.65} />
+                    {renderWire(at(getHole('f', 15)), pinPosition(esp32Meta, 'D35', ESP), '#2A9D8F', -35, 'l3-pot-sig')}
+                    {renderWire(at(getRailHole('bottom', '+', 5)), at(getHole('j', 16)), '#EF4444', 20, 'l3-pot-vcc')}
+                    {renderWire(at(getRailHole('bottom', '-', 5)), at(getHole('j', 14)), '#1E293B', 25, 'l3-pot-gnd')}
+                  </g>
+
+                  {/* DHT22 on GPIO 4 (Col 26) */}
+                  <g>
+                    <Dht22 {...l3Dht} scale={0.8} />
+                    {renderWire(at(getHole('f', 26)), pinPosition(esp32Meta, 'D4', ESP), '#F28C75', 40, 'l3-dht-sig')}
+                    {renderWire(at(getRailHole('bottom', '+', 10)), at(getHole('j', 25)), '#EF4444', 20, 'l3-dht-vcc')}
+                    {renderWire(at(getRailHole('bottom', '-', 10)), at(getHole('j', 27)), '#1E293B', 25, 'l3-dht-gnd')}
+                  </g>
+                </g>
+              )}
+
+              {/* === LEVEL 4: Activity 4 SSD1306 OLED (Name, Age, Hobby) === */}
               {levelNumber === 4 && (
                 <g>
-                  {/* OLED Hardware with ThingSpeak Readings Screen Fields */}
+                  {/* OLED Hardware with Personal Profile Layout */}
                   <Oled {...l4Oled} scale={1}>
-                    <text x="64" y="14" fill="#38BDF8" fontFamily="sans-serif" fontSize="8" textAnchor="middle">ThingSpeak readings</text>
-                    <text x="64" y="32" fill="#FFFFFF" fontFamily="monospace" fontSize="13" fontWeight="bold" textAnchor="middle">Temp: 30.8 C</text>
-                    <text x="64" y="48" fill="#4ADE80" fontFamily="monospace" fontSize="13" fontWeight="bold" textAnchor="middle">Humi: 72.0%</text>
-                    <text x="64" y="60" fill="#94A3B8" fontFamily="monospace" fontSize="6.5" textAnchor="middle">I2C: 0x3C | Wi-Fi: OK</text>
+                    <text x="4" y="16" fill="#FFFFFF" fontFamily="sans-serif" fontSize="13" fontWeight="bold">Name: Alex</text>
+                    <text x="4" y="34" fill="#FFFFFF" fontFamily="sans-serif" fontSize="13" fontWeight="bold">Age: 12</text>
+                    <text x="4" y="52" fill="#38BDF8" fontFamily="monospace" fontSize="9">Hobby: Robotics</text>
                   </Oled>
 
                   {/* ESP32 Main Power to Rails (Hole 2) */}
@@ -480,10 +423,10 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
                   {renderWire(at(getRailHole('bottom', '-', 10)), at(getHole('f', 38)), '#1E293B', 20, 'l4-gnd')}
 
                   {/* I2C Signal Wires (ESP32 D21 SDA, D22 SCL) */}
-                  {currentStepIndex >= 1 && (
+                  {currentStepIndex >= 2 && (
                     renderWire(pinPosition(esp32Meta, 'D21', ESP), at(getHole('f', 41)), '#3B82F6', 45, 'l4-sda')
                   )}
-                  {currentStepIndex >= 2 && (
+                  {currentStepIndex >= 3 && (
                     renderWire(pinPosition(esp32Meta, 'D22', ESP), at(getHole('f', 40)), '#EAB308', 40, 'l4-scl')
                   )}
 
@@ -491,10 +434,9 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
                 </g>
               )}
 
-              {/* === LEVEL 5: Grand IoT Challenge Node === */}
+              {/* === LEVEL 5: ThingSpeak Cloud Stream on OLED === */}
               {levelNumber === 5 && (
                 <g>
-                  {/* OLED Display with Live ThingSpeak Stream */}
                   <Oled {...l4Oled} scale={1}>
                     <text x="64" y="14" fill="#38BDF8" fontFamily="sans-serif" fontSize="8" textAnchor="middle">ThingSpeak readings</text>
                     <text x="64" y="32" fill="#FFFFFF" fontFamily="monospace" fontSize="13" fontWeight="bold" textAnchor="middle">Temp: 30.8 C</text>
@@ -512,12 +454,48 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
                   {renderWire(pinPosition(esp32Meta, 'D21', ESP), at(getHole('f', 41)), '#3B82F6', 45, 'l5-sda')}
                   {renderWire(pinPosition(esp32Meta, 'D22', ESP), at(getHole('f', 40)), '#EAB308', 40, 'l5-scl')}
 
-                  {/* Red Alert LED on D18 */}
-                  <Led {...l3OrangeLed} color="red" lit={true} brightness={1.4} />
-                  {renderWire(pinPosition(esp32Meta, 'D18', ESP), at(getHole('f', 20)), '#EF4444', 45, 'l5-led')}
+                  <PartHover meta={oledMeta} {...l4Oled} />
+                </g>
+              )}
 
-                  {/* Buzzer Line on D19 */}
-                  {renderWire(pinPosition(esp32Meta, 'D19', ESP), at(getHole('f', 15)), '#F59E0B', 50, 'l5-buzzer')}
+              {/* === LEVEL 6: Activity 7 Autonomous Plant Guardian === */}
+              {levelNumber === 6 && (
+                <g>
+                  {/* OLED Screen */}
+                  <Oled {...l4Oled} scale={1}>
+                    <text x="4" y="12" fill="#38BDF8" fontFamily="sans-serif" fontSize="7">Soil and light status</text>
+                    <text x="4" y="28" fill="#FFFFFF" fontFamily="monospace" fontSize="12" fontWeight="bold">Soil: 65%</text>
+                    <text x="4" y="44" fill="#94A3B8" fontFamily="monospace" fontSize="7">Raw: 2100  Light: YES</text>
+                    <text x="4" y="58" fill="#4ADE80" fontFamily="monospace" fontSize="9" fontWeight="bold">Status: GOOD</text>
+                  </Oled>
+
+                  {/* Power Rails */}
+                  {renderWire(pinPosition(esp32Meta, '3V3', ESP), at(getRailHole('bottom', '+', 2)), '#EF4444', 25, 'l6-esp-3v3')}
+                  {renderWire(pinPosition(esp32Meta, 'GND.1', ESP), at(getRailHole('bottom', '-', 2)), '#1E293B', 30, 'l6-esp-gnd')}
+                  {renderWire(at(getRailHole('bottom', '+', 10)), at(getHole('f', 39)), '#EF4444', 25, 'l6-vcc')}
+                  {renderWire(at(getRailHole('bottom', '-', 10)), at(getHole('f', 38)), '#1E293B', 20, 'l6-gnd')}
+                  {renderWire(pinPosition(esp32Meta, 'D21', ESP), at(getHole('f', 41)), '#3B82F6', 45, 'l6-sda')}
+                  {renderWire(pinPosition(esp32Meta, 'D22', ESP), at(getHole('f', 40)), '#EAB308', 40, 'l6-scl')}
+
+                  {/* Red Alert LED (GPIO 18, Col 15-20) */}
+                  {renderWire(pinPosition(esp32Meta, 'D18', ESP), at(getHole('a', 15)), '#EF4444', 40, 'l6-red-sig')}
+                  <Resistor {...l2RedResistor} ohms={220} />
+                  <Led {...l2RedLed} color="red" lit={false} brightness={1.4} />
+                  {renderWire(at(getHole('e', 19)), at(getRailHole('bottom', '-', 4)), '#1E293B', -15, 'l6-red-gnd')}
+
+                  {/* Green Normal LED (GPIO 19, Col 22-26) */}
+                  {renderWire(pinPosition(esp32Meta, 'D19', ESP), at(getHole('a', 22)), '#2A9D8F', 35, 'l6-green-sig')}
+                  <Resistor {...l2GreenResistor} ohms={220} />
+                  <Led {...l2GreenLed} color="green" lit={true} brightness={1.4} />
+                  {renderWire(at(getHole('e', 25)), at(getRailHole('bottom', '-', 6)), '#1E293B', -15, 'l6-green-gnd')}
+
+                  {/* Active Buzzer on GPIO 23 (Col 30) */}
+                  <g filter="url(#wireShadow)">
+                    <circle cx={at(getHole('c', 30)).x} cy={at(getHole('c', 30)).y} r="10" fill="#1E293B" stroke="#F4C95D" strokeWidth="1.5" />
+                    <text x={at(getHole('c', 30)).x} y={at(getHole('c', 30)).y + 3} fill="#FFFFFF" fontSize="7" fontFamily="sans-serif" textAnchor="middle">BUZZ</text>
+                  </g>
+                  {renderWire(pinPosition(esp32Meta, 'D23', ESP), at(getHole('a', 30)), '#F4C95D', 25, 'l6-buzzer-sig')}
+                  {renderWire(at(getHole('e', 30)), at(getRailHole('bottom', '-', 8)), '#1E293B', 20, 'l6-buzzer-gnd')}
 
                   <PartHover meta={oledMeta} {...l4Oled} />
                 </g>
@@ -538,10 +516,10 @@ export const BreadboardCanvas: React.FC<BreadboardCanvasProps> = ({
       {/* Blueprint Footer */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-[#576875] pt-1 border-t border-[#EBE6DC]">
         <span className="flex items-center gap-1.5 font-medium">
-          <Info className="w-4 h-4 text-[#2A9D8F] shrink-0" />
-          <span>Interactive Circuit Blueprint: Drag to pan, scroll to zoom in on pins & holes, or hover over components for specs.</span>
+          <Eye className="w-3.5 h-3.5 text-[#2A9D8F]" />
+          <span>Interactive Blueprint: Hover over any breadboard hole or component pin for live electrical net telemetry.</span>
         </span>
-        <span className="font-mono text-[#899AA8] text-[11px] font-bold shrink-0">Wokwi Vector Standard</span>
+        <span className="font-mono text-[11px] text-[#899AA8]">ESP32 DevKit V1 • 3.3V Logic</span>
       </div>
     </div>
   );

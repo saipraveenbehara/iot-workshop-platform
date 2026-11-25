@@ -3,18 +3,7 @@ export interface ConceptByte {
   title: string;
   metaphor: string;
   readTimeSeconds: number;
-  svgType: 
-    | "brain_vs_pc" 
-    | "digital_switch" 
-    | "breadboard_cutaway" 
-    | "led_polarity" 
-    | "pullup_tugofwar" 
-    | "if_else_railway" 
-    | "i2c_bus_grid" 
-    | "framebuffer_easel" 
-    | "iot_4_layers" 
-    | "api_waiter" 
-    | "closed_loop_gauge";
+  svgType: string;
   keyTakeaways: string[];
   analogyStory: string;
 }
