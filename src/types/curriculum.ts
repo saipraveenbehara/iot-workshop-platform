@@ -40,6 +40,23 @@ export interface CodeChunk {
   isConfigurable?: boolean;
 }
 
+export interface CodeFlowStep {
+  stepNumber: number;
+  title: string;
+  codeSnippet: string;
+  explanation: string;
+}
+
+export interface ActivityItem {
+  id: string;
+  activityNumber: number;
+  title: string;
+  goal: string;
+  fullScript: string;
+  flowSteps: CodeFlowStep[];
+  expectedResult: string;
+}
+
 export interface LevelData {
   levelNumber: number;
   id: string;
@@ -51,6 +68,7 @@ export interface LevelData {
   circuitSteps: CircuitStep[];
   codeChunks: CodeChunk[];
   fullScript: string;
+  activities?: ActivityItem[];
   verificationChallenge: {
     instruction: string;
     expectedObservableResult: string;

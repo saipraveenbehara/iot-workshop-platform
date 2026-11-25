@@ -68,7 +68,25 @@
     "verificationChallenge": {
       "instruction": "Plug your ESP32 into your computer using the USB cable. Verify that the red onboard power LED illuminates steadily.",
       "expectedObservableResult": "A bright red power LED glows near the micro-USB connector, showing the onboard 3.3V regulator is operating."
-    }
+    },
+    "activities": [
+      {
+        "id": "act-0",
+        "activityNumber": 0,
+        "title": "ESP32 DevKit V1 Architecture Check",
+        "goal": "Verify board hardware, micro-USB connection, and power rails.",
+        "fullScript": "// Stage 0: Hardware Pin Plan Reference\n// ESP32 DevKit V1 (30 Pins)\nvoid setup() {\n  Serial.begin(115200);\n  Serial.println(\"ESP32 DevKit V1 Ready!\");\n}\n\nvoid loop() {\n  // Ready for Level 1\n}",
+        "flowSteps": [
+          {
+            "stepNumber": 1,
+            "title": "Serial Communication at 115200 Baud",
+            "codeSnippet": "Serial.begin(115200);\nSerial.println(\"ESP32 DevKit V1 Ready!\");",
+            "explanation": "Initializes the UART USB serial bridge so your computer can receive text diagnostics from the ESP32."
+          }
+        ],
+        "expectedResult": "Serial Monitor prints 'ESP32 DevKit V1 Ready!' at 115200 baud."
+      }
+    ]
   },
   {
     "levelNumber": 1,
@@ -147,7 +165,31 @@
     "verificationChallenge": {
       "instruction": "Upload the sketch to your ESP32. Observe the blue onboard LED beside the Wi-Fi antenna.",
       "expectedObservableResult": "The onboard LED blinks steadily: 500 milliseconds ON, 500 milliseconds OFF."
-    }
+    },
+    "activities": [
+      {
+        "id": "act-1",
+        "activityNumber": 1,
+        "title": "Activity 1: Blink the Onboard LED",
+        "goal": "Turn the ESP32 onboard LED on and off every half second without any external wiring.",
+        "fullScript": "const int LED_PIN = 2;\n \nvoid setup() {\n  pinMode(LED_PIN, OUTPUT);\n}\n \nvoid loop() {\n  digitalWrite(LED_PIN, HIGH);\n  delay(500);\n \n  digitalWrite(LED_PIN, LOW);\n  delay(500);\n}",
+        "flowSteps": [
+          {
+            "stepNumber": 1,
+            "title": "Pin Definition & Direction in setup()",
+            "codeSnippet": "const int LED_PIN = 2;\n\nvoid setup() {\n  pinMode(LED_PIN, OUTPUT);\n}",
+            "explanation": "Tells the ESP32 that GPIO 2 (the onboard LED) will act as an OUTPUT power driver."
+          },
+          {
+            "stepNumber": 2,
+            "title": "Repeating Blink in loop()",
+            "codeSnippet": "void loop() {\n  digitalWrite(LED_PIN, HIGH); // Supply 3.3V (ON)\n  delay(500);                  // Wait 500ms\n  digitalWrite(LED_PIN, LOW);  // Supply 0V (OFF)\n  delay(500);                  // Wait 500ms\n}",
+            "explanation": "Switches the pin between 3.3V and 0V every half second forever."
+          }
+        ],
+        "expectedResult": "Blue onboard LED pulses steadily: 500ms ON, 500ms OFF."
+      }
+    ]
   },
   {
     "levelNumber": 2,
@@ -256,7 +298,53 @@
     "verificationChallenge": {
       "instruction": "Upload the Activity 3 code to your ESP32. With your hand off the button, observe which LED lights up. Then press and hold the button.",
       "expectedObservableResult": "Green LED glows when idle. Pressing and holding the button switches immediately to Red LED; releasing returns to Green LED."
-    }
+    },
+    "activities": [
+      {
+        "id": "act-2",
+        "activityNumber": 2,
+        "title": "Activity 2: Blink Red & Green Breadboard LEDs",
+        "goal": "Alternate two external LEDs safely using 220\u03a9 current-limiting resistors.",
+        "fullScript": "const int RED_LED_PIN = 18;\nconst int GREEN_LED_PIN = 19;\n \nvoid setup() {\n  pinMode(RED_LED_PIN, OUTPUT);\n  pinMode(GREEN_LED_PIN, OUTPUT);\n}\n \nvoid loop() {\n  digitalWrite(RED_LED_PIN, HIGH);\n  digitalWrite(GREEN_LED_PIN, LOW);\n  delay(500);\n \n  digitalWrite(RED_LED_PIN, LOW);\n  digitalWrite(GREEN_LED_PIN, HIGH);\n  delay(500);\n}",
+        "flowSteps": [
+          {
+            "stepNumber": 1,
+            "title": "Pin Definitions & Output Configuration",
+            "codeSnippet": "const int RED_LED_PIN = 18;\nconst int GREEN_LED_PIN = 19;\n\nvoid setup() {\n  pinMode(RED_LED_PIN, OUTPUT);\n  pinMode(GREEN_LED_PIN, OUTPUT);\n}",
+            "explanation": "Configures GPIO 18 (Red LED) and GPIO 19 (Green LED) as independent digital outputs."
+          },
+          {
+            "stepNumber": 2,
+            "title": "Alternating Railroad Signal in loop()",
+            "codeSnippet": "void loop() {\n  digitalWrite(RED_LED_PIN, HIGH);\n  digitalWrite(GREEN_LED_PIN, LOW);\n  delay(500);\n\n  digitalWrite(RED_LED_PIN, LOW);\n  digitalWrite(GREEN_LED_PIN, HIGH);\n  delay(500);\n}",
+            "explanation": "Turns Red ON and Green OFF for 500ms, then flips to Red OFF and Green ON for 500ms."
+          }
+        ],
+        "expectedResult": "Red and Green LEDs alternate back and forth rhythmically every 500 milliseconds."
+      },
+      {
+        "id": "act-3",
+        "activityNumber": 3,
+        "title": "Activity 3: Push Button Controlled Red & Green LEDs",
+        "goal": "Pressing the button turns on Red and turns off Green; releasing reverses it.",
+        "fullScript": "const int BUTTON_PIN = 27;\nconst int RED_LED_PIN = 18;\nconst int GREEN_LED_PIN = 19;\n \nvoid setup() {\n  pinMode(BUTTON_PIN, INPUT_PULLUP);\n  pinMode(RED_LED_PIN, OUTPUT);\n  pinMode(GREEN_LED_PIN, OUTPUT);\n}\n \nvoid loop() {\n  bool pressed = (digitalRead(BUTTON_PIN) == LOW);\n \n  if (pressed) {\n    digitalWrite(RED_LED_PIN, HIGH);\n    digitalWrite(GREEN_LED_PIN, LOW);\n  } else {\n    digitalWrite(RED_LED_PIN, LOW);\n    digitalWrite(GREEN_LED_PIN, HIGH);\n  }\n \n  delay(20); // Software debounce\n}",
+        "flowSteps": [
+          {
+            "stepNumber": 1,
+            "title": "Configuring INPUT_PULLUP on Button Pin",
+            "codeSnippet": "const int BUTTON_PIN = 27;\n\nvoid setup() {\n  pinMode(BUTTON_PIN, INPUT_PULLUP);\n  pinMode(RED_LED_PIN, OUTPUT);\n  pinMode(GREEN_LED_PIN, OUTPUT);\n}",
+            "explanation": "INPUT_PULLUP connects an internal 45k\u03a9 pull-up resistor to 3.3V. When unpressed, the pin reads HIGH. When pressed, it connects to GND, reading LOW."
+          },
+          {
+            "stepNumber": 2,
+            "title": "Active-Low Decision in loop()",
+            "codeSnippet": "bool pressed = (digitalRead(BUTTON_PIN) == LOW);\n\nif (pressed) {\n  digitalWrite(RED_LED_PIN, HIGH);\n  digitalWrite(GREEN_LED_PIN, LOW);\n} else {\n  digitalWrite(RED_LED_PIN, LOW);\n  digitalWrite(GREEN_LED_PIN, HIGH);\n}",
+            "explanation": "Checks if the button is pressed (LOW). If pressed, lights Red; otherwise, lights Green!"
+          }
+        ],
+        "expectedResult": "Green LED glows when idle. Holding the push button switches to Red LED immediately."
+      }
+    ]
   },
   {
     "levelNumber": 3,
@@ -328,7 +416,31 @@
     "verificationChallenge": {
       "instruction": "In the interactive simulator above, switch between the Potentiometer, Soil Moisture, LDR, and DHT22 tabs to observe how continuous physical phenomena turn into digital numbers.",
       "expectedObservableResult": "Moving the sliders dynamically updates the 12-bit ADC readout and demonstrates how calibration formulas invert and scale numbers."
-    }
+    },
+    "activities": [
+      {
+        "id": "act-pot",
+        "activityNumber": 12,
+        "title": "Activity: Potentiometer 12-Bit ADC & map() Scaling",
+        "goal": "Read ESP32 analog pin GPIO 35 with analogRead() and scale 0..4095 to 1..100 with map().",
+        "fullScript": "const int POT_PIN = 35;\n \nvoid setup() {\n  Serial.begin(115200);\n  analogReadResolution(12); // 12-bit ADC (0 to 4095)\n}\n \nvoid loop() {\n  int rawValue = analogRead(POT_PIN);\n  int scaledValue = map(rawValue, 0, 4095, 1, 100);\n  scaledValue = constrain(scaledValue, 1, 100);\n \n  Serial.printf(\"Raw ADC: %d | Scaled: %d / 100\\n\", rawValue, scaledValue);\n  delay(200);\n}",
+        "flowSteps": [
+          {
+            "stepNumber": 1,
+            "title": "12-Bit ADC Configuration in setup()",
+            "codeSnippet": "const int POT_PIN = 35;\n\nvoid setup() {\n  Serial.begin(115200);\n  analogReadResolution(12); // 0 to 4095\n}",
+            "explanation": "Configures the ESP32's internal Analog-to-Digital Converter for 12-bit mode (4,096 voltage levels)."
+          },
+          {
+            "stepNumber": 2,
+            "title": "analogRead() and map() Conversion in loop()",
+            "codeSnippet": "int rawValue = analogRead(POT_PIN);\nint scaledValue = map(rawValue, 0, 4095, 1, 100);\nscaledValue = constrain(scaledValue, 1, 100);",
+            "explanation": "Reads the voltage on GPIO 35 and maps it into a clean percentage range (1 to 100)."
+          }
+        ],
+        "expectedResult": "Turning the potentiometer knob smoothly prints numbers from 1 to 100 in the Serial Monitor."
+      }
+    ]
   },
   {
     "levelNumber": 4,
@@ -434,7 +546,37 @@
     "verificationChallenge": {
       "instruction": "Customize the strings in the sketch with your own name, age, and favorite hobby. Upload to your physical ESP32.",
       "expectedObservableResult": "Your personalized maker profile illuminates sharply on the 0.96-inch OLED screen in crisp white pixels."
-    }
+    },
+    "activities": [
+      {
+        "id": "act-4",
+        "activityNumber": 4,
+        "title": "Activity 4: Show Name, Age & Hobby on OLED",
+        "goal": "Display custom student maker profile on the 128x64 SSD1306 OLED over I2C.",
+        "fullScript": "#include <Wire.h>\n#include <Adafruit_GFX.h>\n#include <Adafruit_SSD1306.h>\n \n#define SCREEN_WIDTH 128\n#define SCREEN_HEIGHT 64\n#define OLED_RESET -1\n \nAdafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);\n \nvoid setup() {\n  Wire.begin(21, 22);  // SDA = 21, SCL = 22\n \n  if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {\n    while (true) {\n      delay(100); // Check wiring if stuck\n    }\n  }\n \n  display.clearDisplay();\n  display.setTextColor(SSD1306_WHITE);\n  display.setTextSize(2);\n  display.setCursor(0, 5);\n  display.println(\"Name: Alex\");\n  display.println(\"Age: 12\");\n  display.setTextSize(1);\n  display.println(\"Hobby: Robotics\");\n  display.display(); // Blast to glass!\n}\n \nvoid loop() {\n  // The OLED text stays on screen.\n}",
+        "flowSteps": [
+          {
+            "stepNumber": 1,
+            "title": "Include Three Essential I2C Display Libraries",
+            "codeSnippet": "#include <Wire.h>\n#include <Adafruit_GFX.h>\n#include <Adafruit_SSD1306.h>",
+            "explanation": "Imports the I2C bus driver (Wire), graphics math (Adafruit_GFX), and OLED screen driver (Adafruit_SSD1306)."
+          },
+          {
+            "stepNumber": 2,
+            "title": "I2C Pins & Display Initialization in setup()",
+            "codeSnippet": "Wire.begin(21, 22); // SDA on 21, SCL on 22\ndisplay.begin(SSD1306_SWITCHCAPVCC, 0x3C);",
+            "explanation": "Starts the hardware I2C peripheral on pins 21 and 22, and connects to the SSD1306 chip at address 0x3C."
+          },
+          {
+            "stepNumber": 3,
+            "title": "Drawing into Framebuffer & display.display()",
+            "codeSnippet": "display.clearDisplay();\ndisplay.setTextSize(2);\ndisplay.setCursor(0, 5);\ndisplay.println(\"Name: Alex\");\ndisplay.display(); // Push RAM buffer to physical glass",
+            "explanation": "Formats the text inside the ESP32's internal memory buffer, then transfers all 8,192 pixels to the OLED glass."
+          }
+        ],
+        "expectedResult": "Crisp white text displays 'Name: Alex', 'Age: 12', and 'Hobby: Robotics' on the physical OLED screen."
+      }
+    ]
   },
   {
     "levelNumber": 5,
@@ -513,7 +655,65 @@
     "verificationChallenge": {
       "instruction": "Set your Wi-Fi credentials, upload the sketch, and solve the Cloud Mystery Puzzle to verify your Channel ID (3594258) and Read Key.",
       "expectedObservableResult": "Your OLED connects to the local Wi-Fi and streams live temperature (~30.8 C) and humidity (~72.0%) updated every 20 seconds."
-    }
+    },
+    "activities": [
+      {
+        "id": "act-5",
+        "activityNumber": 5,
+        "title": "Activity 5: Read Potentiometer from ThingSpeak (Field 5)",
+        "goal": "Read the scaled potentiometer value (1-100) from Field 5 and show on OLED.",
+        "fullScript": "#include <WiFi.h>\n#include <HTTPClient.h>\n#include <ArduinoJson.h>\n#include <Wire.h>\n#include <Adafruit_GFX.h>\n#include <Adafruit_SSD1306.h>\n \nconst char* WIFI_SSID = \"YOUR_WIFI_NAME\";\nconst char* WIFI_PASSWORD = \"YOUR_WIFI_PASSWORD\";\nconst char* CHANNEL_ID = \"3594258\";\nconst char* READ_API_KEY = \"XKXDZN01ERL8CVHX\";\n \nAdafruit_SSD1306 display(128, 64, &Wire, -1);\nunsigned long lastRead = 0;\nconst unsigned long READ_INTERVAL = 20000;\n \nvoid connectWiFi() {\n  WiFi.mode(WIFI_STA);\n  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);\n  while (WiFi.status() != WL_CONNECTED) delay(500);\n}\n \nvoid readAndShowPot() {\n  String url = \"http://api.thingspeak.com/channels/\";\n  url += CHANNEL_ID;\n  url += \"/feeds/last.json?api_key=\";\n  url += READ_API_KEY;\n \n  HTTPClient http;\n  http.begin(url);\n  int code = http.GET();\n  String body = http.getString();\n  http.end();\n \n  if (code != 200) {\n    display.clearDisplay();\n    display.setCursor(0, 20);\n    display.println(\"ThingSpeak error\");\n    display.display();\n    return;\n  }\n \n  StaticJsonDocument<512> doc;\n  if (deserializeJson(doc, body) || doc[\"field5\"].isNull()) {\n    display.clearDisplay();\n    display.setCursor(0, 20);\n    display.println(\"No pot value\");\n    display.display();\n    return;\n  }\n \n  String text = doc[\"field5\"].as<String>();\n  int potValue = text.toInt();\n \n  display.clearDisplay();\n  display.setTextColor(SSD1306_WHITE);\n  display.setTextSize(1);\n  display.setCursor(0, 8);\n  display.println(\"Potentiometer\");\n  display.setTextSize(3);\n  display.setCursor(25, 30);\n  display.print(potValue);\n  display.display();\n \n  Serial.printf(\"Potentiometer: %d / 100\\n\", potValue);\n}\n \nvoid setup() {\n  Serial.begin(115200);\n  Wire.begin(21, 22);\n  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);\n  connectWiFi();\n  readAndShowPot();\n  lastRead = millis();\n}\n \nvoid loop() {\n  if (millis() - lastRead >= READ_INTERVAL) {\n    lastRead = millis();\n    readAndShowPot();\n  }\n}",
+        "flowSteps": [
+          {
+            "stepNumber": 1,
+            "title": "Wi-Fi & ThingSpeak Channel Credentials",
+            "codeSnippet": "const char* WIFI_SSID = \"YOUR_WIFI_NAME\";\nconst char* WIFI_PASSWORD = \"YOUR_WIFI_PASSWORD\";\nconst char* CHANNEL_ID = \"3594258\";\nconst char* READ_API_KEY = \"XKXDZN01ERL8CVHX\";",
+            "explanation": "Replace YOUR_WIFI_NAME and PASSWORD with your classroom network. Channel ID 3594258 and Read Key connect to the live weather station."
+          },
+          {
+            "stepNumber": 2,
+            "title": "HTTP GET & ArduinoJson Deserialization in readAndShowPot()",
+            "codeSnippet": "HTTPClient http;\nhttp.begin(url);\nint code = http.GET();\nString body = http.getString();\n\nStaticJsonDocument<512> doc;\ndeserializeJson(doc, body);\nint potValue = doc[\"field5\"].as<String>().toInt();",
+            "explanation": "Requests /feeds/last.json, parses the response JSON, and extracts field5 (the potentiometer value 1\u2013100)."
+          },
+          {
+            "stepNumber": 3,
+            "title": "Non-Blocking millis() Polling in loop()",
+            "codeSnippet": "void loop() {\n  if (millis() - lastRead >= READ_INTERVAL) {\n    lastRead = millis();\n    readAndShowPot();\n  }\n}",
+            "explanation": "Uses millis() to poll every 20,000ms (20 seconds) without freezing the ESP32 with delay()."
+          }
+        ],
+        "expectedResult": "The OLED renders 'Potentiometer' and a large number (1 to 100) reflecting the live position of the instructor's dial."
+      },
+      {
+        "id": "act-6",
+        "activityNumber": 6,
+        "title": "Activity 6: Read DHT22 Values from ThingSpeak (Fields 1 & 2)",
+        "goal": "Display the latest temperature (\u00b0C) from Field 1 and humidity (%) from Field 2 on OLED.",
+        "fullScript": "#include <WiFi.h>\n#include <HTTPClient.h>\n#include <ArduinoJson.h>\n#include <Wire.h>\n#include <Adafruit_GFX.h>\n#include <Adafruit_SSD1306.h>\n \nconst char* WIFI_SSID = \"YOUR_WIFI_NAME\";\nconst char* WIFI_PASSWORD = \"YOUR_WIFI_PASSWORD\";\nconst char* CHANNEL_ID = \"3594258\";\nconst char* READ_API_KEY = \"XKXDZN01ERL8CVHX\";\n \nAdafruit_SSD1306 display(128, 64, &Wire, -1);\nunsigned long lastRead = 0;\nconst unsigned long READ_INTERVAL = 20000;\n \nvoid connectWiFi() {\n  WiFi.mode(WIFI_STA);\n  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);\n  while (WiFi.status() != WL_CONNECTED) delay(500);\n}\n \nvoid readAndShowDHT() {\n  String url = \"http://api.thingspeak.com/channels/\";\n  url += CHANNEL_ID;\n  url += \"/feeds/last.json?api_key=\";\n  url += READ_API_KEY;\n \n  HTTPClient http;\n  http.begin(url);\n  int code = http.GET();\n  String body = http.getString();\n  http.end();\n \n  StaticJsonDocument<512> doc;\n  if (code != 200 || deserializeJson(doc, body) ||\n      doc[\"field1\"].isNull() || doc[\"field2\"].isNull()) {\n    display.clearDisplay();\n    display.setCursor(0, 20);\n    display.println(\"No DHT readings\");\n    display.display();\n    return;\n  }\n \n  float temperature = doc[\"field1\"].as<String>().toFloat();\n  float humidity = doc[\"field2\"].as<String>().toFloat();\n \n  display.clearDisplay();\n  display.setTextColor(SSD1306_WHITE);\n  display.setTextSize(1);\n  display.setCursor(0, 5);\n  display.println(\"DHT22 from ThingSpeak\");\n  display.setTextSize(2);\n  display.setCursor(0, 22);\n  display.printf(\"T: %.1f C\", temperature);\n  display.setCursor(0, 45);\n  display.printf(\"H: %.1f%%\", humidity);\n  display.display();\n \n  Serial.printf(\"Temperature: %.1f C, humidity: %.1f%%\\n\",\n                temperature, humidity);\n}\n \nvoid setup() {\n  Serial.begin(115200);\n  Wire.begin(21, 22);\n  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);\n  connectWiFi();\n  readAndShowDHT();\n  lastRead = millis();\n}\n \nvoid loop() {\n  if (millis() - lastRead >= READ_INTERVAL) {\n    lastRead = millis();\n    readAndShowDHT();\n  }\n}",
+        "flowSteps": [
+          {
+            "stepNumber": 1,
+            "title": "Wi-Fi & ThingSpeak Credentials",
+            "codeSnippet": "const char* CHANNEL_ID = \"3594258\";\nconst char* READ_API_KEY = \"XKXDZN01ERL8CVHX\";",
+            "explanation": "Target Channel ID and Read API Key for live weather station polling."
+          },
+          {
+            "stepNumber": 2,
+            "title": "Parsing Field 1 (Temp) & Field 2 (Humidity)",
+            "codeSnippet": "float temperature = doc[\"field1\"].as<String>().toFloat();\nfloat humidity = doc[\"field2\"].as<String>().toFloat();",
+            "explanation": "Converts string JSON fields into decimal floating-point numbers in Celsius and percentage."
+          },
+          {
+            "stepNumber": 3,
+            "title": "Display Formatting on OLED",
+            "codeSnippet": "display.setTextSize(2);\ndisplay.printf(\"T: %.1f C\", temperature);\ndisplay.printf(\"H: %.1f%%\", humidity);\ndisplay.display();",
+            "explanation": "Renders formatted temperature and humidity with 1 decimal place on the OLED."
+          }
+        ],
+        "expectedResult": "OLED illuminates with 'DHT22 from ThingSpeak', showing live temperature (~30.8 C) and humidity (~72.0%)."
+      }
+    ]
   },
   {
     "levelNumber": 6,
@@ -620,6 +820,36 @@
     "verificationChallenge": {
       "instruction": "Upload Activity 7 to your ESP32. Have the instructor simulate dry soil or cover the classroom LDR sensor, and observe your plant guardian's multi-modal reaction.",
       "expectedObservableResult": "Under good conditions, the Green LED shines steadily and the OLED reports 'Status: GOOD'. When dry soil or darkness is detected, the Red LED fires, the buzzer beeps, and the OLED displays 'Status: CHECK'!"
-    }
+    },
+    "activities": [
+      {
+        "id": "act-7",
+        "activityNumber": 7,
+        "title": "Activity 7: Smart Plant Guardian \u2014 Decisions, Alerts & Integration",
+        "goal": "Read soil raw value from field 3 and LDR from field 4. Trigger Red LED and Buzzer if dry or dark; Green LED if good.",
+        "fullScript": "#include <WiFi.h>\n#include <HTTPClient.h>\n#include <ArduinoJson.h>\n#include <Wire.h>\n#include <Adafruit_GFX.h>\n#include <Adafruit_SSD1306.h>\n \nconst char* WIFI_SSID = \"YOUR_WIFI_NAME\";\nconst char* WIFI_PASSWORD = \"YOUR_WIFI_PASSWORD\";\nconst char* CHANNEL_ID = \"3594258\";\nconst char* READ_API_KEY = \"XKXDZN01ERL8CVHX\";\n \n#define RED_LED_PIN 18\n#define GREEN_LED_PIN 19\n#define BUZZER_PIN 23\n \nconst int SOIL_DRY_RAW = 3000;\nconst int SOIL_WET_RAW = 1300;\nconst float MIN_GOOD_SOIL_PERCENT = 30.0;\nconst int LIGHT_DETECTED_LEVEL = LOW;  // Change to HIGH if reversed\n \nAdafruit_SSD1306 display(128, 64, &Wire, -1);\nunsigned long lastRead = 0;\nconst unsigned long READ_INTERVAL = 20000;\n \nvoid connectWiFi() {\n  WiFi.mode(WIFI_STA);\n  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);\n  while (WiFi.status() != WL_CONNECTED) delay(500);\n}\n \nvoid readAndControl() {\n  String url = \"http://api.thingspeak.com/channels/\";\n  url += CHANNEL_ID;\n  url += \"/feeds/last.json?api_key=\";\n  url += READ_API_KEY;\n \n  HTTPClient http;\n  http.begin(url);\n  int code = http.GET();\n  String body = http.getString();\n  http.end();\n \n  StaticJsonDocument<512> doc;\n  if (code != 200 || deserializeJson(doc, body) ||\n      doc[\"field3\"].isNull() || doc[\"field4\"].isNull()) {\n    digitalWrite(RED_LED_PIN, HIGH);\n    digitalWrite(GREEN_LED_PIN, LOW);\n    digitalWrite(BUZZER_PIN, HIGH);\n    display.clearDisplay();\n    display.setCursor(0, 20);\n    display.println(\"No sensor data\");\n    display.display();\n    return;\n  }\n \n  int soilRaw = doc[\"field3\"].as<String>().toInt();\n  int ldrRaw = doc[\"field4\"].as<String>().toInt();\n  float soilPercent = (float)(SOIL_DRY_RAW - soilRaw) * 100.0 /\n                      (float)(SOIL_DRY_RAW - SOIL_WET_RAW);\n  soilPercent = constrain(soilPercent, 0.0, 100.0);\n  bool lightDetected = (ldrRaw == LIGHT_DETECTED_LEVEL);\n  bool good = (soilPercent >= MIN_GOOD_SOIL_PERCENT) && lightDetected;\n \n  digitalWrite(RED_LED_PIN, good ? LOW : HIGH);\n  digitalWrite(GREEN_LED_PIN, good ? HIGH : LOW);\n  digitalWrite(BUZZER_PIN, good ? LOW : HIGH);  // Active buzzer\n \n  display.clearDisplay();\n  display.setTextColor(SSD1306_WHITE);\n  display.setTextSize(1);\n  display.setCursor(0, 2);\n  display.println(\"Soil and light status\");\n  display.setTextSize(2);\n  display.setCursor(0, 16);\n  display.printf(\"Soil: %.0f%%\", soilPercent);\n  display.setTextSize(1);\n  display.setCursor(0, 40);\n  display.printf(\"Raw: %d  Light: %s\", soilRaw,\n                 lightDetected ? \"YES\" : \"NO\");\n  display.setCursor(0, 54);\n  display.print(\"Status: \");\n  display.println(good ? \"GOOD\" : \"CHECK\");\n  display.display();\n \n  Serial.printf(\"Soil %d (%.1f%%), LDR %d, status %s\\n\",\n                soilRaw, soilPercent, ldrRaw, good ? \"GOOD\" : \"CHECK\");\n}\n \nvoid setup() {\n  Serial.begin(115200);\n  pinMode(RED_LED_PIN, OUTPUT);\n  pinMode(GREEN_LED_PIN, OUTPUT);\n  pinMode(BUZZER_PIN, OUTPUT);\n  Wire.begin(21, 22);\n  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);\n  connectWiFi();\n  readAndControl();\n  lastRead = millis();\n}\n \nvoid loop() {\n  if (millis() - lastRead >= READ_INTERVAL) {\n    lastRead = millis();\n    readAndControl();\n  }\n}",
+        "flowSteps": [
+          {
+            "stepNumber": 1,
+            "title": "Actuator Pins & Calibration Thresholds",
+            "codeSnippet": "#define RED_LED_PIN 18\n#define GREEN_LED_PIN 19\n#define BUZZER_PIN 23\n\nconst int SOIL_DRY_RAW = 3000;\nconst int SOIL_WET_RAW = 1300;\nconst float MIN_GOOD_SOIL_PERCENT = 30.0;",
+            "explanation": "Defines the Red Alert LED (18), Green Normal LED (19), Active Buzzer (23), and soil calibration bounds."
+          },
+          {
+            "stepNumber": 2,
+            "title": "Soil % Inversion & Boolean Rule",
+            "codeSnippet": "float soilPercent = (float)(SOIL_DRY_RAW - soilRaw) * 100.0 / (float)(SOIL_DRY_RAW - SOIL_WET_RAW);\nbool lightDetected = (ldrRaw == LIGHT_DETECTED_LEVEL);\nbool good = (soilPercent >= MIN_GOOD_SOIL_PERCENT) && lightDetected;",
+            "explanation": "Inverts the ADC to a percentage (0..100%). Evaluates if soil is at least 30% AND light is detected."
+          },
+          {
+            "stepNumber": 3,
+            "title": "Actuating Red/Green LEDs & Active Buzzer Alarm",
+            "codeSnippet": "digitalWrite(RED_LED_PIN, good ? LOW : HIGH);\ndigitalWrite(GREEN_LED_PIN, good ? HIGH : LOW);\ndigitalWrite(BUZZER_PIN, good ? LOW : HIGH); // Buzz if not good!",
+            "explanation": "If good: Green LED ON, Red OFF, Buzzer silent. If thirsty/dark: Red LED ON, Green OFF, Buzzer beeps!"
+          }
+        ],
+        "expectedResult": "Green LED glows and OLED displays 'Status: GOOD' under normal conditions. If dry soil (<30%) or darkness is detected, Red LED illuminates and Buzzer beeps while OLED warns 'Status: CHECK'!"
+      }
+    ]
   }
 ]
