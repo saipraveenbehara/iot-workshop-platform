@@ -28,6 +28,56 @@ class StateStore {
     }
   }
 
+  public getTeamNames(): string[] {
+    return Array.from(this.teams.keys());
+  }
+
+  public addTeam(name: string): boolean {
+    const trimmed = name.trim();
+    if (!trimmed) return false;
+    for (const k of this.teams.keys()) {
+      if (k.toLowerCase() === trimmed.toLowerCase()) {
+        return false; // Already exists
+      }
+    }
+    this.teams.set(trimmed, {
+      teamName: trimmed,
+      currentLevel: 0,
+      score: 0,
+      handRaised: false,
+      completedLevels: [],
+      peerBonusReceivedFrom: []
+    });
+    return true;
+  }
+
+  public removeTeam(name: string): boolean {
+    const trimmed = name.trim().toLowerCase();
+    for (const [k] of this.teams.entries()) {
+      if (k.toLowerCase() === trimmed) {
+        this.teams.delete(k);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public loadPresetTeams(presets?: string[]): string[] {
+    const defaultPresets = [
+      'CyberKnights',
+      'ByteBuilders',
+      'RoboExplorers',
+      'SolarMinds',
+      'QuantumCrew',
+      'SiliconSpark'
+    ];
+    const toAdd = presets && presets.length > 0 ? presets : defaultPresets;
+    for (const name of toAdd) {
+      this.addTeam(name);
+    }
+    return this.getTeamNames();
+  }
+
   public getTeams(): TeamState[] {
     return Array.from(this.teams.values()).sort((a, b) => b.score - a.score);
   }

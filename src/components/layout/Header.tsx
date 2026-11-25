@@ -224,7 +224,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAdmin, isAdminView }) => {
                     className="w-full text-left px-3 py-2 rounded-xl text-xs font-bold text-[#24313A] hover:bg-[#E6F4F2] flex items-center gap-2.5 transition-colors cursor-pointer"
                   >
                     <Radio className="w-4 h-4 text-[#2A9D8F]" />
-                    <span>{isAdminView ? 'Switch to Student View' : 'Facilitator View'}</span>
+                    <span>{isAdminView ? 'Switch to Student View' : 'Instructor Admin Portal'}</span>
                   </button>
 
                   {/* Logout / Switch Team */}

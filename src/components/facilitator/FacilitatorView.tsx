@@ -13,41 +13,64 @@ import {
   Plus,
   Trash2,
   ArrowRight,
-  Sparkles
+  Sparkles,
+  Copy,
+  Check,
+  Lock,
+  ExternalLink
 } from 'lucide-react';
 import { useSocketStore } from '../../store/useSocketStore.js';
 import { useRosterStore } from '../../store/useRosterStore.js';
 
 interface FacilitatorViewProps {
   onLaunchWorkshop?: () => void;
+  onLockAdmin?: () => void;
 }
 
-export const FacilitatorView: React.FC<FacilitatorViewProps> = ({ onLaunchWorkshop }) => {
+export const FacilitatorView: React.FC<FacilitatorViewProps> = ({ onLaunchWorkshop, onLockAdmin }) => {
   const { 
     leaderboard, 
     cancelHand, 
-    adminResetRoom
+    adminResetRoom,
+    addTeamRemote,
+    removeTeamRemote,
+    loadPresetsRemote
   } = useSocketStore();
 
-  const { teams, addTeam, removeTeam, loadPresetTeams, resetRoster } = useRosterStore();
+  const { teams } = useRosterStore();
 
   const [newTeamName, setNewTeamName] = useState('');
   const [teamAddError, setTeamAddError] = useState<string | null>(null);
   const [alertFeedback, setAlertFeedback] = useState<string | null>(null);
+  const [copiedLink, setCopiedLink] = useState(false);
 
   // Teams with active hand raises
   const handsRaised = leaderboard.filter((t) => t.handRaised);
 
-  const handleAddTeam = (e: React.FormEvent) => {
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(window.location.origin);
+    setCopiedLink(true);
+    setTimeout(() => setCopiedLink(false), 2500);
+  };
+
+  const handleAddTeam = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTeamName.trim()) return;
-    const ok = addTeam(newTeamName.trim());
-    if (ok) {
+    const res = await addTeamRemote(newTeamName.trim());
+    if (res.success) {
       setNewTeamName('');
       setTeamAddError(null);
     } else {
-      setTeamAddError('Team name already exists in roster.');
+      setTeamAddError(res.error || 'Team name already exists in roster.');
     }
+  };
+
+  const handleRemoveTeam = (teamName: string) => {
+    removeTeamRemote(teamName);
+  };
+
+  const handleLoadPresets = () => {
+    loadPresetsRemote();
   };
 
   const handleTriggerAlert = async (type: 'heat' | 'dry' | 'reset') => {
@@ -85,12 +108,31 @@ export const FacilitatorView: React.FC<FacilitatorViewProps> = ({ onLaunchWorksh
 
           {/* Quick Actions */}
           <div className="flex flex-wrap items-center gap-3">
+            {/* Share Workshop Link */}
+            <button
+              onClick={handleCopyLink}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#FFFDF7] border border-[#2A9D8F] text-[#21867A] hover:bg-[#E6F4F2] text-xs font-bold transition-all shadow-xs cursor-pointer"
+              title="Copy the public workshop link to share with students"
+            >
+              {copiedLink ? (
+                <>
+                  <Check className="w-4 h-4 text-[#2A9D8F]" />
+                  <span>Student Link Copied!</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="w-4 h-4 text-[#2A9D8F]" />
+                  <span>Copy Student Workshop Link</span>
+                </>
+              )}
+            </button>
+
             {teams.length > 0 && onLaunchWorkshop && (
               <button
                 onClick={onLaunchWorkshop}
                 className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#2A9D8F] hover:bg-[#21867A] text-white text-xs font-extrabold transition-all shadow-sm cursor-pointer"
               >
-                <span>Launch Workshop Session</span>
+                <span>Preview Student View</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             )}
@@ -106,6 +148,17 @@ export const FacilitatorView: React.FC<FacilitatorViewProps> = ({ onLaunchWorksh
               <RotateCcw className="w-4 h-4" />
               <span>Reset Session</span>
             </button>
+
+            {onLockAdmin && (
+              <button
+                onClick={onLockAdmin}
+                className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-[#FFFDF7] border border-[#EBE6DC] hover:border-[#D5CFC2] text-[#576875] hover:text-[#24313A] text-xs font-bold transition-all shadow-xs cursor-pointer"
+                title="Lock admin portal and return to student screen"
+              >
+                <Lock className="w-3.5 h-3.5" />
+                <span>Lock Admin</span>
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -133,7 +186,7 @@ export const FacilitatorView: React.FC<FacilitatorViewProps> = ({ onLaunchWorksh
           </div>
 
           <button
-            onClick={loadPresetTeams}
+            onClick={handleLoadPresets}
             className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#FFFDF7] border border-[#EBE6DC] hover:border-[#2A9D8F] text-[#24313A] text-xs font-bold transition-all shadow-xs self-start sm:self-auto cursor-pointer"
           >
             <Sparkles className="w-3.5 h-3.5 text-[#2A9D8F]" />
@@ -193,8 +246,8 @@ export const FacilitatorView: React.FC<FacilitatorViewProps> = ({ onLaunchWorksh
                   <span className="w-2 h-2 rounded-full bg-[#2A9D8F]" />
                   <span>{t}</span>
                   <button
-                    onClick={() => removeTeam(t)}
-                    className="p-1 rounded-md text-[#899AA8] hover:text-[#D95D43] hover:bg-[#FDF1EE] transition-all ml-1"
+                    onClick={() => handleRemoveTeam(t)}
+                    className="p-1 rounded-md text-[#899AA8] hover:text-[#D95D43] hover:bg-[#FDF1EE] transition-all ml-1 cursor-pointer"
                     title={`Remove ${t}`}
                   >
                     <Trash2 className="w-3.5 h-3.5" />

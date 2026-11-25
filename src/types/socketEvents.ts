@@ -20,6 +20,7 @@ export interface ToastAlertPayload {
 
 export interface ServerToClientEvents {
   "leaderboard:update": (teams: TeamState[]) => void;
+  "roster:update": (teamNames: string[]) => void;
   "room:toast": (toast: ToastAlertPayload) => void;
   "admin:fallbackToggle": (useMockFeed: boolean) => void;
   "hand:updated": (data: { teamName: string; handRaised: boolean }) => void;
@@ -27,6 +28,9 @@ export interface ServerToClientEvents {
 
 export interface ClientToServerEvents {
   "team:login": (teamName: string, ack: (response: { success: boolean; state?: TeamState; error?: string }) => void) => void;
+  "roster:addTeam": (teamName: string, ack?: (response: { success: boolean; error?: string }) => void) => void;
+  "roster:removeTeam": (teamName: string, ack?: (response: { success: boolean }) => void) => void;
+  "roster:loadPresets": (ack?: (response: { success: boolean; teams: string[] }) => void) => void;
   "level:complete": (data: { teamName: string; level: number }) => void;
   "help:raiseHand": (data: { teamName: string; level: number }) => void;
   "help:cancelHand": (data: { teamName: string }) => void;

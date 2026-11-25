@@ -2,9 +2,16 @@ import express from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
 import { stateStore } from './stateStore.js';
 import { getMockTelemetryFeed, triggerAlertSpike } from './mockThingspeak.js';
 import { ToastAlertPayload } from '../src/types/socketEvents.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const distPath = path.resolve(__dirname, '../dist');
 
 const app = express();
 const httpServer = createServer(app);
@@ -39,9 +46,58 @@ app.post('/api/trigger-alert', (req, res) => {
   }
 });
 
-// Teams list endpoint
+// Admin login validation (Credentials: admin / admin)
+app.post('/api/admin/login', (req, res) => {
+  const { username, password } = req.body;
+  if (username === 'admin' && password === 'admin') {
+    res.json({ success: true, message: 'Admin authenticated' });
+  } else {
+    res.status(401).json({ success: false, error: 'Invalid admin credentials' });
+  }
+});
+
+// Teams list and roster endpoints
 app.get('/api/teams', (req, res) => {
   res.json(stateStore.getTeams());
+});
+
+app.get('/api/roster', (req, res) => {
+  res.json(stateStore.getTeamNames());
+});
+
+app.post('/api/admin/teams', (req, res) => {
+  const { teamName } = req.body;
+  if (!teamName || typeof teamName !== 'string') {
+    res.status(400).json({ error: 'teamName required' });
+    return;
+  }
+  const added = stateStore.addTeam(teamName);
+  if (added) {
+    io.emit('roster:update', stateStore.getTeamNames());
+    io.emit('leaderboard:update', stateStore.getTeams());
+    res.json({ success: true, roster: stateStore.getTeamNames() });
+  } else {
+    res.status(409).json({ error: 'Team already exists' });
+  }
+});
+
+app.delete('/api/admin/teams/:teamName', (req, res) => {
+  const { teamName } = req.params;
+  const removed = stateStore.removeTeam(teamName);
+  if (removed) {
+    io.emit('roster:update', stateStore.getTeamNames());
+    io.emit('leaderboard:update', stateStore.getTeams());
+    res.json({ success: true, roster: stateStore.getTeamNames() });
+  } else {
+    res.status(404).json({ error: 'Team not found' });
+  }
+});
+
+app.post('/api/admin/presets', (req, res) => {
+  const roster = stateStore.loadPresetTeams();
+  io.emit('roster:update', roster);
+  io.emit('leaderboard:update', stateStore.getTeams());
+  res.json({ success: true, roster });
 });
 
 app.get('/api/health', (req, res) => {
@@ -51,9 +107,40 @@ app.get('/api/health', (req, res) => {
 // --- WebSocket Event Handlers ---
 
 io.on('connection', (socket) => {
-  // Send current room state on initial connection
+  // Send current room state and roster on initial connection
   socket.emit('leaderboard:update', stateStore.getTeams());
+  socket.emit('roster:update', stateStore.getTeamNames());
   socket.emit('admin:fallbackToggle', stateStore.getMockFeedState());
+
+  // Dynamic Roster Management from Admin Dashboard
+  socket.on('roster:addTeam', (teamName: string, ack) => {
+    const added = stateStore.addTeam(teamName);
+    if (added) {
+      io.emit('roster:update', stateStore.getTeamNames());
+      io.emit('leaderboard:update', stateStore.getTeams());
+      if (typeof ack === 'function') ack({ success: true });
+    } else {
+      if (typeof ack === 'function') ack({ success: false, error: 'Team name already exists' });
+    }
+  });
+
+  socket.on('roster:removeTeam', (teamName: string, ack) => {
+    const removed = stateStore.removeTeam(teamName);
+    if (removed) {
+      io.emit('roster:update', stateStore.getTeamNames());
+      io.emit('leaderboard:update', stateStore.getTeams());
+      if (typeof ack === 'function') ack({ success: true });
+    } else {
+      if (typeof ack === 'function') ack({ success: false });
+    }
+  });
+
+  socket.on('roster:loadPresets', (ack) => {
+    const roster = stateStore.loadPresetTeams();
+    io.emit('roster:update', roster);
+    io.emit('leaderboard:update', stateStore.getTeams());
+    if (typeof ack === 'function') ack({ success: true, teams: roster });
+  });
 
   // Team login
   socket.on('team:login', (teamName: string, ack) => {
@@ -134,6 +221,19 @@ io.on('connection', (socket) => {
     io.emit('admin:fallbackToggle', useMock);
   });
 });
+
+// --- Static Frontend File Serving (Full-Stack Single-URL Production Mode) ---
+if (fs.existsSync(distPath)) {
+  console.log(`[IoT Platform Server] Serving compiled frontend from: ${distPath}`);
+  app.use(express.static(distPath));
+  // Single-Page Application (SPA) fallback
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api') || req.path.startsWith('/socket.io')) {
+      return next();
+    }
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+}
 
 httpServer.listen(PORT, () => {
   console.log(`[IoT Platform Server] Running on http://localhost:${PORT}`);

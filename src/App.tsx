@@ -22,6 +22,7 @@ import { ConceptByteView } from './components/concept/ConceptByteView.js';
 import { BuildGuideView } from './components/build/BuildGuideView.js';
 import { QuizChallengeView } from './components/quiz/QuizChallengeView.js';
 import { FacilitatorView } from './components/facilitator/FacilitatorView.js';
+import { AdminAuthModal } from './components/auth/AdminAuthModal.js';
 import rawCurriculum from './data/curriculumData.json' with { type: 'json' };
 import { LevelData } from './types/curriculum.js';
 
@@ -42,14 +43,54 @@ export const App: React.FC = () => {
   const { initSocket, submitLevelComplete } = useSocketStore();
   const { isConfigured } = useRosterStore();
 
-  // If no team accounts created yet, start in Instructor Setup mode
-  const [isAdminView, setIsAdminView] = useState(!isConfigured);
+  // Admin authentication state (User ID: admin, Password: admin)
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState<boolean>(() => {
+    try {
+      return sessionStorage.getItem('makerlab_admin_auth') === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  // Default to student view for everyone opening the link
+  const [isAdminView, setIsAdminView] = useState(false);
+  const [showAdminAuthModal, setShowAdminAuthModal] = useState(false);
   const [stagePhase, setStagePhase] = useState<StagePhase>('concept');
   const [visitedBuildPhases, setVisitedBuildPhases] = useState<number[]>([]);
 
   useEffect(() => {
     initSocket();
   }, [initSocket]);
+
+  const handleOpenAdmin = () => {
+    if (isAdminView) {
+      // If already viewing admin, switch back to student view
+      setIsAdminView(false);
+    } else if (isAdminAuthenticated) {
+      // If already authenticated in this session, open admin directly
+      setIsAdminView(true);
+    } else {
+      // Prompt for User ID 'admin' & Password 'admin'
+      setShowAdminAuthModal(true);
+    }
+  };
+
+  const handleAdminAuthSuccess = () => {
+    setIsAdminAuthenticated(true);
+    try {
+      sessionStorage.setItem('makerlab_admin_auth', 'true');
+    } catch {}
+    setShowAdminAuthModal(false);
+    setIsAdminView(true);
+  };
+
+  const handleLockAdmin = () => {
+    setIsAdminAuthenticated(false);
+    try {
+      sessionStorage.removeItem('makerlab_admin_auth');
+    } catch {}
+    setIsAdminView(false);
+  };
 
   const currentLevelData = curriculum.find((l) => l.levelNumber === activeLevelView) || curriculum[0];
   const isLevelCompleted = completedLevels.includes(activeLevelView);
@@ -88,21 +129,37 @@ export const App: React.FC = () => {
       {/* Toast Alert System */}
       <ToastAlert />
 
+      {/* Admin Authentication Gate Modal */}
+      <AdminAuthModal
+        isOpen={showAdminAuthModal}
+        onClose={() => setShowAdminAuthModal(false)}
+        onSuccess={handleAdminAuthSuccess}
+      />
+
       {/* Persistent Sticky Header */}
       <Header
         isAdminView={isAdminView}
-        onOpenAdmin={() => setIsAdminView(!isAdminView)}
+        onOpenAdmin={handleOpenAdmin}
       />
 
-      {/* Login Modal */}
+      {/* Login Modal for Students */}
       {!isLoggedIn && !isAdminView && (
-        <TeamLoginModal onOpenInstructor={() => setIsAdminView(true)} />
+        <TeamLoginModal onOpenInstructor={() => {
+          if (isAdminAuthenticated) {
+            setIsAdminView(true);
+          } else {
+            setShowAdminAuthModal(true);
+          }
+        }} />
       )}
 
       {/* Facilitator / Admin View */}
       {isAdminView ? (
         <main className="flex-1">
-          <FacilitatorView onLaunchWorkshop={() => setIsAdminView(false)} />
+          <FacilitatorView 
+            onLaunchWorkshop={() => setIsAdminView(false)} 
+            onLockAdmin={handleLockAdmin}
+          />
         </main>
       ) : (
         /* Student Level Runner */

@@ -8,6 +8,7 @@ import {
   ServerToClientEvents 
 } from '../types/socketEvents.js';
 import { useTeamStore } from './useTeamStore.js';
+import { useRosterStore } from './useRosterStore.js';
 
 interface SocketStoreState {
   socket: Socket<ServerToClientEvents, ClientToServerEvents> | null;
@@ -25,6 +26,9 @@ interface SocketStoreState {
   dismissToast: (id: string) => void;
   adminResetRoom: () => void;
   adminToggleMockFeed: (val: boolean) => void;
+  addTeamRemote: (teamName: string) => Promise<{ success: boolean; error?: string }>;
+  removeTeamRemote: (teamName: string) => void;
+  loadPresetsRemote: () => void;
 }
 
 export const useSocketStore = create<SocketStoreState>((set, get) => ({
@@ -97,6 +101,10 @@ export const useSocketStore = create<SocketStoreState>((set, get) => ({
 
     s.on('admin:fallbackToggle', (useMock) => {
       set({ isMockFeedActive: useMock });
+    });
+
+    s.on('roster:update', (roster) => {
+      useRosterStore.getState().setTeams(roster);
     });
 
     s.on('hand:updated', ({ teamName, handRaised }) => {
@@ -178,5 +186,45 @@ export const useSocketStore = create<SocketStoreState>((set, get) => ({
   adminToggleMockFeed: (val: boolean) => {
     const s = get().socket;
     if (s) s.emit('admin:toggleMock', val);
+  },
+
+  addTeamRemote: (teamName: string) => {
+    return new Promise<{ success: boolean; error?: string }>((resolve) => {
+      const trimmed = teamName.trim();
+      if (!trimmed) {
+        resolve({ success: false, error: 'Team name cannot be empty.' });
+        return;
+      }
+      const s = get().socket;
+      if (s) {
+        s.emit('roster:addTeam', trimmed, (res) => {
+          if (res && !res.success) {
+            resolve({ success: false, error: res.error || 'Failed to add team' });
+          } else {
+            useRosterStore.getState().addTeam(trimmed);
+            resolve({ success: true });
+          }
+        });
+      } else {
+        const ok = useRosterStore.getState().addTeam(trimmed);
+        resolve({ success: ok, error: ok ? undefined : 'Team already exists' });
+      }
+    });
+  },
+
+  removeTeamRemote: (teamName: string) => {
+    const s = get().socket;
+    if (s) {
+      s.emit('roster:removeTeam', teamName);
+    }
+    useRosterStore.getState().removeTeam(teamName);
+  },
+
+  loadPresetsRemote: () => {
+    const s = get().socket;
+    if (s) {
+      s.emit('roster:loadPresets');
+    }
+    useRosterStore.getState().loadPresetTeams();
   },
 }));

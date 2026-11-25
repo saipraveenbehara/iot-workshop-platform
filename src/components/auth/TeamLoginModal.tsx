@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sparkles, ArrowRight, ShieldCheck, AlertCircle, Users, Radio } from 'lucide-react';
+import { Sparkles, ArrowRight, ShieldCheck, AlertCircle, Users, Radio, Lock } from 'lucide-react';
 import { useSocketStore } from '../../store/useSocketStore.js';
 import { useRosterStore } from '../../store/useRosterStore.js';
 
@@ -8,7 +8,7 @@ interface TeamLoginModalProps {
 }
 
 export const TeamLoginModal: React.FC<TeamLoginModalProps> = ({ onOpenInstructor }) => {
-  const [selectedTeam, setSelectedTeam] = useState('');
+  const [typedTeam, setTypedTeam] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { submitLogin } = useSocketStore();
@@ -16,17 +16,25 @@ export const TeamLoginModal: React.FC<TeamLoginModalProps> = ({ onOpenInstructor
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedTeam) {
-      setError('Please select your team from the roster.');
+    const cleanName = typedTeam.trim();
+    if (!cleanName) {
+      setError('Please enter your assigned team name.');
+      return;
+    }
+
+    // Verify team name exists in instructor's authorized roster (case-insensitive)
+    const matched = teams.find((t) => t.toLowerCase() === cleanName.toLowerCase());
+    if (!matched) {
+      setError(`Team "${cleanName}" has not been registered yet. Please ask your instructor to add your team in the Admin Portal.`);
       return;
     }
 
     setIsSubmitting(true);
     setError(null);
 
-    const res = await submitLogin(selectedTeam);
+    const res = await submitLogin(matched);
     if (!res.success) {
-      setError(res.error || 'Team authorization failed.');
+      setError(res.error || 'Team authorization failed. Please try again.');
       setIsSubmitting(false);
     }
   };
@@ -45,7 +53,7 @@ export const TeamLoginModal: React.FC<TeamLoginModalProps> = ({ onOpenInstructor
             Welcome to the Workbench
           </h2>
           <p className="text-sm text-[#576875] mt-2 leading-relaxed">
-            Select your assigned team name to load your workbench kit, circuit guides, and real-time activities.
+            Enter your team name to sign in and launch your interactive ESP32 workbench kit and live IoT activities.
           </p>
 
           {teams.length === 0 ? (
@@ -63,9 +71,9 @@ export const TeamLoginModal: React.FC<TeamLoginModalProps> = ({ onOpenInstructor
               {onOpenInstructor && (
                 <button
                   onClick={onOpenInstructor}
-                  className="px-4 py-2.5 rounded-xl bg-[#2A9D8F] hover:bg-[#21867A] text-white text-xs font-bold transition-all shadow-xs"
+                  className="px-4 py-2.5 rounded-xl bg-[#2A9D8F] hover:bg-[#21867A] text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
                 >
-                  Instructor: Create Team Accounts
+                  Instructor: Enter Admin Portal
                 </button>
               )}
             </div>
@@ -74,26 +82,45 @@ export const TeamLoginModal: React.FC<TeamLoginModalProps> = ({ onOpenInstructor
             <form onSubmit={handleLogin} className="mt-8 space-y-5">
               <div>
                 <label className="block text-xs font-bold text-[#576875] uppercase tracking-wider mb-2">
-                  Select Your Assigned Team:
+                  Enter Your Assigned Team Name:
                 </label>
-                <div className="relative">
-                  <select
-                    value={selectedTeam}
+                <div className="space-y-3">
+                  <input
+                    type="text"
+                    value={typedTeam}
                     onChange={(e) => {
-                      setSelectedTeam(e.target.value);
+                      setTypedTeam(e.target.value);
                       setError(null);
                     }}
-                    className="w-full bg-[#FFFDF7] border border-[#EBE6DC] hover:border-[#D5CFC2] focus:border-[#2A9D8F] rounded-2xl px-4 py-3.5 text-[#24313A] font-semibold text-sm appearance-none focus:outline-none transition-all cursor-pointer shadow-xs"
-                  >
-                    <option value="">-- Choose your team name --</option>
-                    {teams.map((t) => (
-                      <option key={t} value={t}>
-                        {t}
-                      </option>
-                    ))}
-                  </select>
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#576875]">
-                    ▼
+                    placeholder="Type team name (e.g., CyberKnights, SolarMinds)..."
+                    autoFocus
+                    className="w-full bg-[#FFFDF7] border border-[#EBE6DC] hover:border-[#D5CFC2] focus:border-[#2A9D8F] rounded-2xl px-4 py-3.5 text-[#24313A] font-semibold text-sm focus:outline-none transition-all shadow-xs"
+                  />
+
+                  {/* Quick Select from Active Roster */}
+                  <div className="pt-1">
+                    <span className="text-[11px] font-bold text-[#899AA8] uppercase tracking-wider block mb-1.5">
+                      Or pick from active registered teams:
+                    </span>
+                    <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto p-1 bg-[#FFFDF7] border border-[#EBE6DC] rounded-xl">
+                      {teams.map((t) => (
+                        <button
+                          key={t}
+                          type="button"
+                          onClick={() => {
+                            setTypedTeam(t);
+                            setError(null);
+                          }}
+                          className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                            typedTeam.toLowerCase() === t.toLowerCase()
+                              ? 'bg-[#2A9D8F] text-white shadow-xs'
+                              : 'bg-white border border-[#EBE6DC] text-[#24313A] hover:border-[#2A9D8F]'
+                          }`}
+                        >
+                          {t}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -107,7 +134,7 @@ export const TeamLoginModal: React.FC<TeamLoginModalProps> = ({ onOpenInstructor
 
               <button
                 type="submit"
-                disabled={!selectedTeam || isSubmitting}
+                disabled={!typedTeam.trim() || isSubmitting}
                 className="w-full flex items-center justify-center gap-2 py-4 px-6 rounded-2xl bg-[#2A9D8F] hover:bg-[#21867A] disabled:opacity-40 text-white font-extrabold text-sm shadow-sm transition-all cursor-pointer"
               >
                 <span>{isSubmitting ? 'Opening Workbench...' : 'Enter Workshop'}</span>
@@ -116,12 +143,22 @@ export const TeamLoginModal: React.FC<TeamLoginModalProps> = ({ onOpenInstructor
             </form>
           )}
 
-          <div className="mt-6 pt-5 border-t border-[#EBE6DC] flex items-center justify-between text-xs text-[#576875]">
+          <div className="mt-6 pt-5 border-t border-[#EBE6DC] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#576875]">
             <span className="flex items-center gap-1.5 font-medium">
               <ShieldCheck className="w-4 h-4 text-[#2A9D8F]" />
-              Production Hardware Lab
+              ESP32 C/C++ Workbench Lab
             </span>
-            <span className="font-mono text-[11px] text-[#899AA8]">C / C++ • ESP32 DevKit V1</span>
+            
+            {onOpenInstructor && (
+              <button
+                type="button"
+                onClick={onOpenInstructor}
+                className="text-xs font-bold text-[#2A9D8F] hover:text-[#21867A] hover:underline flex items-center gap-1.5 cursor-pointer"
+              >
+                <Lock className="w-3.5 h-3.5" />
+                <span>Instructor Portal</span>
+              </button>
+            )}
           </div>
         </div>
       </div>

@@ -114,10 +114,12 @@ export const InstructorCircuitGuide: React.FC<InstructorCircuitGuideProps> = ({
       case 4:
       case 5:
         return [
-          { pin: 'GPIO 21 (D21)', destination: 'OLED SDA Pin', note: 'I2C Serial Data line' },
-          { pin: 'GPIO 22 (D22)', destination: 'OLED SCL Pin', note: 'I2C Serial Clock line' },
-          { pin: '3V3 Rail', destination: 'OLED VCC Pin', note: '3.3V power from rail' },
-          { pin: 'GND Rail', destination: 'OLED GND Pin', note: 'Common ground from rail' },
+          { pin: 'ESP32 3V3', destination: 'Breadboard (+) Red Power Rail', note: 'Supplies 3.3V power to breadboard rail' },
+          { pin: 'ESP32 GND', destination: 'Breadboard (-) Blue Ground Rail', note: 'Connects ground to breadboard rail' },
+          { pin: 'OLED VCC', destination: 'Breadboard (+) Power Rail', note: 'Takes 3.3V from breadboard rail' },
+          { pin: 'OLED GND', destination: 'Breadboard (-) Ground Rail', note: 'Takes GND from breadboard rail' },
+          { pin: 'OLED SDA', destination: 'ESP32 GPIO 21 (D21)', note: 'I2C Serial Data line' },
+          { pin: 'OLED SCL', destination: 'ESP32 GPIO 22 (D22)', note: 'I2C Serial Clock line' },
         ];
       case 6:
         return [
